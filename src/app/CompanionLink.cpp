@@ -612,6 +612,7 @@ Expected<std::unique_ptr<CompanionChannel>, CompanionNotice> CompanionLink::esta
         return makeUnexpected(noticeOf(CompanionEvent::Ended));
     }
     grantOverlay();
+    grantCapture();
     if (level >= kNotificationsSdk) {
         static_cast<void>(m_client.shell(
             m_serial, std::format("pm grant {} android.permission.POST_NOTIFICATIONS", kCompanionPackage)));
@@ -694,6 +695,18 @@ void CompanionLink::grantOverlay()
     }
     log::info(kLog, "[{}] the overlay permission could not be granted over adb", m_serial);
     openPermissionPage();
+}
+
+// Screen capture without the "Share your screen?" dialog: mirroring without adb asks the companion for screen capture
+// each time, and PROJECT_MEDIA allowed lets Android give it at once (the status bar still shows the capture icon).
+// Granted whenever adb starts the companion, so one session with USB debugging is enough.
+void CompanionLink::grantCapture()
+{
+    static_cast<void>(m_client.shell(m_serial, std::format("appops set {} PROJECT_MEDIA allow", kCompanionPackage)));
+    const auto checked = m_client.shell(m_serial, std::format("appops get {} PROJECT_MEDIA", kCompanionPackage));
+    if (!checked || checked->out.find("PROJECT_MEDIA: allow") == std::string::npos) {
+        log::info(kLog, "[{}] screen capture without asking could not be allowed over adb", m_serial);
+    }
 }
 
 void CompanionLink::openPermissionPage()
