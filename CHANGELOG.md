@@ -2,15 +2,15 @@
 
 Notable changes are documented here following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
-## [2.2.1-beta3] - 2026-11-25
+## [2.2.1-beta3] - 2026-11-27
 
-macOS 14+ universal beta of **anmacgamer**:
+macOS 14+ universal beta 3 of **anmacgamer**:
 
-- Trackpad: touches match Mac cadence and lift velocity so home screens flip one page and lists keep native momentum; Direct mode is now default.
-- Window and toolbar: customizable toolbar buttons on any side, always-on-top across Spaces, and an option to turn off the phone screen while mirroring.
-- Input and audio: on-screen Chinese pinyin preview via **anmacgamer Companion** IME, built-in Honkai: Star Rail PC profile, and fixed-volume phone audio capture.
-- Connections and hardware: wireless transport falls back to the adb tunnel when Wi-Fi direct fails; adb-free Companion mirroring (`TransportKind::Companion`); USB AOA touch and `/dev/cu.*` serial ports wired up.
-- Branding: renamed to **anmacgamer** with a Liquid Glass icon and custom DMG icon.
+- Mirroring without USB debugging: USB AOA touch paired with Companion picture and sound over Wi-Fi (`TransportKind::Companion`), one QR pairing per computer, and screen capture without Android's share-screen dialog once allowed over USB debugging.
+- Companion 2.3: Android 17 single-page Settings look with wallpaper colours, muted phone speaker while mirroring audio at fixed capture volume (independent Mac volume), on-screen Chinese pinyin preview without a keyboard bar, and automatic restore of the previous keyboard on disconnect.
+- Window, toolbar, and input: keep-on-top across desktops, toolbar on any side with Back/Home/Recents plus five chosen buttons, phone screen-off switch, built-in Honkai: Star Rail phone and cloud PC profiles (`Tab` locks the view), Mac key labels (`Option`/`Command`/`Control`/`Shift`/`Delete`, `fn` note for F keys), and Direct-by-default trackpad swipes matching Mac cadence and lift velocity.
+- Connections, hardware, and fixes: automatic wireless transport falls back to the adb tunnel when Wi-Fi direct cannot reach the phone; `/dev/cu.*` serial ports wired up; fixed logic-stop crash, Companion Disconnect and phone-side stop handling, clean quit on `SIGTERM`/`SIGINT`/`SIGHUP`, and repeated Keychain prompts (key cached per launch).
+- Branding: renamed throughout to **anmacgamer** with one-time `GameScrcpy` data folder migration, Liquid Glass app icon, and custom DMG volume icon.
 
 ## [2.2.1-beta2] - 2026-11-24
 
@@ -229,4 +229,5 @@ GameScrcpy 2.0 是一次完全重写：电脑端程序、手机端服务、通�
 
 GameScrcpy 2.0 is a complete rewrite of the PC app, the phone server, the protocol and the companion app. Highlights: a zero-copy hardware-decoded mirroring pipeline with H.264, H.265 and AV1; audio; USB, wireless debugging and WiFi direct; several phones in windows or a grid; recording to MP4; an in-place key mapping editor with a large component library; blueprints that are the same thing as TypeScript, with vision, OCR, tasks and a debugger; a built-in AI assistant and a local MCP server; the ESP32 touch box with in-app flashing; `.gsext` extensions with sandboxed native extensions; a new dark-first interface with built-in help and guided tours; an installer and a portable build. Experimental: AOA touch, Bluetooth ESP32 boards, capture cards and gamepad passthrough. Profiles and scripts from 1.x cannot be imported.
 
+[2.2.1-beta3]: https://github.com/wyb-070110/anmacgamer/releases/tag/v2.2.1-beta3
 [2.2.1-beta2]: https://github.com/wyb-070110/anmacgamer/releases/tag/v2.2.1-beta2
