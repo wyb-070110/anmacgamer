@@ -100,6 +100,7 @@ private:
     std::atomic<bool> m_closing{false};
     std::mutex m_mutex;
     std::condition_variable m_expectedChanged;  // m_expected changed (a mirror link may wait for its pairing)
+    std::size_t m_pairingInFlight = 0;
     std::vector<LanExpectation> m_expected;
     MirrorArrived m_mirrorArrived;
     std::vector<OlderPhone> m_older;

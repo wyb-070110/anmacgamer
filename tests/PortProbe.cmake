@@ -174,6 +174,28 @@ target_compile_definitions(gs_companion_cipher_tests PRIVATE
     GS_PROTOCOL_VECTOR_DIR="${PROJECT_SOURCE_DIR}/protocol/vectors"
 )
 
+if(TARGET Qt6::Network)
+    gs_add_unit_test(gs_companion_lan_tests
+        SOURCES
+            unit/app/CompanionLanMacTests.cpp
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionCipher.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionLan.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionLink.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionShots.cpp"
+        LIBRARIES
+            gs::input
+            gs::nlohmann_json
+            gs::session
+            Qt6::Core
+            Qt6::Network
+    )
+    target_include_directories(gs_companion_lan_tests BEFORE PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/compat/posix"
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${PROJECT_SOURCE_DIR}/src/app"
+    )
+endif()
+
 # Device tests: they run against a real phone and report "skipped" (77) without GS_ADB_TEST_SERIAL.
 add_executable(gs_adb_device_tests integration/adb/AdbDeviceTests.cpp)
 target_link_libraries(gs_adb_device_tests PRIVATE gs::adb gs::platform gs::doctest)

@@ -27,6 +27,12 @@ class MainActivity : Activity(), Shell {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         build()
+        if (savedInstanceState == null && sync.values.autoConnect && !CompanionState.lanConnected &&
+            CompanionState.lan != LanState.SEARCHING && CompanionState.lan != LanState.PAIRING &&
+            PairingStore(this).all().isNotEmpty()
+        ) {
+            connectNow()
+        }
     }
 
     override fun onResume() {

@@ -506,3 +506,25 @@ TEST_CASE("SPEC 11.10: a channel the companion closes reaches the session as a l
     REQUIRE(reopened != ops.end());
     CHECK(std::ranges::find(ops.begin(), reopened, MirrorControl{MirrorOp::Close, 0}) != reopened);
 }
+
+TEST_CASE("SPEC 11.10: when screen sharing stops on the phone, a clean ServerGoodbye ends the session as Stopped "
+          "without reconnecting")
+{
+    Rig rig;
+    rig.session->start();
+    REQUIRE(rig.listener.waitForPhase(SessionPhase::Streaming));
+    REQUIRE(rig.listener.waitForVideo(1));
+
+    protocol::ServerGoodbye goodbye;
+    goodbye.reason = protocol::ErrorCode::None;
+    goodbye.message = "screen sharing stopped on the phone";
+    REQUIRE(rig.server.sendControl(goodbye));
+    rig.phone->closeFromPhone(0);
+
+    REQUIRE(rig.listener.waitForEnd());
+    const auto phases = rig.listener.phases();
+    CHECK(phases.back() == SessionPhase::Stopped);
+    CHECK(std::ranges::count(phases, SessionPhase::Reconnecting) == 0);
+    CHECK(std::ranges::count(phases, SessionPhase::Failed) == 0);
+    CHECK(rig.server.handshakes() == 1);
+}

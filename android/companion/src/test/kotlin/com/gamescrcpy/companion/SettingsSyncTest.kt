@@ -235,4 +235,28 @@ class SettingsSyncTest {
         assertEquals(pending, SyncCodec.decodePending(SyncCodec.encodePending(pending)))
         assertEquals(mapOf(CompanionItem.IME to 0), SyncCodec.decodePending("3,0\n9,1\n2,5\n0,x\n1"))
     }
+
+    @Test
+    fun aComputerThatPairsAgainReportsItsPreviousPcId() {
+        val sync = sync()
+        val replaced = ArrayList<String>()
+        sync.onPcReplaced = { replaced += it }
+        val pc1 = Hex.encode(ByteArray(16) { (0xA0 + it).toByte() })
+        val pc2 = Hex.encode(ByteArray(16) { (0xB0 + it).toByte() })
+
+        val first = sync.open(pc1) { }
+        sync.snapshot(first, snapshot(1, link = ComputerLink.LAN))
+        sync.close(first)
+        assertTrue(replaced.isEmpty())
+
+        val sameAgain = sync.open(pc1) { }
+        sync.snapshot(sameAgain, snapshot(1, link = ComputerLink.LAN))
+        sync.close(sameAgain)
+        assertTrue(replaced.isEmpty())
+
+        val repaired = sync.open(pc2) { }
+        sync.snapshot(repaired, snapshot(1, link = ComputerLink.LAN))
+        assertEquals(listOf(pc1), replaced)
+        assertEquals(pc2, sync.connected?.pc)
+    }
 }

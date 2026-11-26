@@ -6979,12 +6979,18 @@ void DeviceManager::stopCompanion(Row& row)
 
 void DeviceManager::syncCompanionLan(Row& row)
 {
-    const bool wanted = (row.mirror != nullptr && noPictureOf(row) &&
-                         (row.aoa != nullptr || row.touchBox != nullptr) && !row.deviceId.isEmpty() &&
-                         row.session.phase == session::SessionPhase::Streaming) ||
-                        (companionPictured(row) && !row.deviceId.isEmpty() && active(row.session.phase));
+    const bool noPictureActive = noPictureOf(row) && (row.aoa != nullptr || row.touchBox != nullptr) &&
+                                 !row.deviceId.isEmpty() &&
+                                 ((row.mirror != nullptr && row.session.phase == session::SessionPhase::Streaming) ||
+                                  (row.companion != nullptr && active(row.session.phase)));
+    const bool wanted =
+        noPictureActive || (companionPictured(row) && !row.deviceId.isEmpty() && active(row.session.phase));
     if (!wanted) {
         stopCompanion(row);
+        if (row.companionMirror != nullptr) {
+            row.companionMirror->detach();
+            row.companionMirror.reset();
+        }
         row.lanToken.clear();
         row.lanPairing.reset();
         if (row.mirror != nullptr) {
@@ -7001,10 +7007,11 @@ void DeviceManager::syncLanService()
 {
     std::vector<LanExpectation> expected;
     for (const Row& row : m_rows) {
+        const bool noPictureActive = noPictureOf(row) && (row.aoa != nullptr || row.touchBox != nullptr) &&
+                                     ((row.mirror != nullptr && row.session.phase == session::SessionPhase::Streaming) ||
+                                      (row.companion != nullptr && active(row.session.phase)));
         const bool pictured = companionPictured(row) && active(row.session.phase);
-        if ((!noPictureOf(row) || row.mirror == nullptr || (row.aoa == nullptr && row.touchBox == nullptr) ||
-             row.session.phase != session::SessionPhase::Streaming) &&
-            !pictured) {
+        if (!noPictureActive && !pictured) {
             continue;
         }
         if (row.deviceId.isEmpty()) {
@@ -7020,7 +7027,7 @@ void DeviceManager::syncLanService()
         }
         expectation.paired =
             pairingOf({.phone = device.companionPhone, .key = device.companionKey, .pc = device.companionPc});
-        const bool justPaired = !expectation.paired && row.lanPairing.has_value();
+        const bool justPaired = row.lanPairing.has_value();
         if (justPaired) {
             expectation.paired = row.lanPairing;
         }
@@ -7387,7 +7394,7 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
             if (paired && !row.deviceId.isEmpty()) {
                 QMetaObject::invokeMethod(
                     this,
-                    [this, id = row.deviceId.toStdString(), text = pairingText(*paired)] {
+                    [this, serial, saved = *paired, id = row.deviceId.toStdString(), text = pairingText(*paired)] {
                         if (text.key.empty()) {
                             qWarning("companion pairing of %s is not kept: macOS Keychain could not protect its key",
                                      id.c_str());
@@ -7398,6 +7405,10 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
                         device.companionKey = text.key;
                         device.companionPc = text.pc;
                         m_settings.setDevice(id, device);
+                        if (const int at = indexOf(serial);
+                            at >= 0 && m_rows[static_cast<std::size_t>(at)].lanPairing == saved) {
+                            m_rows[static_cast<std::size_t>(at)].lanPairing.reset();
+                        }
                         syncLanService();
                     },
                     Qt::QueuedConnection);
@@ -7430,6 +7441,16 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
         if (mirror != nullptr && notice.event != CompanionEvent::Ended) {
             mirror->showToast(tr("anmacgamer Companion disconnected; it connects again by itself on the same Wi-Fi"),
                               QStringLiteral("wifi"));
+        }
+        syncCompanionLan(row);
+        return;
+    }
+    if (companionPictured(row)) {
+        row.lanPairing.reset();
+        if (notice.event == CompanionEvent::StoppedOnPhone) {
+            qInfo("companion on %s: stopped on the phone, so mirroring stops", qUtf8Printable(row.name()));
+            disconnectDevice(serial);
+            return;
         }
         syncCompanionLan(row);
         return;

@@ -600,6 +600,8 @@ CompanionLan::CompanionLan(std::shared_ptr<const CompanionApk> apk, Arrived arri
         return;
     }
     ::fcntl(listener, F_SETFD, FD_CLOEXEC);
+    const int reuse = 1;
+    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     sockaddr_in address{};
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = htonl(m_loopbackOnly ? INADDR_LOOPBACK : INADDR_ANY);
@@ -785,6 +787,12 @@ void CompanionLan::serve(Slot& slot)
         {
             std::unique_lock lock(m_mutex);
             m_expectedChanged.wait_for(lock, kMirrorPairingWait, [&] {
+                if (m_closing.load()) {
+                    return true;
+                }
+                if (m_pairingInFlight > 0) {
+                    return false;
+                }
                 for (const LanExpectation& expectation : m_expected) {
                     if (decoded->token.empty() && expectation.paired && expectation.paired->phone == decoded->phone) {
                         pairing = expectation.paired;
@@ -792,7 +800,7 @@ void CompanionLan::serve(Slot& slot)
                         return true;
                     }
                 }
-                return m_closing.load();
+                return false;
             });
             arrived = m_mirrorArrived;
         }
@@ -818,14 +826,17 @@ void CompanionLan::serve(Slot& slot)
     std::optional<LanArrival> arrival;
     LanKey key{};
     LanId pc{};
+    bool pairingNow = false;
     {
         const std::lock_guard lock(m_mutex);
         for (const LanExpectation& expectation : m_expected) {
             if (!decoded->token.empty() && expectation.token == decoded->token) {
                 key = expectation.qrKey;
-                pc = newLanId();
+                pc = expectation.paired ? expectation.paired->pc : newLanId();
                 arrival = LanArrival{.serial = expectation.serial,
                                      .paired = LanPairing{.phone = decoded->phone, .key = key, .pc = pc}};
+                ++m_pairingInFlight;
+                pairingNow = true;
                 break;
             }
             if (decoded->token.empty() && expectation.paired && expectation.paired->phone == decoded->phone) {
@@ -843,8 +854,25 @@ void CompanionLan::serve(Slot& slot)
             key = older->pairing->key;
             pc = older->pairing->pc;
             arrival = LanArrival{.serial = older->serial, .paired = older->pairing};
+            ++m_pairingInFlight;
+            pairingNow = true;
         }
     }
+    struct PairingFlight {
+        CompanionLan& lan;
+        bool active;
+        ~PairingFlight()
+        {
+            if (!active) {
+                return;
+            }
+            {
+                const std::lock_guard lock(lan.m_mutex);
+                --lan.m_pairingInFlight;
+            }
+            lan.m_expectedChanged.notify_all();
+        }
+    } flight{*this, pairingNow};
     if (!arrival) {
         static_cast<void>(socket->writeAll(encodeLanReply({.status = LanStatus::Unknown})));
         socket->finish();
@@ -892,12 +920,17 @@ void CompanionLan::serve(Slot& slot)
         // Known at once, for the mirror link that follows before the app has saved the pairing.
         const std::lock_guard lock(m_mutex);
         for (LanExpectation& expectation : m_expected) {
-            if (expectation.serial == arrival->serial && !expectation.paired) {
+            if (expectation.serial == arrival->serial) {
                 expectation.paired = arrival->paired;
+                expectation.token.clear();
             }
         }
+        if (flight.active) {
+            --m_pairingInFlight;
+            flight.active = false;
+        }
     }
-        m_expectedChanged.notify_all();
+    m_expectedChanged.notify_all();
     arrival->channel = std::move(channel);
     arrival->welcome = *welcome;
     log::info(kLog, "[{}] a companion {} over the local network", arrival->serial,

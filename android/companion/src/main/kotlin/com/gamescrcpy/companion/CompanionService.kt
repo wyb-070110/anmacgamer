@@ -87,6 +87,7 @@ class CompanionService : Service(), ProjectionHost {
             .startWatchingMode(AppOpsManager.OPSTR_SYSTEM_ALERT_WINDOW, packageName, permissionWatcher)
         capture = ScreenCapture(this, this)
         autoConnect = sync.values.autoConnect
+        sync.onPcReplaced = { stalePc -> PairingStore(this).forget(stalePc) }
         sync.addListener(syncListener)
         options.addListener(optionsListener)
         ImeBridge.watch(boxWatcher)
@@ -133,6 +134,7 @@ class CompanionService : Service(), ProjectionHost {
     }
 
     override fun onDestroy() {
+        sync.onPcReplaced = null
         sync.removeListener(syncListener)
         options.removeListener(optionsListener)
         ImeBridge.unwatch(boxWatcher)
@@ -343,14 +345,18 @@ class CompanionService : Service(), ProjectionHost {
     private fun stopByUser() {
         val local = server?.takeUnless { it.ended }
         val remote = lanServer?.takeUnless { it.ended }
-        connector?.close()
-        if (local == null && remote == null) {
+        val activeMirror = mirror
+        connector?.stop()
+        if (local == null && remote == null && activeMirror == null) {
+            connector?.close()
             stopSelf()
             return
         }
         thread(name = "companion-stop", isDaemon = true) {
+            activeMirror?.stop()
             local?.stop()
             remote?.stop()
+            connector?.close()
             main.post { stopSelf() }
         }
     }
@@ -561,10 +567,11 @@ class CompanionService : Service(), ProjectionHost {
                 if (owner !== server) {
                     return@post
                 }
-                if (lanServer == null) {
+                CompanionState.update(listening = false, connected = false)
+                if (lanServer == null && sync.values.autoConnect && PairingStore(this@CompanionService).all().isNotEmpty()) {
+                    startLan(null)
+                } else if (lanServer == null) {
                     stopSelfResult(lastStartId)
-                } else {
-                    CompanionState.update(listening = false, connected = false)
                 }
             }
         }

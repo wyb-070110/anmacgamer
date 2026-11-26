@@ -117,9 +117,11 @@ class MirrorWriter(private val link: MirrorConnection, private val broken: () ->
 
     private val lock = ReentrantLock()
     private val ready = lock.newCondition()
+    private val drained = lock.newCondition()
     private val urgent = ArrayDeque<Item>()
     private val video = ArrayDeque<Item>()
     private var videoBytes = 0L
+    private var sending = false
     private var closed = false
     private val thread = Thread(::run, "companion-mirror-out").apply { isDaemon = true }
 
@@ -151,14 +153,30 @@ class MirrorWriter(private val link: MirrorConnection, private val broken: () ->
 
     fun op(op: Int, channel: Int) {
         lock.withLock {
+            if (closed) {
+                return
+            }
             if (op == MirrorCodec.CLOSE) {
-                urgent.removeAll { it.channel == channel }
                 video.removeAll { item ->
                     (item.channel == channel).also { if (it) videoBytes -= item.record.size }
                 }
             }
             urgent.addLast(Item(-1, MirrorCodec.op(op, channel)))
             ready.signalAll()
+        }
+    }
+
+    fun flush(timeoutMillis: Long) {
+        lock.withLock {
+            var left = TimeUnit.MILLISECONDS.toNanos(timeoutMillis)
+            while (!closed && (urgent.isNotEmpty() || sending) && left > 0) {
+                try {
+                    left = drained.awaitNanos(left)
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    return
+                }
+            }
         }
     }
 
@@ -169,23 +187,35 @@ class MirrorWriter(private val link: MirrorConnection, private val broken: () ->
             video.clear()
             videoBytes = 0
             ready.signalAll()
+            drained.signalAll()
         }
     }
 
     private fun run() {
         while (true) {
             val item = lock.withLock {
+                sending = false
+                if (urgent.isEmpty()) {
+                    drained.signalAll()
+                }
                 while (!closed && urgent.isEmpty() && video.isEmpty()) {
                     ready.await()
                 }
                 if (closed) {
+                    drained.signalAll()
                     return
                 }
+                sending = true
                 urgent.removeFirstOrNull() ?: video.removeFirst().also { videoBytes -= it.record.size }
             }
             try {
                 link.send(item.record)
             } catch (e: IOException) {
+                lock.withLock {
+                    sending = false
+                    closed = true
+                    drained.signalAll()
+                }
                 broken()
                 return
             }
@@ -400,6 +430,16 @@ class MirrorServer(private val link: MirrorConnection, private val host: MirrorH
         }
     }
 
+    fun stop() {
+        session?.let { active ->
+            active.control.write(serverGoodbye(ErrorCode.NONE, "stopped on the phone"))
+            active.control.close()
+            active.end()
+            writer.flush(DRAIN_MILLIS)
+        }
+        close()
+    }
+
     override fun close() {
         val open = lock.withLock { channels.filterNotNull() }
         open.forEach { it.input.end() }
@@ -567,7 +607,11 @@ class MirrorServer(private val link: MirrorConnection, private val host: MirrorH
 
     private fun projectionStopped() {
         val ended = projection ?: return
-        session?.control?.close()
+        session?.let { active ->
+            active.control.write(serverGoodbye(ErrorCode.NONE, "screen sharing stopped on the phone"))
+            active.control.close()
+            active.end()
+        }
         if (projection === ended) {
             releaseProjection()
         }
@@ -613,6 +657,11 @@ class MirrorServer(private val link: MirrorConnection, private val host: MirrorH
 
     private fun handshakeError(code: ErrorCode, text: String) = Messages.HandshakeError().apply {
         this.code = code
+        message = text
+    }
+
+    private fun serverGoodbye(code: ErrorCode, text: String) = Messages.ServerGoodbye().apply {
+        reason = code
         message = text
     }
 
@@ -690,6 +739,7 @@ class MirrorServer(private val link: MirrorConnection, private val host: MirrorH
         const val HANDSHAKE_MILLIS = 5_000L
         const val SILENCE_MILLIS = 6_000L
         const val CONSENT_MILLIS = 60_000L
+        const val DRAIN_MILLIS = 1_000L
         const val BACKLOG_BYTES = 4L * 1024 * 1024
         const val MAX_U16 = 0xFFFF
         const val MAX_ENCODERS = 32
