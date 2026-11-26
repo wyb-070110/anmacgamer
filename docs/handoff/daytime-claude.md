@@ -74,3 +74,13 @@
   installer script and the touch-box help no longer point at NuoRan; READMEs ask to report here. Credit and licence
   lines to NuoRan/GameScrcpy stay (Apache-2.0 attribution).
 - That made the A11 DMG stale: A12 (rebuild) sent to Antigravity (`4487caa`). Publishing waits for the user.
+
+## 2026-11-27 05:16 — A12 DMG checked (Claude)
+
+Antigravity rebuilt the beta 3 DMG from `6796941` (report `cb327c0` on `mac/antigravity`, only the handoff file).
+`~/GameScrcpy-macos-antigravity/build/package/anmacgamer-2.2.1-beta3-macos-universal.dmg`, 156,173,889 bytes,
+SHA-256 `5ff3da0634c5e723414b52c1f76afb432a8ba8d40b890be45f1b385c257dbde1`. Checked myself on a read-only mount and
+a copy in the scratchpad: all four binaries `x86_64 arm64`; `codesign --verify --deep --strict` ok; 0 references to
+`/opt/homebrew`, `/usr/local/(opt|Cellar)` or `/Users/york` in `otool -L` of every Mach-O; `gs-companion.json`
+versionCode 11 / 2.3.3; `extensions/gamescrcpy.games/1.0.2`; no `NuoRan` in `src/app/help` or the bundle; smoke test
+with its own `GS_DATA_DIR` exits 0. Ready to publish; waiting for the user's go (push, merge to main, tag, release).
