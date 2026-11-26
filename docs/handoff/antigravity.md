@@ -284,3 +284,40 @@
     - `SIGHUP`：`21:16:53.462 received SIGHUP, quitting` → `21:16:53.570 GameScrcpy exits with code 0`（耗时 ~108 ms，退出码 `0`）。
   - `ctest --preset mac-app -j8`：174/174 全部通过（2 个真机测试跳过）。
 - **状态**：**可合并**
+
+
+---
+
+## [2026-11-26 晚间] 合并主线（`32b3213`）与完成 A10（无 adb 投屏：单次扫码持久化配对、首条投屏连接不掉线、停止投屏立即断开）
+
+### 1. 根因定位（对照 `gamescrcpy.log` 21:09–21:10、21:44:49、21:55:59）
+
+- **Bug 1（反复扫码 & 扫码后首条 `GSCM` 投屏连接 2 ms 内断开）**：
+  1. **旧配对抢占新扫码的 `GSCM` 握手（21:44:49.477→49.489、21:10:50）**：Mac 已有旧配对时重新扫码，`CompanionLan::serve` 仅在 `!expectation.paired` 为真时才更新 `m_expected`，`DeviceManager::syncLanService` 也只在 `!expectation.paired` 时才用 `row.lanPairing`（`devices.json` 保存走 `Qt::QueuedConnection` 尚未落盘），且 `GSCL` 的 `provenWelcome` 与伴侣并行的 `mirrorOver` 存在竞态。结果紧随其后的 `GSCM` 投屏连接拿到的是**旧** `pc`（`34c0e5…`），手机端 `MirrorConnection.join` 校验 `reply.pc != 04413604…` 立即关掉套接字；Mac 侧 `switchToCompanionPicture → connectDevice` 发现 `companionMirrorReady` 已假，回退 `connectAoa`（`Connecting` 阶段又使 `syncCompanionLan` 误判 `!wanted` 杀掉刚连上的 `CompanionLink` 与 `CompanionLan`）。
+  2. **端口跳变与旧配对列表冲突（解释 21:09–21:10 成对出现的 `did not prove it holds the key`，与 `6be9581` 签名变更无关，Keychain 解封正常）**：`CompanionLan` 绑定默认端口 `27185` 未设 `SO_REUSEADDR`，重启监听时因 `TIME_WAIT` 退回随机临时端口（`59104`/`62359`/`54714`）；每次重扫又生成新 `pc`，手机 `PairingStore` 累积多条同机旧记录（端口 `27185`）。Mac 重启回 `27185` 后，伴侣先试最新配对的旧临时端口失败，再试两条旧配对连上 `27185`，收到 `reply.pc = 81607b39…` 与旧配对预期不符即直接 `socket.close()`（Mac 读 `CompanionWelcome` 得 EOF 打出两条间隔 ~15 ms 的 `turned away`），却未用已知列表里匹配的 `81607b39…` 立即连 `27185`。
+  3. **21:44:38 未自动回连**：21:15–21:43 走有线 adb 安装并启动伴侣 2.3.0（仅 `EXTRA_TOKEN` 本地 socket，`lanServer == null`），21:43:56 adb 会话结束时 `ServerEvents.ended` 直接 `stopSelfResult` 停掉服务；随后打开伴侣 `MainActivity` 时也未在 `autoConnect` 开启且有配对时主动触发 `ACTION_CONNECT`。
+- **Bug 2（投屏停止后不会自动断开，21:55:59→21:56:14）**：
+  1. 用户在手机状态栏点“停止共享”触发 `MirrorServer.projectionStopped()` 时，仅调用 `session?.control?.close()` 未发 `ServerGoodbye(None)`（且 `MirrorWriter.op(CLOSE)` 原先会清空 `urgent` 队列中排在 `CLOSE` 前的控制帧）；Mac `Session` 将通道 EOF 当作掉线进入 15 秒 `Reconnecting` 并立即重开通道 `0`，反过来让伴侣再次弹出录屏授权窗，最后以 `Failed` 报错收场。
+  2. 用户在伴侣或通知栏点“停止”（`CompanionService.stopByUser`）时，`connector?.close()` 先于 `remote?.stop()` 直接关掉底层 TCP 套接字，`GSCL` 与 `GSCM` 的 `ServerGoodbye(None)` 均发不出去；且 `DeviceManager::companionNotice` 在 `companionPictured(row)` 为真时未处理 `StoppedOnPhone`（掉线重连也误走 adb 的单次 `companionRetried` 分支）。
+
+### 2. 改动（代码提交 `10715fe`）
+
+- **Mac（`src/app/CompanionLan.{h,cpp}`, `src/app/DeviceManager.cpp`, `src/session/src/Session.cpp`）**：
+  - `CompanionLan`：监听套接字开启 `SO_REUSEADDR` 稳定复用 `27185`；同机重扫复用已有 `pc`，用 `m_pairingInFlight` 让并行的 `GSCM` 等完 `provenWelcome`，并无条件覆盖旧 `expectation.paired`、清空一次性 `token`。
+  - `DeviceManager`：`syncLanService` 在 `row.lanPairing` 存在时优先采用新配对（落盘后清除）；`AoaSession` `Connecting` 过渡期不断开已连上的伴侣，会话结束（`!wanted`）同步 `detach` 并释放 `companionMirror`；`companionPictured(row)` 收到 `StoppedOnPhone` 立即 `disconnectDevice`，收到 `Lost` 每次均重走 `syncCompanionLan` 重新广播 mDNS。
+  - `Session`：控制通道收到 `ServerGoodbye(ErrorCode::None)` 时记日志并直接结束流循环进入 `SessionPhase::Stopped`（不进 15 秒重连、不报错，窗口干净关闭、设备卡片回到未投屏状态）。
+- **Android 伴侣（`android/companion/`，`versionCode = 9` / `2.3.1`）**：
+  - `MirrorServer.kt`：`MirrorWriter` 在 `CLOSE` 时保留此前入队的控制帧并支持 `flush()`；`projectionStopped()` 与新增 `MirrorServer.stop()` 先发 `ServerGoodbye(ErrorCode.NONE)` 再关通道与释放录屏。
+  - `LanConnector.kt`：重连在某端口收到 `OtherPc` 时若匹配 `PairingStore` 中已有电脑，立即以对应密钥连该端口并更新地址；`start`/`nudge` 重置退避间隔；新增 `stop()` 仅停重连循环、不提前掐断正在发 `ServerGoodbye` 的连接。
+  - `SettingsSync.kt`、`CompanionService.kt`、`MainActivity.kt`：同一 `computer` ID 更换 `pc` 时自动清理 `PairingStore` 旧 `pc`；`stopByUser` 按 `connector.stop() → mirror/local/remote.stop() → connector.close()` 顺序优雅退出；adb 本地会话结束及首次打开 `MainActivity` 时若 `autoConnect` 开启且有配对记录，自动拉起局域网重连。
+- **测试（`tests/unit/app/CompanionLanMacTests.cpp`, `tests/unit/session/CompanionMirrorTests.cpp`, `tests/PortProbe.cmake`, `LanConnectorTest.kt`, `SettingsSyncTest.kt`, `MirrorServerTest.kt`）**：
+  - 新增 `gs_companion_lan_tests`（覆盖已有旧配对下重新扫码并立即并行发起 `GSCM` 投屏连接、重启监听复用原端口）与 `CompanionMirrorTests` 干净停止用例；伴侣侧补充对应 JUnit 用例。
+
+### 3. 验证
+
+- `python3 tools/check_source_rules.py`：所改文件 0 违规。
+- `cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@17 ANDROID_HOME=~/Library/Android/sdk ./gradlew :server:testDebugUnitTest :server:assembleRelease :companion:assembleDebug --offline`：`BUILD SUCCESSFUL`（新伴侣 2.3.1 已打入 `build/mac-app/bin/anmacgamer.app/Contents/Resources/gs-companion.apk`）。
+- `cmake --build --preset mac-app -j8` & `ctest --preset mac-app -j8`：**176/176 全部通过**（含新增 `gs_companion_lan_tests`，2 个真机测试跳过）。
+
+- **状态**：**可合并**（未触碰手机与运行中的用户实例；实机测试前需将最新伴侣 2.3.1 `gs-companion.apk` 装到手机上）。
+
