@@ -229,4 +229,4 @@ GameScrcpy 2.0 是一次完全重写：电脑端程序、手机端服务、通�
 
 GameScrcpy 2.0 is a complete rewrite of the PC app, the phone server, the protocol and the companion app. Highlights: a zero-copy hardware-decoded mirroring pipeline with H.264, H.265 and AV1; audio; USB, wireless debugging and WiFi direct; several phones in windows or a grid; recording to MP4; an in-place key mapping editor with a large component library; blueprints that are the same thing as TypeScript, with vision, OCR, tasks and a debugger; a built-in AI assistant and a local MCP server; the ESP32 touch box with in-app flashing; `.gsext` extensions with sandboxed native extensions; a new dark-first interface with built-in help and guided tours; an installer and a portable build. Experimental: AOA touch, Bluetooth ESP32 boards, capture cards and gamepad passthrough. Profiles and scripts from 1.x cannot be imported.
 
-[2.2.1-beta2]: https://github.com/wyb-070110/anmacgammer/releases/tag/v2.2.1-beta2
+[2.2.1-beta2]: https://github.com/wyb-070110/anmacgamer/releases/tag/v2.2.1-beta2

@@ -5,8 +5,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        感谢反馈！提交前请先搜一下有没有人报过，并看看[常见问题](https://github.com/wyb-070110/anmacgammer/blob/main/src/app/help/zh_CN/faq.md)。安全问题请按 [SECURITY.md](https://github.com/wyb-070110/anmacgammer/blob/main/SECURITY.md) 私下报告。
-        Thanks for reporting! Please search existing issues and the [FAQ](https://github.com/wyb-070110/anmacgammer/blob/main/src/app/help/en/faq.md) first. Report security problems privately as described in [SECURITY.md](https://github.com/wyb-070110/anmacgammer/blob/main/SECURITY.md).
+        感谢反馈！提交前请先搜一下有没有人报过，并看看[常见问题](https://github.com/wyb-070110/anmacgamer/blob/main/src/app/help/zh_CN/faq.md)。安全问题请按 [SECURITY.md](https://github.com/wyb-070110/anmacgamer/blob/main/SECURITY.md) 私下报告。
+        Thanks for reporting! Please search existing issues and the [FAQ](https://github.com/wyb-070110/anmacgamer/blob/main/src/app/help/en/faq.md) first. Report security problems privately as described in [SECURITY.md](https://github.com/wyb-070110/anmacgamer/blob/main/SECURITY.md).
   - type: input
     id: version
     attributes:

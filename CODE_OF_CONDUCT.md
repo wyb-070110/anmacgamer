@@ -1,4 +1,4 @@
-anmacgamer adopts the Contributor Covenant v2.1. An official Chinese translation is available at [contributor-covenant.org](https://www.contributor-covenant.org/zh-cn/version/2/1/code_of_conduct/). To report a violation, contact [@wyb-070110](https://github.com/wyb-070110) privately or use the repository's [GitHub Security page](https://github.com/wyb-070110/anmacgammer/security/advisories/new).
+anmacgamer adopts the Contributor Covenant v2.1. An official Chinese translation is available at [contributor-covenant.org](https://www.contributor-covenant.org/zh-cn/version/2/1/code_of_conduct/). To report a violation, contact [@wyb-070110](https://github.com/wyb-070110) privately or use the repository's [GitHub Security page](https://github.com/wyb-070110/anmacgamer/security/advisories/new).
 
 # Contributor Covenant Code of Conduct
 
@@ -38,7 +38,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement privately through the repository's [GitHub Security page](https://github.com/wyb-070110/anmacgammer/security/advisories/new) or by contacting the maintainer [@wyb-070110](https://github.com/wyb-070110). All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement privately through the repository's [GitHub Security page](https://github.com/wyb-070110/anmacgamer/security/advisories/new) or by contacting the maintainer [@wyb-070110](https://github.com/wyb-070110). All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 

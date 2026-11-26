@@ -6,7 +6,7 @@ This guide covers reporting issues, setting up a macOS build environment, runnin
 
 ## Reporting issues
 
-- Search [Issues](https://github.com/wyb-070110/anmacgammer/issues) first.
+- Search [Issues](https://github.com/wyb-070110/anmacgamer/issues) first.
 - Use the bug report template and include the app version, macOS version, chip (Apple silicon or Intel), phone model, Android version, connection type, steps to reproduce, and the archive from **Settings > About > Export diagnostics**.
 - Report security issues privately as described in [SECURITY.md](SECURITY.md).
 

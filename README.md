@@ -6,13 +6,13 @@
 
 Android screen mirroring, key and gamepad mapping, and script automation for macOS.
 
-[![Releases](https://img.shields.io/github/v/release/wyb-070110/anmacgammer?include_prereleases&style=flat-square&label=release)](https://github.com/wyb-070110/anmacgammer/releases)
+[![Releases](https://img.shields.io/github/v/release/wyb-070110/anmacgamer?include_prereleases&style=flat-square&label=release)](https://github.com/wyb-070110/anmacgamer/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0%2B%20%2F%20Apache--2.0-blue?style=flat-square)](LICENSING.md)
 [![Platform](https://img.shields.io/badge/macOS%2014%2B-Apple%20Silicon%20%26%20Intel-000000?style=flat-square)](#requirements)
 
 English · [简体中文](README.zh-CN.md)
 
-[Releases](https://github.com/wyb-070110/anmacgammer/releases) · [Documentation](docs/README.md) · [macOS port notes](docs/macos-port.md) · [Changelog](CHANGELOG.md)
+[Releases](https://github.com/wyb-070110/anmacgamer/releases) · [Documentation](docs/README.md) · [macOS port notes](docs/macos-port.md) · [Changelog](CHANGELOG.md)
 
 <img src="docs/images/keymap-editor.png" width="860" alt="Placing key bindings directly on the mirrored phone screen">
 
@@ -51,7 +51,7 @@ See [docs/macos-port.md](docs/macos-port.md) for current port status and test re
 
 ## Install
 
-1. Download the universal `.dmg` from [Releases](https://github.com/wyb-070110/anmacgammer/releases) and drag the app to Applications.
+1. Download the universal `.dmg` from [Releases](https://github.com/wyb-070110/anmacgamer/releases) and drag the app to Applications.
 2. Beta builds are unsigned. On first launch, right-click the app in Applications and choose **Open**. If macOS says the app is damaged, run once in Terminal:
    ```bash
    xattr -dr com.apple.quarantine /Applications/anmacgamer.app
@@ -104,8 +104,8 @@ For universal `.dmg` packaging (`arm64` + `x86_64`, macOS 14+, bundling LGPL dep
 
 ## Feedback and security
 
-- Bug reports and feature requests: [GitHub Issues](https://github.com/wyb-070110/anmacgammer/issues). Attach the archive from **Settings > About > Export diagnostics** when reporting a bug.
-- Security issues: do not open a public issue. Report privately through the [GitHub Security page](https://github.com/wyb-070110/anmacgammer/security/advisories/new) as described in [SECURITY.md](SECURITY.md).
+- Bug reports and feature requests: [GitHub Issues](https://github.com/wyb-070110/anmacgamer/issues). Attach the archive from **Settings > About > Export diagnostics** when reporting a bug.
+- Security issues: do not open a public issue. Report privately through the [GitHub Security page](https://github.com/wyb-070110/anmacgamer/security/advisories/new) as described in [SECURITY.md](SECURITY.md).
 
 ## License and credits
 

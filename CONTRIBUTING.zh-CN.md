@@ -6,7 +6,7 @@
 
 ## 报告问题
 
-- 先在 [Issues](https://github.com/wyb-070110/anmacgammer/issues) 搜索是否已有相同问题。
+- 先在 [Issues](https://github.com/wyb-070110/anmacgamer/issues) 搜索是否已有相同问题。
 - 使用问题反馈模板，写明程序版本、macOS 版本与芯片型号（Apple 芯片或 Intel）、手机型号与 Android 版本、连接方式和复现步骤，并附上**设置 > 关于 > 导出诊断包**生成的压缩包。
 - 安全问题不要公开提 Issue，请按 [SECURITY.md](SECURITY.md) 私下报告。
 

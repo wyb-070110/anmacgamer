@@ -6,13 +6,13 @@
 
 macOS 安卓投屏、键鼠手柄映射与脚本自动化工具。
 
-[![Releases](https://img.shields.io/github/v/release/wyb-070110/anmacgammer?include_prereleases&style=flat-square&label=release)](https://github.com/wyb-070110/anmacgammer/releases)
+[![Releases](https://img.shields.io/github/v/release/wyb-070110/anmacgamer?include_prereleases&style=flat-square&label=release)](https://github.com/wyb-070110/anmacgamer/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0%2B%20%2F%20Apache--2.0-blue?style=flat-square)](LICENSING.md)
 [![Platform](https://img.shields.io/badge/macOS%2014%2B-Apple%20Silicon%20%26%20Intel-000000?style=flat-square)](#系统要求)
 
 [English](README.md) · 简体中文
 
-[下载发布版](https://github.com/wyb-070110/anmacgammer/releases) · [文档](docs/README.md) · [macOS 移植说明](docs/macos-port.md) · [更新日志](CHANGELOG.md)
+[下载发布版](https://github.com/wyb-070110/anmacgamer/releases) · [文档](docs/README.md) · [macOS 移植说明](docs/macos-port.md) · [更新日志](CHANGELOG.md)
 
 <img src="docs/images/keymap-editor.png" width="860" alt="在投屏画面上摆放键位">
 
@@ -51,7 +51,7 @@ anmacgamer 是 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy)（Apach
 
 ## 安装
 
-1. 从 [Releases](https://github.com/wyb-070110/anmacgammer/releases) 下载通用版 `.dmg`，拖入“应用程序”。
+1. 从 [Releases](https://github.com/wyb-070110/anmacgamer/releases) 下载通用版 `.dmg`，拖入“应用程序”。
 2. 测试版未签名，首次打开请在“应用程序”中右键选择**打开**。若系统提示“已损坏”，在终端运行一次：
    ```bash
    xattr -dr com.apple.quarantine /Applications/anmacgamer.app
@@ -104,8 +104,8 @@ cmake --workflow --preset posix-core
 
 ## 反馈与安全报告
 
-- 问题反馈与建议：[GitHub Issues](https://github.com/wyb-070110/anmacgammer/issues)。报 bug 时请附上**设置 > 关于 > 导出诊断包**生成的压缩包。
-- 安全问题请勿公开提 Issue，按 [SECURITY.md](SECURITY.md) 通过 [GitHub Security 页面](https://github.com/wyb-070110/anmacgammer/security/advisories/new)私下报告。
+- 问题反馈与建议：[GitHub Issues](https://github.com/wyb-070110/anmacgamer/issues)。报 bug 时请附上**设置 > 关于 > 导出诊断包**生成的压缩包。
+- 安全问题请勿公开提 Issue，按 [SECURITY.md](SECURITY.md) 通过 [GitHub Security 页面](https://github.com/wyb-070110/anmacgamer/security/advisories/new)私下报告。
 
 ## 许可证与致谢
 

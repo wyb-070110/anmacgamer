@@ -1,6 +1,6 @@
 # Licensing
 
-**anmacgamer** ([wyb-070110/anmacgammer](https://github.com/wyb-070110/anmacgammer)), maintained by [@wyb-070110](https://github.com/wyb-070110), is built upon [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) and contains two categories of code:
+**anmacgamer** ([wyb-070110/anmacgamer](https://github.com/wyb-070110/anmacgamer)), maintained by [@wyb-070110](https://github.com/wyb-070110), is built upon [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) and contains two categories of code:
 
 | Part | License | How to tell |
 |:--|:--|:--|
@@ -27,7 +27,7 @@ The LGPL libraries are shipped as separate dynamic libraries in `anmacgamer.app/
 
 ## 简体中文
 
-**anmacgamer**（[wyb-070110/anmacgammer](https://github.com/wyb-070110/anmacgammer)）由 [@wyb-070110](https://github.com/wyb-070110) 维护，基于上游项目 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) 移植并开发，包含两部分代码：
+**anmacgamer**（[wyb-070110/anmacgamer](https://github.com/wyb-070110/anmacgamer)）由 [@wyb-070110](https://github.com/wyb-070110) 维护，基于上游项目 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) 移植并开发，包含两部分代码：
 
 - 沿用的上游代码（来自 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy)，含为 macOS 修改过的上游文件）：[Apache License 2.0](LICENSES/Apache-2.0.txt)（原文同 [LICENSE](LICENSE)），无 SPDX 标记。
 - anmacgamer 为 macOS 新写的代码（2026-11-16 之后新增的 macOS 平台层、POSIX 移植、着色器、打包与构建脚本、测试等）：[GNU GPL 3.0 或更高版本](LICENSES/GPL-3.0-or-later.txt)，文件开头注明 `SPDX-License-Identifier: GPL-3.0-or-later`。

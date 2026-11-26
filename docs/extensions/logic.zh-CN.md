@@ -163,7 +163,7 @@ log.info("listening on", server.port);
 ## 联网
 
 ```ts
-const reply = await net.fetch("https://api.github.com/repos/wyb-070110/anmacgammer/releases/latest", {
+const reply = await net.fetch("https://api.github.com/repos/wyb-070110/anmacgamer/releases/latest", {
     headers: { accept: "application/vnd.github+json" },
 });
 if (reply.status === 200) {

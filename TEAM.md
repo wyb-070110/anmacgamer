@@ -2,7 +2,7 @@
 
 > 由 Claude（总协调）维护。用户只和 Claude 对接：有问题、要下载、要用户在 Mac 上点授权，都写进自己的日志里，由 Claude 汇总后去问用户。
 > 现状、构建命令、代码红线见根目录 `HANDOFF.md` 与 `AGENTS.md`，开工前先读这两份。
-> 仓库（2026-11-26 起）：`origin` = 私有的 `wyb-070110/anmacgammer`（代码和发布都在这里）；`public` = 旧的公开仓库
+> 仓库（2026-11-26 起）：`origin` = 私有的 `wyb-070110/anmacgamer`（代码和发布都在这里）；`public` = 旧的公开仓库
 > `wyb-070110/GameScrcpy-macos`（不再推送）；`upstream` = `NuoRan/GameScrcpy`。只有 Claude 推送，且要用户同意。
 
 ## 1. 角色
