@@ -62,3 +62,15 @@
   "Not yet" until tested, AGENTS.md link. No newer Star Rail mapping from Gemini (build/honkai-star-rail-pc is the
   23:28 version already built in). Gemini's open points: repo name anmacgammer (kept), Windows details in
   docs/extensions (kept), CHANGELOG beta3 tag link (at release time).
+
+## 2026-11-27 03:35 — beta 3 review, upstream links
+
+- A11 (Antigravity) done: notes and changelog are accurate and plain (en + zh). Checked its DMG myself
+  (SHA-256 406f8c71…96cf): universal x86_64 + arm64 for all four programs, codesign verifies, no Homebrew/Qt/home
+  paths, companion 2.3.2, profiles 1.0.2, smoke test exit 0. Merged A11 (`95c2a39`).
+- User asked before release: Mac images in the Markdown, every link points at anmacgamer, not upstream. Done in
+  `3c298b6`: README image is a capture of the macOS mirror window with key hints (demo copy, own data folder);
+  upstream Windows screenshots removed; homepage URL, companion Help link (companion 2.3.3), example extensions,
+  installer script and the touch-box help no longer point at NuoRan; READMEs ask to report here. Credit and licence
+  lines to NuoRan/GameScrcpy stay (Apache-2.0 attribution).
+- That made the A11 DMG stale: A12 (rebuild) sent to Antigravity (`4487caa`). Publishing waits for the user.
