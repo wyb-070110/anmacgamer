@@ -321,3 +321,26 @@
 
 - **状态**：**可合并**（未触碰手机与运行中的用户实例；实机测试前需将最新伴侣 2.3.1 `gs-companion.apk` 装到手机上）。
 
+
+
+---
+
+## [2026-11-27] 完成 A11：打包 `anmacgamer` 2.2.1 beta 3 通用版 DMG
+
+- **提交**：主线快进合并至 `4ac3488`（`ccr-e32722c2-75w11u`）；发布说明与更新日志提交 `15a64c4`（重写英中双语 `packaging/macos/RELEASE-NOTES-beta3.md`，更新 `CHANGELOG.md` 的 `2.2.1-beta3` 小节与 `v2.2.1-beta3` 链接）。
+- **DMG 产物**：
+  - **路径**：`/Users/york/GameScrcpy-macos-antigravity/build/package/anmacgamer-2.2.1-beta3-macos-universal.dmg`
+  - **大小**：`148M`（`155,196,467` 字节）
+  - **SHA-256**：`406f8c71c25ad318c9c713aba36bbc0f1d5a576ce6a4eb6114374f112c4e96cf`
+- **构建与检查结果**（全部通过，失败项：无）：
+  - **Android 构建**：`:server:testDebugUnitTest :server:assembleRelease :companion:assembleDebug --offline` 通过。
+  - **Debug 构建与测试**：`cmake --preset mac-app && cmake --build --preset mac-app` 通过；`ctest --preset mac-app -j8` **176/176 通过**（174 项运行通过，2 项真机测试跳过；注：首次与 `mac-release` 双架构满载编译并行跑时 `gs_script_tests` 的 10 ms 时间片断言抖动 1 次，编译结束后复跑 176/176 一次通过，耗时 15.12 s）。
+  - **通用版打包**：`cmake --preset mac-release && cmake --build --preset mac-release` 与 `packaging/macos/package.sh beta3` 退出码 `0`（`CFBundleShortVersionString = 2.2.1`，`LSMinimumSystemVersion = 14.0`）。
+  - **挂载 DMG 核验**（只读挂载 DMG 并拷贝 `anmacgamer.app` 到 `/tmp` 临时目录逐项检查）：
+    - 卷内容：`anmacgamer.app`、`Applications -> /Applications` 软链、`.VolumeIcon.icns`。
+    - `lipo -archs`：`Contents/MacOS/anmacgamer`、`gs-exthost`、`gs-scripthost`、`gs` 四者均为 `x86_64 arm64`。
+    - `codesign --verify --deep --strict`：通过（`adhoc`，`Identifier=io.github.wyb070110.anmacgamer`）。
+    - `otool -L`：遍历主程序、辅助进程及包内全部可执行文件与 `.dylib`，`/opt/homebrew`、`/usr/local/(opt|Cellar)` 与 `~/Qt`（含 `/Users/york`）引用数均为 `0`。
+    - `Contents/Resources`：含 `adb/adb`（`1.0.41`）、`gs-server.apk`（`212K`）、`gs-companion.apk`（`9.6M`，`gs-companion.json` 核验为 `versionCode: 10`、`versionName: "2.3.2"`）、`extensions/gamescrcpy.games/1.0.2`（含 `honkai-star-rail` 与 `honkai-star-rail-cloud`）、`Assets.car`、`GameScrcpy.icns`。
+    - 冒烟测试：使用独立临时 `GS_DATA_DIR` 运行 `--smoke-test --demo-device tests/data/video/emulator_h264.media`，正常加载 `gamescrcpy.games 1.0.2`、硬解 `h264 288x640` 并显示主窗口与投屏窗口，退出码 `0`（未触碰用户运行实例与数据目录；未打标签、未 push、未发布）。
+- **状态**：**可合并（ready to merge）**
