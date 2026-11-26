@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.projection.MediaProjectionConfig
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
@@ -54,7 +55,14 @@ class CaptureActivity : Activity() {
             return
         }
         try {
-            startActivityForResult(manager.createScreenCaptureIntent(), REQUEST_CAPTURE)
+            // The computer mirrors the whole phone: from Android 14 on, ask for the whole screen only, so the dialog
+            // has no "single app" choice and one tap on Start is enough.
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                manager.createScreenCaptureIntent(MediaProjectionConfig.createConfigForDefaultDisplay())
+            } else {
+                manager.createScreenCaptureIntent()
+            }
+            startActivityForResult(intent, REQUEST_CAPTURE)
         } catch (e: RuntimeException) {
             answer(null)
         }
