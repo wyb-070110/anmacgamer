@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 Column {
     id: about
@@ -37,7 +37,7 @@ Column {
 
                 Text {
                     textFormat: Text.PlainText
-                    text: "GameScrcpy"
+                    text: "anmacgamer"
                     color: Theme.colors.textPrimary
                     font.pixelSize: Theme.type.subtitle.size
                     font.weight: Theme.type.subtitle.weight

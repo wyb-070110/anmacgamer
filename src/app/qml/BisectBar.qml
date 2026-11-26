@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 T.Pane {
     id: bar

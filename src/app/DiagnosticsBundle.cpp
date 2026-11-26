@@ -1080,7 +1080,7 @@ bool DiagnosticsBundle::exportTo(const QString& fileOrUrl)
 std::string DiagnosticsBundle::systemText() const
 {
     const AppInfo info;
-    return std::format("GameScrcpy {} ({})\nbuild: {}\nsystem: {} ({}), {}\ngraphics: {}\nlanguage: {}\n"
+    return std::format("anmacgamer {} ({})\nbuild: {}\nsystem: {} ({}), {}\ngraphics: {}\nlanguage: {}\n"
                        "data folder: {}\nexported: {}\n",
                        info.version().toStdString(), info.revision().toStdString(), info.build().toStdString(),
                        QSysInfo::prettyProductName().toStdString(), QSysInfo::kernelVersion().toStdString(),

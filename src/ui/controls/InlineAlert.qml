@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 T.Pane {
     id: control

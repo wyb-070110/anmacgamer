@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Dialogs
-import GameScrcpy.App
+import Anmacgamer.App
 
 Item {
     id: prompts

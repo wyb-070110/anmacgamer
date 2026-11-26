@@ -62,7 +62,7 @@ struct Tray {
     {
         v.boolean("closeToTray", m.closeToTray,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Keep in the menu bar while tasks have a schedule"),
-                   .description = GS_TRANSLATE_NOOP("Settings", "Closing the main window keeps GameScrcpy running in "
+                   .description = GS_TRANSLATE_NOOP("Settings", "Closing the main window keeps anmacgamer running in "
                                                                 "the menu bar while any task has a schedule, so the "
                                                                 "tasks still start on time. Quit from its menu bar "
                                                                 "icon."),
@@ -82,7 +82,7 @@ struct Updates {
     {
         v.boolean("extensions", m.extensions,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Check extensions for updates"),
-                   .description = GS_TRANSLATE_NOOP("Settings", "Once a day at startup, GameScrcpy reads the update "
+                   .description = GS_TRANSLATE_NOOP("Settings", "Once a day at startup, anmacgamer reads the update "
                                                                 "lists your extensions name and shows newer versions "
                                                                 "on the Extensions page. Nothing is installed until you "
                                                                 "choose Update, and nothing about what you have "
@@ -207,6 +207,8 @@ enum class EditingClose : std::uint8_t { Ask, ExitEditing, CloseWindow };
 inline constexpr std::array<std::string_view, 3> kEditingCloseNames{"ask", "exitEditing", "closeWindow"};
 
 struct Display {
+    static constexpr std::size_t kMaxToolbarButtonsLength = 512;
+
     bool lowLatency = false;
     std::int32_t sharpness = 0;
     TitleBarMode titleBar = TitleBarMode::Fixed;
@@ -217,6 +219,11 @@ struct Display {
     bool cameraGlow = true;
     EditingClose closeWhileEditing = EditingClose::Ask;
     ScreenOffAction phoneScreenOff = ScreenOffAction::Ask;
+    bool screenOffWhileMirroring = false;
+    bool mirrorOnTop = false;
+    // Besides Back, Home and Recents, the mirror toolbar's buttons (at most five), comma-separated ids; a command added
+    // from the More menu starts with "+". The rest stay in the More menu.
+    std::string toolbarButtons = "keymap,volume,rotate,fullScreen,onTop";
 
     template <typename V, typename Self>
     static void visit(V& v, Self& m)
@@ -296,11 +303,33 @@ struct Display {
                   .description = GS_TRANSLATE_NOOP("Settings", "Stop mirroring when the phone goes to sleep or shows "
                                                                "its Always On Display, or keep mirroring. Ask decides "
                                                                "the first time it happens. Turning the screen off "
-                                                               "from GameScrcpy does not count. Needs adb."),
+                                                               "from anmacgamer does not count. Needs adb."),
                   .keywords = GS_TRANSLATE_NOOP("Settings", "screen off sleep lock aod always on display disconnect "
                                                             "stop mirroring battery"),
                   .scope = Scope::Device,
                   .live = true});
+        v.boolean("screenOffWhileMirroring", m.screenOffWhileMirroring,
+                  {.title = GS_TRANSLATE_NOOP("Settings", "Turn the phone's screen off while mirroring"),
+                   .description = GS_TRANSLATE_NOOP("Settings", "Turns the phone's own screen dark when mirroring "
+                                                                "starts; the phone keeps running and the picture "
+                                                                "keeps coming. Saves battery and keeps the phone "
+                                                                "cool. Turn it back on from the Device menu."),
+                   .keywords = GS_TRANSLATE_NOOP("Settings", "screen off dark display power battery heat mirroring "
+                                                             "start"),
+                   .scope = Scope::Device});
+        v.boolean("mirrorOnTop", m.mirrorOnTop,
+                  {.title = GS_TRANSLATE_NOOP("Settings", "Keep the mirror window on top"),
+                   .description = GS_TRANSLATE_NOOP("Settings", "The mirror window stays above other windows, also "
+                                                                "when you work in another app or switch desktops."),
+                   .keywords = GS_TRANSLATE_NOOP("Settings", "on top float pin always front window"),
+                   .live = true});
+        v.text("toolbarButtons", m.toolbarButtons, kMaxToolbarButtonsLength,
+               {.title = GS_TRANSLATE_NOOP("Settings", "Toolbar buttons"),
+                .description = GS_TRANSLATE_NOOP("Settings", "Up to five buttons the mirror toolbar shows besides "
+                                                             "Back, Home and Recents; choose them from the "
+                                                             "toolbar's More menu."),
+                .keywords = GS_TRANSLATE_NOOP("Settings", "toolbar buttons customize customise hide show"),
+                .live = true});
     }
 
     friend bool operator==(const Display&, const Display&) = default;
@@ -449,7 +478,7 @@ struct Touch {
     std::string extension;
     std::string device;
     std::int32_t rateHz = 0;
-    TrackpadMode trackpadMode = TrackpadMode::PageTurn;
+    TrackpadMode trackpadMode = TrackpadMode::Direct;
     std::int32_t trackpadSpeed = 100;
     bool trackpadInertia = true;
     std::int32_t trackpadInertiaStrength = 100;
@@ -599,7 +628,7 @@ struct Capture {
                {.title = GS_TRANSLATE_NOOP("Settings", "Recording location"),
                 .description = GS_TRANSLATE_NOOP("Settings", "The folder new recordings go into, each as a folder of "
                                                              "its own; exported videos are saved next to it. "
-                                                             "Empty uses GameScrcpy in your Movies folder."),
+                                                             "Empty uses anmacgamer in your Movies folder."),
                 .keywords = GS_TRANSLATE_NOOP("Settings", "recording record video folder location save path mp4"),
                 .live = true});
     }
@@ -620,15 +649,15 @@ struct Companion {
         v.boolean("cursor", m.cursor,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Show the cursor on the phone"),
                    .description = GS_TRANSLATE_NOOP("Settings", "While the mouse is over the picture, the phone's own "
-                                                                "screen shows where it points, through the GameScrcpy "
-                                                                "Companion app. The first time, GameScrcpy offers to "
+                                                                "screen shows where it points, through the anmacgamer "
+                                                                "Companion app. The first time, anmacgamer offers to "
                                                                 "install the app on the phone."),
                    .keywords = GS_TRANSLATE_NOOP("Settings", "cursor pointer mouse arrow companion overlay phone"),
                    .scope = Scope::Device,
                    .live = true});
         v.boolean("ime", m.ime,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Type with this computer's keyboard"),
-                   .description = GS_TRANSLATE_NOOP("Settings", "While mirroring, the phone uses the GameScrcpy "
+                   .description = GS_TRANSLATE_NOOP("Settings", "While mirroring, the phone uses the anmacgamer "
                                                                 "Companion input method: when an input box opens, the "
                                                                 "keys pause and what you type, Chinese included, goes "
                                                                 "straight into the box. The phone's own keyboard comes "
@@ -648,14 +677,14 @@ struct Companion {
         v.integer("hintOpacity", m.hintOpacity, 10, 100,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Opacity of the key hints on the phone"),
                    .description = GS_TRANSLATE_NOOP("Settings", "How strongly the key hints on the phone's own screen "
-                                                                "show once they have faded. GameScrcpy Companion on the "
+                                                                "show once they have faded. anmacgamer Companion on the "
                                                                 "phone can change it too."),
                    .keywords = GS_TRANSLATE_NOOP("Settings", "key hints opacity transparency fade phone companion"),
                    .scope = Scope::Device,
                    .live = true});
         v.boolean("autoConnect", m.autoConnect,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Connect again by itself over Wi-Fi"),
-                   .description = GS_TRANSLATE_NOOP("Settings", "GameScrcpy Companion on a phone paired over Wi-Fi "
+                   .description = GS_TRANSLATE_NOOP("Settings", "anmacgamer Companion on a phone paired over Wi-Fi "
                                                                 "looks for this computer by itself and connects again "
                                                                 "after the connection drops. The phone can change it "
                                                                 "too."),
@@ -796,7 +825,7 @@ struct Mcp {
         v.boolean("enabled", m.enabled,
                   {.title = GS_TRANSLATE_NOOP("Settings", "Allow AI to connect through MCP"),
                    .description = GS_TRANSLATE_NOOP("Settings", "Lets AI clients on this computer, such as Claude "
-                                                                "Desktop or Cursor, use GameScrcpy through MCP. Each "
+                                                                "Desktop or Cursor, use anmacgamer through MCP. Each "
                                                                 "client asks you once; every change to a profile and "
                                                                 "every script run on a phone asks you again. No "
                                                                 "network port is opened."),

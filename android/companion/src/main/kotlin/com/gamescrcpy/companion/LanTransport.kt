@@ -11,7 +11,18 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-class LanConnection(private val socket: Socket, session: ByteArray, val pc: String = "") : Connection {
+class LanConnection(
+    private val socket: Socket,
+    session: ByteArray,
+    val pc: String = "",
+    val key: ByteArray = ByteArray(0),
+) : Connection {
+    val host: String
+        get() = socket.inetAddress?.hostAddress.orEmpty()
+
+    val port: Int
+        get() = socket.port
+
     private val closed = CountDownLatch(1)
 
     override val authenticated: Boolean

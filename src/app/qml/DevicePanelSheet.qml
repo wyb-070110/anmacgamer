@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 SettingsSheet {
     id: sheet

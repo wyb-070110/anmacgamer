@@ -1,7 +1,7 @@
 pragma Singleton
 
 import QtQuick
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 QtObject {
     id: look

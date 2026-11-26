@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.App
 
 Item {
     id: titleBar

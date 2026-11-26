@@ -702,7 +702,7 @@ ControlSink& SessionController::aoaSink()
     std::unique_ptr<AoaLink> link = m_usbPhone ? openAoaLink(*m_usbPhone, m_aoaFailure) : nullptr;
     if (link == nullptr) {
         qInfo("touch on %s goes through injection: %s", qUtf8Printable(m_serial),
-              m_aoaFailure == platform::UsbFailure::NoDriver ? "AOA over USB is not available on macOS"
+              m_aoaFailure == platform::UsbFailure::NoDriver ? "USB access is not supported for the phone"
               : m_aoaFailure == platform::UsbFailure::Busy   ? "another program holds the phone's USB"
                                                              : "the phone is not on USB for AOA");
         m_touchMissing = true;

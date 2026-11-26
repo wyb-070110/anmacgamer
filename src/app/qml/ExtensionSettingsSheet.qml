@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQml.Models
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Controls
+import Anmacgamer.App
 import "ExtensionLook.js" as ExtensionLook
 
 SettingsSheet {

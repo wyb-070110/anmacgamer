@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Effects
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Item {
     id: toolbar
@@ -31,18 +31,18 @@ Item {
         internal.revealed = false
     }
 
-    implicitWidth: vertical ? Math.max(Theme.size.toolbar, column.implicitWidth + 2 * Theme.space.xs)
+    implicitWidth: vertical ? Math.max(Theme.size.toolbar, row.implicitWidth + 2 * Theme.space.xs)
                             : row.implicitWidth + 2 * Theme.space.xs
-    implicitHeight: vertical ? column.implicitHeight + 2 * Theme.space.xs : Theme.size.toolbar
+    implicitHeight: vertical ? row.implicitHeight + 2 * Theme.space.xs : Theme.size.toolbar
     opacity: internal.revealed ? 1 : 0
     visible: opacity > 0
 
     Accessible.role: Accessible.ToolBar
 
-    onVerticalChanged: internal.arrange()
-    Component.onCompleted: internal.arrange()
     onPinnedChanged: internal.schedule()
     onHideDelayChanged: internal.schedule()
+    onVerticalChanged: internal.syncGrid()
+    Component.onCompleted: internal.syncGrid()
     onHoveredChanged: {
         if (hovered && visible && !blocked)
             internal.revealed = true
@@ -64,26 +64,21 @@ Item {
 
         property bool revealed: false
 
-        function arrange() {
-            const from = toolbar.vertical ? row : column
-            const to = toolbar.vertical ? column : row
-            for (const item of Array.from(from.children)) {
-                item.parent = to
-                // A row places x and a column y; the other one is left from before and set here.
-                if (toolbar.vertical) {
-                    item.anchors.horizontalCenter = column.horizontalCenter
-                } else {
-                    item.anchors.horizontalCenter = undefined
-                    item.y = 0
-                }
-            }
-        }
-
         function schedule() {
             if (revealed && !toolbar.pinned && !toolbar.hovered)
                 idle.restart()
             else
                 idle.stop()
+        }
+
+        function syncGrid() {
+            if (toolbar.vertical) {
+                row.rows = -1
+                row.columns = 1
+            } else {
+                row.columns = -1
+                row.rows = 1
+            }
         }
     }
 
@@ -147,19 +142,21 @@ Item {
             }
         }
 
-        Row {
+        // One row of buttons, or one column while the toolbar is vertical. The buttons stay in this one grid:
+        // moving them between a Row and a Column left the ones that were hidden at the time undrawn once shown.
+        Grid {
             id: row
 
+            objectName: "toolbarButtons"
             anchors.centerIn: parent
-            spacing: Theme.space.xxs
-        }
-
-        // The buttons move here while the toolbar is vertical, in the same order.
-        Column {
-            id: column
-
-            anchors.centerIn: parent
-            spacing: Theme.space.xxs
+            // -1: as many as the visible buttons need. syncGrid() opens the unbounded axis before closing the
+            // other so switching sides never passes through a 1x1 grid warning.
+            columns: -1
+            rows: 1
+            rowSpacing: Theme.space.xxs
+            columnSpacing: Theme.space.xxs
+            horizontalItemAlignment: Grid.AlignHCenter
+            verticalItemAlignment: Grid.AlignVCenter
         }
     }
 }

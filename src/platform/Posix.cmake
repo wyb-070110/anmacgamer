@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # gs_platform off Windows (macOS port): the POSIX backend under src/posix. Only what the core modules
 # below the interface need so far; the rest of the headers stay unimplemented until a module uses them.
 if(APPLE AND NOT OPENSSL_ROOT_DIR AND NOT DEFINED ENV{OPENSSL_ROOT_DIR})
@@ -27,6 +27,7 @@ add_library(gs_platform STATIC
     include/gs/platform/TrayNotice.h
     include/gs/platform/Usb.h
     include/gs/platform/Crypto.h
+    include/gs/platform/QuitSignal.h
     include/gs/platform/RunningMarker.h
     include/gs/platform/TcpStream.h
     include/gs/platform/TextReader.h
@@ -35,6 +36,7 @@ add_library(gs_platform STATIC
     src/posix/AtomicFile.cpp
     src/posix/CrashHandler.cpp
     src/posix/Crypto.cpp
+    src/posix/QuitSignal.cpp
     src/posix/RunningMarker.cpp
     src/posix/TcpStream.cpp
     src/posix/TextJoin.cpp
@@ -65,6 +67,10 @@ if(APPLE)
         # Gamepads (InputCapture.mm) through SDL, as on Windows.
         target_link_libraries(gs_platform PRIVATE SDL3::SDL3)
         target_compile_definitions(gs_platform PRIVATE GS_HAVE_SDL3)
+    endif()
+    if(TARGET libusb::libusb)
+        target_link_libraries(gs_platform PRIVATE libusb::libusb)
+        target_compile_definitions(gs_platform PRIVATE GS_HAVE_LIBUSB)
     endif()
     target_link_libraries(gs_platform PRIVATE "-framework CoreFoundation" "-framework Security"
                           "-framework Foundation" "-framework CoreGraphics" "-framework Vision" "-framework AppKit"

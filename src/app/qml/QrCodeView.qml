@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Rectangle {
     id: view

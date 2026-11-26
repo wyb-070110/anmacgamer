@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The window's area and the cursor on macOS, in global display coordinates (points, top left origin, as Quartz
 // gives them). Pinning the cursor puts it on one point of the window and detaches it from the mouse, so it stays
 // there while the mouse keeps sending its movements (Windows clips the cursor to a 1x1 rectangle instead).

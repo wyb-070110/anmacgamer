@@ -1,6 +1,6 @@
 import QtQuick
 import QtTest
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 TestCase {
     name: "ThemePalette"

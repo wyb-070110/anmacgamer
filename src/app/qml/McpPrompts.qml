@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Item {
     id: prompts
@@ -13,7 +13,7 @@ Item {
 
     function question(): string {
         if (McpServer.approval !== "")
-            return qsTr("Let %1 use GameScrcpy?").arg(McpServer.approval)
+            return qsTr("Let %1 use anmacgamer?").arg(McpServer.approval)
         const asked = McpServer.confirmation
         const client = asked.client ?? ""
         switch (asked.kind ?? "") {
@@ -75,7 +75,7 @@ Item {
         property bool answered: false
 
         objectName: "mcpApproval"
-        title: qsTr("Let %1 use GameScrcpy?").arg(approval.client)
+        title: qsTr("Let %1 use anmacgamer?").arg(approval.client)
         acceptText: qsTr("Allow")
         rejectText: qsTr("Deny")
         onAccepted: {
@@ -114,7 +114,7 @@ Item {
                         { icon: "code-xml", text: qsTr("Look up the script API and the profile format") },
                         { icon: "history", text: qsTr("Try logic on recordings, step by step, without touching a phone") },
                         { icon: "image", text: qsTr("See a phone's current picture and find pictures in it") },
-                        { icon: "terminal", text: qsTr("Read GameScrcpy's log") },
+                        { icon: "terminal", text: qsTr("Read anmacgamer's log") },
                         { icon: "pencil", text: qsTr("Change profiles, components, tasks and blueprints in a draft; you confirm before a draft is used") },
                         { icon: "smartphone", text: qsTr("Run scripts on a phone; you confirm every run") },
                         { icon: "monitor-play", text: qsTr("Record a phone; you confirm every recording") },
@@ -230,7 +230,7 @@ Item {
                     width: parent.width
                     visible: confirm.applying && confirm.conflicts > 0
                     textFormat: Text.PlainText
-                    text: qsTr("%n file(s) changed in GameScrcpy after the AI made its draft; applying replaces them with the draft.", "",
+                    text: qsTr("%n file(s) changed in anmacgamer after the AI made its draft; applying replaces them with the draft.", "",
                                confirm.conflicts)
                     color: Theme.colors.warningText
                     font.pixelSize: Theme.type.caption.size
@@ -513,8 +513,8 @@ Item {
 
                     objectName: "mcpQuiet"
                     visible: (confirm.running || confirm.tooling) && confirm.shown.quiet === true
-                    text: confirm.tooling ? qsTr("Don't ask again for this tool until GameScrcpy closes")
-                                          : qsTr("Don't ask again for this phone until GameScrcpy closes")
+                    text: confirm.tooling ? qsTr("Don't ask again for this tool until anmacgamer closes")
+                                          : qsTr("Don't ask again for this phone until anmacgamer closes")
                 }
             }
         }

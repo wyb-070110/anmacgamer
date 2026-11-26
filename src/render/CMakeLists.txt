@@ -2,7 +2,7 @@
 
 qt_add_library(gs_render STATIC)
 qt_add_qml_module(gs_render
-    URI GameScrcpy.Render
+    URI Anmacgamer.Render
     VERSION 1.0
     SOURCES
         include/gs/render/FrameSlot.h

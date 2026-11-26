@@ -61,6 +61,8 @@ private:
     std::uint16_t m_videoSession = 0;
     protocol::TouchFrame m_open;
     Microseconds m_openSince{0};
+    // When the open frame last changed: the time it is stamped with (its positions are the latest ones).
+    Microseconds m_openLatest{0};
     std::deque<Queued> m_ready;
     std::optional<Microseconds> m_lastSent;
     bool m_blocked = false;

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 """Summarises a GS_FRAME_TRACE file (GameScrcpy's per-frame timing log): phone + cable delay spread, decode,
 wait, draw, received-to-screen, how evenly frames reach the screen, and frames per second.
 
-    GS_FRAME_TRACE=/tmp/trace.csv open build/mac-app/bin/GameScrcpy.app   # then mirror and swipe
+    GS_FRAME_TRACE=/tmp/trace.csv open build/mac-app/bin/anmacgamer.app   # then mirror and swipe
     tools/frame_trace.py /tmp/trace.csv
 """
 import sys,collections

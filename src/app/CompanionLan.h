@@ -3,10 +3,13 @@
 #include "CompanionCipher.h"
 #include "CompanionLink.h"
 
+#include <gs/session/CompanionMirror.h>
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <condition_variable>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -41,6 +44,7 @@ struct LanExpectation {
     LanKey qrKey{};
     std::optional<LanPairing> paired;
     bool announce = false;
+    bool mirror = false;  // waiting for this phone's mirror link: the listener stays open
 };
 
 struct LanArrival {
@@ -50,10 +54,17 @@ struct LanArrival {
     protocol::CompanionWelcome welcome;
 };
 
+struct MirrorArrival {
+    std::string serial;
+    std::unique_ptr<session::MirrorPipe> pipe;
+    session::Token token{};
+};
+
 class CompanionLan final
 {
 public:
     using Arrived = std::function<void(LanArrival arrival)>;
+    using MirrorArrived = std::function<void(MirrorArrival arrival)>;
 
     CompanionLan(std::shared_ptr<const CompanionApk> apk, Arrived arrived, std::uint16_t port = kLanPort,
                  bool loopbackOnly = false);
@@ -64,6 +75,7 @@ public:
     [[nodiscard]] bool listening() const noexcept { return m_listener != kNoSocket; }
     [[nodiscard]] std::uint16_t port() const noexcept { return m_port; }
     void expect(std::vector<LanExpectation> expectations);
+    void setMirrorArrived(MirrorArrived arrived);
 
 private:
     static constexpr std::uintptr_t kNoSocket = ~std::uintptr_t{0};
@@ -87,7 +99,10 @@ private:
     std::uint16_t m_port = 0;
     std::atomic<bool> m_closing{false};
     std::mutex m_mutex;
+    std::condition_variable m_expectedChanged;  // m_expected changed (a mirror link may wait for its pairing)
+    std::size_t m_pairingInFlight = 0;
     std::vector<LanExpectation> m_expected;
+    MirrorArrived m_mirrorArrived;
     std::vector<OlderPhone> m_older;
     std::vector<std::shared_ptr<Slot>> m_slots;
     std::unique_ptr<Announcer> m_announcer;

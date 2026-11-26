@@ -2,10 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Column {
     id: section
@@ -572,7 +572,7 @@ Column {
                                 return qsTr("Turning on network debugging on %1…").arg(networkBox.phoneName)
                             case "searching":
                                 return qsTr("%1 takes adb connections on port 5555 until it restarts. Unplug the cable "
-                                            + "and put the phone on the same network as this computer; GameScrcpy "
+                                            + "and put the phone on the same network as this computer; anmacgamer "
                                             + "finds it.")
                                        .arg(networkBox.phoneName)
                             case "connected":

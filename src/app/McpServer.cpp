@@ -38,13 +38,13 @@ constexpr auto kProtocolVersions =
     std::to_array<QLatin1StringView>({QLatin1StringView("2025-06-18"), QLatin1StringView("2025-03-26"),
                                       QLatin1StringView("2024-11-05")});
 constexpr auto kInstructions = QLatin1StringView(
-    "GameScrcpy mirrors Android phones to this computer, maps keys to touches and runs TypeScript logic on the "
+    "anmacgamer mirrors Android phones to this computer, maps keys to touches and runs TypeScript logic on the "
     "phones. Look things up with api_reference first: it holds the script API and the profile format. Positions are "
     "ratios of the phone picture, from (0, 0) at the top left to (1, 1) at the bottom right. Change profiles, "
     "components and tasks in a draft first (write_profile, write_component, write_task, edit_blueprint): drafts need "
     "no confirmation and change nothing the user runs. Verify a draft with check and with run_replay (draft and trace) "
     "on a recording, then call apply_draft, which the user confirms once. Try logic on a recording before running it "
-    "on a phone. apply_draft, run_script and start_recording wait until the user confirms in GameScrcpy and count as "
+    "on a phone. apply_draft, run_script and start_recording wait until the user confirms in anmacgamer and count as "
     "refused when the user does not answer within two minutes."
     " When the user's request is vague, ask before writing code: which app, which screen, what should happen and "
     "when, and whether they already have the pictures, colors, regions and points it needs. This server's prompts "
@@ -447,7 +447,7 @@ void McpServer::start()
 {
     m_problem.clear();
     if (pipeTaken(m_pipe)) {
-        m_problem = tr("Another program already uses the connection point %1, so AI clients cannot reach GameScrcpy")
+        m_problem = tr("Another program already uses the connection point %1, so AI clients cannot reach anmacgamer")
                         .arg(m_pipe);
         qWarning("mcp: the pipe %s is open in another program; not listening", qUtf8Printable(m_pipe));
         emit stateChanged();
@@ -596,8 +596,8 @@ void McpServer::handle(Session& session, const QByteArray& line)
                   qUtf8Printable(params.value(QStringLiteral("name")).toString()));
         }
         fail(session, id, kRefused,
-             QStringLiteral("GS-MCP-001 Waiting for the user to allow this client in GameScrcpy: ask the user to "
-                            "answer the question in the GameScrcpy window, then try again"));
+             QStringLiteral("GS-MCP-001 Waiting for the user to allow this client in anmacgamer: ask the user to "
+                            "answer the question in the anmacgamer window, then try again"));
         return;
     }
     if (session.trust != Trust::Allowed) {
@@ -667,7 +667,7 @@ void McpServer::initialize(Session& session, const QJsonValue& id, const QJsonOb
         {QStringLiteral("tools"), QJsonObject{{QStringLiteral("listChanged"), true}}},
         {QStringLiteral("prompts"), QJsonObject{{QStringLiteral("listChanged"), false}}},
         {QStringLiteral("resources"), QJsonObject{{QStringLiteral("listChanged"), false}}}};
-    const QJsonObject server{{QStringLiteral("name"), QStringLiteral("GameScrcpy")},
+    const QJsonObject server{{QStringLiteral("name"), QStringLiteral("anmacgamer")},
                              {QStringLiteral("version"), toQString(gs::buildInfo().version)}};
     reply(session, id,
           QJsonObject{{QStringLiteral("protocolVersion"),

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # Port probe: unit tests of the Windows-free modules.
 function(gs_add_unit_test name)
     cmake_parse_arguments(PARSE_ARGV 1 arg "" "" "SOURCES;LIBRARIES;ARGUMENTS")
@@ -103,9 +103,9 @@ gs_add_unit_test(gs_platform_tests
 )
 if(APPLE)
     target_sources(gs_platform_tests PRIVATE unit/platform/mac/SpeechMacTests.mm unit/platform/mac/TextReaderMacTests.mm
-                   unit/platform/mac/InputCaptureMacTests.mm)
+                   unit/platform/mac/InputCaptureMacTests.mm unit/platform/mac/UsbMacTests.mm)
     set_source_files_properties(unit/platform/mac/SpeechMacTests.mm unit/platform/mac/TextReaderMacTests.mm
-                                unit/platform/mac/InputCaptureMacTests.mm
+                                unit/platform/mac/InputCaptureMacTests.mm unit/platform/mac/UsbMacTests.mm
                                 PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
     target_link_libraries(gs_platform_tests PRIVATE "-framework Foundation" "-framework CoreGraphics"
                           "-framework CoreText" "-framework AppKit" "-framework Speech")
@@ -136,6 +136,7 @@ gs_add_unit_test(gs_session_tests
         unit/adb/FakeAdbServer.h
         unit/session/AcceptanceSessionTests.cpp
         unit/session/AdbServerHostTests.cpp
+        unit/session/CompanionMirrorTests.cpp
         unit/session/DatagramVectors.h
         unit/session/DirectHandshakeTests.cpp
         unit/session/DirectTransportTests.cpp
@@ -159,6 +160,41 @@ target_compile_definitions(gs_session_tests PRIVATE
     GS_PROTOCOL_VECTOR_DIR="${PROJECT_SOURCE_DIR}/protocol/vectors"
     GS_SERVER_PACKAGE_FILE="${PROJECT_SOURCE_DIR}/android/server/build/outputs/apk/release/server-release-unsigned.apk"
 )
+
+gs_add_unit_test(gs_companion_cipher_tests
+    SOURCES
+        unit/app/CompanionMirrorCipherTests.cpp
+        "${PROJECT_SOURCE_DIR}/src/app/CompanionCipher.cpp"
+    LIBRARIES
+        gs::session
+        gs::nlohmann_json
+)
+target_include_directories(gs_companion_cipher_tests BEFORE PRIVATE "${PROJECT_SOURCE_DIR}/src/app")
+target_compile_definitions(gs_companion_cipher_tests PRIVATE
+    GS_PROTOCOL_VECTOR_DIR="${PROJECT_SOURCE_DIR}/protocol/vectors"
+)
+
+if(TARGET Qt6::Network)
+    gs_add_unit_test(gs_companion_lan_tests
+        SOURCES
+            unit/app/CompanionLanMacTests.cpp
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionCipher.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionLan.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionLink.cpp"
+            "${PROJECT_SOURCE_DIR}/src/app/CompanionShots.cpp"
+        LIBRARIES
+            gs::input
+            gs::nlohmann_json
+            gs::session
+            Qt6::Core
+            Qt6::Network
+    )
+    target_include_directories(gs_companion_lan_tests BEFORE PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/compat/posix"
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${PROJECT_SOURCE_DIR}/src/app"
+    )
+endif()
 
 # Device tests: they run against a real phone and report "skipped" (77) without GS_ADB_TEST_SERIAL.
 add_executable(gs_adb_device_tests integration/adb/AdbDeviceTests.cpp)
@@ -369,11 +405,12 @@ gs_add_unit_test(gs_capture_tests
 )
 target_compile_definitions(gs_capture_tests PRIVATE GS_CAPTURE_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/tests/data/capture")
 
-# Hardware for scripts: device ids and names, the fake backend, and the macOS backend that lists no devices yet.
+# Hardware for scripts: device ids and names, the fake backend, and the macOS IOKit/termios serial backend.
 gs_add_unit_test(gs_hardware_tests
     SOURCES
         unit/hardware/HardwareTests.cpp
-        unit/hardware/posix/NoDevicesBackendTests.cpp
+        $<$<PLATFORM_ID:Darwin>:unit/hardware/mac/SerialBackendTests.cpp>
+        $<$<NOT:$<PLATFORM_ID:Darwin>>:unit/hardware/posix/NoDevicesBackendTests.cpp>
     LIBRARIES
         gs::hardware
 )
@@ -431,4 +468,28 @@ if(TARGET gs::render)
         LIBRARIES
             gs::render
     )
+endif()
+
+# Qt Quick controls on macOS (FloatingToolbar, ToolbarSeparator, ToolbarRevealArea and the rest of ui/controls).
+if(TARGET gs_ui_controlsplugin)
+    find_package(Qt6 6.10 REQUIRED COMPONENTS QuickTest)
+    add_executable(gs_controls_tests ui/controls/ControlsTests.cpp ui/controls/tst_controls.qml)
+    target_link_libraries(gs_controls_tests PRIVATE
+        Qt6::QuickTest
+        gs_ui_themeplugin
+        gs_ui_iconsplugin
+        gs_ui_controlsplugin
+    )
+    target_compile_definitions(gs_controls_tests PRIVATE
+        QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/ui/controls"
+    )
+    gs_apply_compiler_policy(gs_controls_tests)
+    foreach(suite IN ITEMS floating_toolbar toolbar_reveal)
+        add_test(NAME gs_${suite}_tests
+            COMMAND gs_controls_tests -platform offscreen
+                -import "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_QML}"
+                -input "${CMAKE_CURRENT_SOURCE_DIR}/ui/controls/tst_${suite}.qml")
+        set_tests_properties(gs_${suite}_tests PROPERTIES ENVIRONMENT_MODIFICATION
+            "QT_PLUGIN_PATH=set:${QT6_INSTALL_PREFIX}/${QT6_INSTALL_PLUGINS};QT_FORCE_STDERR_LOGGING=set:1")
+    endforeach()
 endif()

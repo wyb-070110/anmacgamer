@@ -29,7 +29,7 @@ const char* failureName(platform::UsbFailure failure) noexcept
     case platform::UsbFailure::NotFound:
         return "not found on USB";
     case platform::UsbFailure::NoDriver:
-        return "AOA over USB is not available on macOS";
+        return "USB access is not supported for this device";
     case platform::UsbFailure::Busy:
         return "in use by another program";
     case platform::UsbFailure::Gone:
@@ -74,7 +74,7 @@ void AoaSession::start(const platform::UsbPhone& phone, int rotation, QSize canv
         const std::string resource = usbResourceOf(phone);
         const std::string holder = "app:aoa:" + phone.serial;
         const exthost::ClaimResult claimed =
-            claims->claim(resource, ClaimHolder{holder, QStringLiteral("GameScrcpy"), {}}, false);
+            claims->claim(resource, ClaimHolder{holder, QStringLiteral("anmacgamer"), {}}, false);
         if (claimed == exthost::ClaimResult::Claimed) {
             m_resource = resource;
             m_holder = holder;

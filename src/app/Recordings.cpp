@@ -364,7 +364,7 @@ QString defaultRecordingsLocation()
     if (videos.isEmpty()) {
         videos = QDir::homePath();
     }
-    return QDir(videos).filePath(QStringLiteral("GameScrcpy"));
+    return QDir(videos).filePath(QStringLiteral("anmacgamer"));
 }
 
 QString recordingsLocation(const AppSettings& settings)

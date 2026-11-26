@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The script thread off Windows: a pthread with the stack the engine asks for, woken by a condition variable
 // for commands and by its deadline for timers and frames. Included by ScriptHost.cpp inside gs::script.
 

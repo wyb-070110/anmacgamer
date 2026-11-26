@@ -43,7 +43,7 @@ TEST_CASE("the network access manager given to QML refuses every address that is
     CHECK(requested(*manager, QUrl(QStringLiteral("file://server/share/a.png"))).scheme() == QStringLiteral("blocked"));
     const QUrl local = QUrl::fromLocalFile(QStringLiteral("C:/Windows/win.ini"));
     CHECK(requested(*manager, local) == local);
-    const QUrl resource(QStringLiteral("qrc:/i18n/gamescrcpy_zh_CN.qm"));
+    const QUrl resource(QStringLiteral("qrc:/i18n/anmacgamer_zh_CN.qm"));
     CHECK(requested(*manager, resource) == resource);
     const QUrl embedded(QStringLiteral("data:image/png;base64,iVBORw0KGgo="));
     CHECK(requested(*manager, embedded) == embedded);

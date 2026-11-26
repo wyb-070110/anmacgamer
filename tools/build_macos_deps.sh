@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # Builds GameScrcpy's own copies of FFmpeg (LGPL only), dav1d, SDL3, OpenSSL and libusb for macOS 14 and later,
 # arm64 and x86_64, merged into universal libraries under deps/macos/universal. The app then ships these instead of
 # Homebrew's (built for the build Mac's macOS only, and Homebrew's FFmpeg is GPL with x264/x265).

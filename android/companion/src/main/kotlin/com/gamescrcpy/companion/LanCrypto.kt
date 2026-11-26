@@ -45,12 +45,12 @@ object LanCodec {
     const val MIN_RECORD = 6 + TAG_SIZE
     const val MAX_RECORD = 6 + 16 * 1024 + TAG_SIZE
     const val CONTEXT = "GSCP/1 companion lan"
-    private val MAGIC = byteArrayOf('G'.code.toByte(), 'S'.code.toByte(), 'C'.code.toByte(), 'L'.code.toByte())
+    val MAGIC = byteArrayOf('G'.code.toByte(), 'S'.code.toByte(), 'C'.code.toByte(), 'L'.code.toByte())
 
-    fun hello(token: String, phone: ByteArray, nonce: ByteArray): ByteArray {
+    fun hello(token: String, phone: ByteArray, nonce: ByteArray, magic: ByteArray = MAGIC): ByteArray {
         val text = token.toByteArray(Charsets.US_ASCII)
         require(text.size <= MAX_TOKEN && phone.size == ID_SIZE && nonce.size == NONCE_SIZE)
-        return MAGIC + byteArrayOf(VERSION.toByte(), text.size.toByte()) + text + phone + nonce
+        return magic + byteArrayOf(VERSION.toByte(), text.size.toByte()) + text + phone + nonce
     }
 
     fun helloSize(head: ByteArray): Int {
@@ -78,8 +78,8 @@ object LanCodec {
         return MAGIC + byteArrayOf(VERSION.toByte(), status.wire.toByte()) + pc + nonce
     }
 
-    fun parseReply(bytes: ByteArray): LanReply {
-        val wire = checkHead(bytes, REPLY_SIZE)
+    fun parseReply(bytes: ByteArray, magic: ByteArray = MAGIC): LanReply {
+        val wire = checkHead(bytes, REPLY_SIZE, magic)
         val status = LanStatus.entries.firstOrNull { it.wire == wire } ?: throw LanException(LanError.INVALID_ENUM)
         val pc = bytes.copyOfRange(HEAD_SIZE, HEAD_SIZE + ID_SIZE)
         val nonce = bytes.copyOfRange(HEAD_SIZE + ID_SIZE, REPLY_SIZE)
@@ -95,12 +95,12 @@ object LanCodec {
         return mac.doFinal()
     }
 
-    fun recordLength(prefix: ByteArray): Int {
+    fun recordLength(prefix: ByteArray, least: Int = MIN_RECORD, most: Int = MAX_RECORD): Int {
         if (prefix.size != 4) {
             throw LanException(LanError.TRUNCATED)
         }
         val length = ByteBuffer.wrap(prefix).int.toLong() and 0xFFFFFFFFL
-        if (length < MIN_RECORD || length > MAX_RECORD) {
+        if (length < least || length > most) {
             throw LanException(LanError.OUT_OF_RANGE)
         }
         return length.toInt()
@@ -109,12 +109,12 @@ object LanCodec {
     internal fun nonce(direction: Int, counter: Long): ByteArray =
         ByteBuffer.allocate(12).putInt(direction).putLong(counter).array()
 
-    private fun checkHead(bytes: ByteArray, size: Int): Int {
+    private fun checkHead(bytes: ByteArray, size: Int, magic: ByteArray = MAGIC): Int {
         if (bytes.size < size) {
             throw LanException(LanError.TRUNCATED)
         }
-        for (i in MAGIC.indices) {
-            if (bytes[i] != MAGIC[i]) {
+        for (i in magic.indices) {
+            if (bytes[i] != magic[i]) {
                 throw LanException(LanError.BAD_MAGIC)
             }
         }
@@ -138,11 +138,17 @@ class RecordSealer(session: ByteArray, private val direction: Int, private var c
     }
 }
 
-class RecordOpener(session: ByteArray, private val direction: Int, private var counter: Long = 0) {
+class RecordOpener(
+    session: ByteArray,
+    private val direction: Int,
+    private var counter: Long = 0,
+    private val least: Int = LanCodec.MIN_RECORD,
+    private val most: Int = LanCodec.MAX_RECORD,
+) {
     private val key = SecretKeySpec(session, "AES")
 
     fun open(prefix: ByteArray, body: ByteArray): ByteArray {
-        val length = LanCodec.recordLength(prefix)
+        val length = LanCodec.recordLength(prefix, least, most)
         if (body.size != length) {
             throw LanException(LanError.TRUNCATED)
         }

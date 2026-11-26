@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // gs-scripthost off Windows: the few Win32 names RemoteLogicHost.cpp and Pipe.cpp use, mapped onto POSIX so
 // those files stay as they are upstream. A pipe HANDLE is its descriptor plus one, a process HANDLE a
 // ScriptProcess made by the POSIX launch().
@@ -98,12 +98,16 @@ inline bool reap(ScriptProcess& process, bool block) noexcept
 
 inline thread_local DWORD g_gsLastError = 0;
 
-inline DWORD GetLastError() noexcept
+// The Win32 stand-ins below are static: the extension host defines functions of the same names (src/exthost/src/posix/
+// Compat.cpp) for its own handles, and with external linkage the linker kept one copy for both, so closing a logic
+// pipe ran the extension host's CloseHandle and crashed.
+
+static inline DWORD GetLastError() noexcept
 {
     return g_gsLastError != 0 ? g_gsLastError : static_cast<DWORD>(errno);
 }
 
-inline BOOL CloseHandle(HANDLE handle) noexcept
+static inline BOOL CloseHandle(HANDLE handle) noexcept
 {
     using namespace gs::scripthost::posix;
     if (handle == nullptr) {
@@ -118,7 +122,7 @@ inline BOOL CloseHandle(HANDLE handle) noexcept
     return TRUE;
 }
 
-inline BOOL ReadFile(HANDLE handle, void* buffer, DWORD wanted, DWORD* read, void*) noexcept
+static inline BOOL ReadFile(HANDLE handle, void* buffer, DWORD wanted, DWORD* read, void*) noexcept
 {
     using namespace gs::scripthost::posix;
     *read = 0;
@@ -138,7 +142,7 @@ inline BOOL ReadFile(HANDLE handle, void* buffer, DWORD wanted, DWORD* read, voi
     }
 }
 
-inline BOOL WriteFile(HANDLE handle, const void* buffer, DWORD size, DWORD* written, void*) noexcept
+static inline BOOL WriteFile(HANDLE handle, const void* buffer, DWORD size, DWORD* written, void*) noexcept
 {
     using namespace gs::scripthost::posix;
     *written = 0;
@@ -158,7 +162,7 @@ inline BOOL WriteFile(HANDLE handle, const void* buffer, DWORD size, DWORD* writ
     }
 }
 
-inline BOOL TerminateProcess(HANDLE handle, UINT) noexcept
+static inline BOOL TerminateProcess(HANDLE handle, UINT) noexcept
 {
     using namespace gs::scripthost::posix;
     if (handle == nullptr || isDescriptor(handle)) {
@@ -171,7 +175,7 @@ inline BOOL TerminateProcess(HANDLE handle, UINT) noexcept
     return ::kill(process->pid, SIGKILL) == 0 ? TRUE : FALSE;
 }
 
-inline DWORD WaitForSingleObject(HANDLE handle, DWORD milliseconds) noexcept
+static inline DWORD WaitForSingleObject(HANDLE handle, DWORD milliseconds) noexcept
 {
     using namespace gs::scripthost::posix;
     if (handle == nullptr || isDescriptor(handle)) {
@@ -192,7 +196,7 @@ inline DWORD WaitForSingleObject(HANDLE handle, DWORD milliseconds) noexcept
     return WAIT_OBJECT_0;
 }
 
-inline BOOL GetExitCodeProcess(HANDLE handle, DWORD* code) noexcept
+static inline BOOL GetExitCodeProcess(HANDLE handle, DWORD* code) noexcept
 {
     using namespace gs::scripthost::posix;
     if (handle == nullptr || isDescriptor(handle)) {
@@ -213,12 +217,12 @@ inline BOOL GetExitCodeProcess(HANDLE handle, DWORD* code) noexcept
     return TRUE;
 }
 
-inline HANDLE GetCurrentThread() noexcept
+static inline HANDLE GetCurrentThread() noexcept
 {
     return nullptr;
 }
 
-inline long SetThreadDescription(HANDLE, const wchar_t* name) noexcept
+static inline long SetThreadDescription(HANDLE, const wchar_t* name) noexcept
 {
     std::string narrow;
     for (; name != nullptr && *name != L'\0'; ++name) {
@@ -233,12 +237,12 @@ inline long SetThreadDescription(HANDLE, const wchar_t* name) noexcept
     return 0;
 }
 
-inline UINT SetErrorMode(UINT) noexcept
+static inline UINT SetErrorMode(UINT) noexcept
 {
     return 0;
 }
 
-inline DWORD GetModuleFileNameW(void*, wchar_t* buffer, DWORD size) noexcept
+static inline DWORD GetModuleFileNameW(void*, wchar_t* buffer, DWORD size) noexcept
 {
     std::error_code error;
     std::filesystem::path self;

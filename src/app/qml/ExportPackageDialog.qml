@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Dialogs
-import GameScrcpy.App
+import Anmacgamer.App
 
 FileDialog {
     id: dialog
@@ -24,7 +24,7 @@ FileDialog {
     title: qsTr("Export %1 as an extension package").arg(dialog.sourceName)
     fileMode: FileDialog.SaveFile
     defaultSuffix: "gsext"
-    nameFilters: [qsTr("GameScrcpy extension (*.gsext)")]
+    nameFilters: [qsTr("anmacgamer extension (*.gsext)")]
     onAccepted: {
         const target = dialog.selectedFile.toString()
         let exported = false

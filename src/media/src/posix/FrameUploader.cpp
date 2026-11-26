@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Capture frames off Windows: the pictures stay in memory as NV12 (what Windows does without a D3D11 device);
 // the renderer uploads them. There are no D3D11 sources to copy from.
 #include "gs/media/FrameUploader.h"

@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Window {
     id: root
@@ -56,7 +56,7 @@ Window {
     minimumWidth: 640
     minimumHeight: 480
     visible: false
-    title: qsTr("AI assistant — GameScrcpy")
+    title: qsTr("AI assistant — anmacgamer")
     color: Theme.colors.bgBase
 
     onClosing: AiChats.windowOpen = false

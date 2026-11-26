@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Dialogs
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 SettingRow {
     id: row

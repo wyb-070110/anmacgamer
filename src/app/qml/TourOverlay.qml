@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Controls
 
 Item {
     id: tour
@@ -629,7 +629,7 @@ Item {
                 objectName: "counter"
                 width: parent.width
                 textFormat: Text.PlainText
-                text: qsTr("Step %1 of %2").arg(tour.step + 1).arg(tour.stepCount)
+                text: qsTr("%1 / %2").arg(tour.step + 1).arg(tour.stepCount)
                 color: Theme.colors.textTertiary
                 font.pixelSize: Theme.type.caption.size
                 font.weight: Font.DemiBold

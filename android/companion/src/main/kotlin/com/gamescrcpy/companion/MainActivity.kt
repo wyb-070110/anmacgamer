@@ -5,11 +5,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 
 class MainActivity : Activity(), Shell {
     override val activity: Activity
@@ -18,12 +18,7 @@ class MainActivity : Activity(), Shell {
     override val sync: SettingsSync by lazy { SettingsSync.of(this) }
     override val options: PhoneOptions by lazy { PhoneOptions.of(this) }
 
-    private lateinit var host: FrameLayout
-    private lateinit var nav: NavBar
-    private var pages: List<Page> = emptyList()
-    private var current = Page.HOME
-    private var accent = 0
-    private var top = 0
+    private lateinit var page: HomePage
     private val asked = HashSet<String>()
     private val stateListener = CompanionState.Listener { runOnUiThread { refresh() } }
     private val syncListener = SettingsSync.Listener { runOnUiThread { refresh() } }
@@ -31,8 +26,13 @@ class MainActivity : Activity(), Shell {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        current = savedInstanceState?.getInt(PAGE, Page.HOME)?.coerceIn(Page.HOME, Page.ABOUT) ?: Page.HOME
         build()
+        if (savedInstanceState == null && sync.values.autoConnect && !CompanionState.lanConnected &&
+            CompanionState.lan != LanState.SEARCHING && CompanionState.lan != LanState.PAIRING &&
+            PairingStore(this).all().isNotEmpty()
+        ) {
+            connectNow()
+        }
     }
 
     override fun onResume() {
@@ -50,11 +50,6 @@ class MainActivity : Activity(), Shell {
         super.onPause()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(PAGE, current)
-    }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -65,15 +60,6 @@ class MainActivity : Activity(), Shell {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         refresh()
-    }
-
-    override fun open(page: Int) {
-        if (page == current) {
-            return
-        }
-        current = page
-        nav.select(page)
-        show(animate = true)
     }
 
     override fun scan() {
@@ -97,78 +83,45 @@ class MainActivity : Activity(), Shell {
     }
 
     private fun build() {
-        accent = wantedAccent()
-        ui = Ui(this, Look.palette(this, accent))
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(ui.palette.bgRaised)
-        }
-        host = FrameLayout(this)
-        root.addView(host, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
-        nav = NavBar(ui) { open(it) }
-        nav.add(NavBar.Entry(R.drawable.ic_nav_home, R.string.nav_home))
-        nav.add(NavBar.Entry(R.drawable.ic_nav_computers, R.string.nav_computers))
-        nav.add(NavBar.Entry(R.drawable.ic_nav_features, R.string.nav_features))
-        nav.add(NavBar.Entry(R.drawable.ic_nav_permissions, R.string.nav_permissions))
-        nav.add(NavBar.Entry(R.drawable.ic_nav_about, R.string.nav_about))
-        root.addView(nav.view, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT))
-        pages = listOf(HomePage(this), ComputersPage(this), FeaturesPage(this), PermissionsPage(this), AboutPage(this))
+        ui = Ui(this, Look.palette(this))
+        page = HomePage(this)
+        val root = FrameLayout(this)
+        root.setBackgroundColor(ui.palette.page)
+        window.decorView.setBackgroundColor(ui.palette.page)
+        root.addView(page.view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT))
+        // Behind the status bar the page colour stays, so the list does not run under the clock.
+        val scrim = View(this).apply { setBackgroundColor(ui.palette.page) }
+        root.addView(scrim, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, Gravity.TOP))
         root.setOnApplyWindowInsetsListener { view, insets ->
             val bars = barsOf(insets)
             view.setPadding(bars[0], 0, bars[2], 0)
-            top = bars[1]
-            pages.forEach { it.inset(top) }
-            nav.view.setPadding(0, 0, 0, bars[3])
+            page.inset(bars[1], bars[3])
+            scrim.layoutParams = (scrim.layoutParams as FrameLayout.LayoutParams).apply { height = bars[1] }
             insets
         }
+        page.view.clipToPadding = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
         setContentView(root)
-        pages.forEach { it.inset(top) }
-        nav.select(current)
-        show(animate = false)
-    }
-
-    private fun show(animate: Boolean) {
-        val page = pages[current]
-        val incoming = page.view
-        for (index in 0 until host.childCount) {
-            host.getChildAt(index).animate().cancel()
-        }
-        val outgoing = (0 until host.childCount).map { host.getChildAt(it) }.filter { it !== incoming }
-        if (incoming.parent == null) {
-            host.addView(incoming, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT))
-        }
-        page.refresh()
-        incoming.visibility = View.VISIBLE
-        if (!animate || Look.reducedMotion()) {
-            outgoing.forEach { host.removeView(it) }
-            incoming.alpha = 1f
-            incoming.translationY = 0f
-            return
-        }
-        incoming.bringToFront()
-        incoming.alpha = 0f
-        incoming.translationY = Look.dp(this, Look.PAGE_SHIFT)
-        incoming.animate().alpha(1f).translationY(0f).setDuration(Look.BASE).setInterpolator(Look.standard).start()
-        outgoing.forEach { view ->
-            view.animate().alpha(0f).setDuration(Look.FAST).setInterpolator(Look.exit)
-                .withEndAction { host.removeView(view) }.start()
-        }
+        lightBars(!ui.palette.dark)
     }
 
     private fun refresh() {
-        if (!::ui.isInitialized) {
-            return
+        if (::page.isInitialized) {
+            page.refresh()
         }
-        if (wantedAccent() != accent) {
-            build()
-            return
-        }
-        pages.getOrNull(current)?.refresh()
     }
 
-    private fun wantedAccent(): Int = sync.connected?.accent ?: (Look.EMBER and Look.RGB)
+    @Suppress("DEPRECATION")
+    private fun lightBars(light: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val mask = android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            window.insetsController?.setSystemBarsAppearance(if (light) mask else 0, mask)
+        }
+    }
 
     private fun barsOf(insets: WindowInsets): IntArray {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -187,7 +140,6 @@ class MainActivity : Activity(), Shell {
     )
 
     private companion object {
-        const val PAGE = "page"
         const val REQUEST_PERMISSION = 7
     }
 }

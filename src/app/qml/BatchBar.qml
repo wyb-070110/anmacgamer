@@ -3,10 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Dialogs
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Item {
     id: bar

@@ -1,6 +1,6 @@
 import QtQuick
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 MenuItem {
     required property CommandState commandState

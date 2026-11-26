@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Capture pictures off Windows: NV12, YUY2 and BGRA samples become frames in memory; MJPEG and H.264 from a
 // capture card, and GPU textures, are not ported yet.
 #include "gs/capture/FrameBuilder.h"

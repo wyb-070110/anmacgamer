@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Effects
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Item {
     id: surface

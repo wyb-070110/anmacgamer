@@ -3,12 +3,14 @@
 
 add_library(gs_session STATIC
     include/gs/session/AdbServerHost.h
+    include/gs/session/CompanionMirror.h
     include/gs/session/ServerHost.h
     include/gs/session/Session.h
     include/gs/session/SessionState.h
     include/gs/session/StreamHost.h
     include/gs/session/Transport.h
     src/AdbServerHost.cpp
+    src/CompanionMirror.cpp
     src/DirectHandshake.cpp
     src/DirectHandshake.h
     src/DirectTransport.cpp

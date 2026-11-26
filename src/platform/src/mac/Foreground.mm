@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Whether a window is in front, the mouse buttons and keys held, and changes of the front application, on macOS.
 // A window is the NSView of a QWindow (its winId()).
 #include "gs/platform/Foreground.h"

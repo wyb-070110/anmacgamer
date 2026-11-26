@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The handles of posix/compat/windows.h as the POSIX launch of gs-exthost needs them, and the bridge: a Unix socket
 // between the app and each gs-exthost over which DuplicateHandle passes descriptors (SCM_RIGHTS).
 //

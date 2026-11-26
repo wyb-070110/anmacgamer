@@ -1387,8 +1387,8 @@ QVariantList ExtensionHost::entries() const
             row.insert(QStringLiteral("key"), extension->usable()
                                                   ? QString::fromStdString(manifest.id + '@' + manifest.version.text())
                                                   : QString::fromStdWString(extension->directory.wstring()));
-            row.insert(QStringLiteral("enabled"), !extension->superseded && state != states.end() &&
-                                                      state->second.enabled && consented(manifest));
+            const bool switchedOn = state != states.end() ? state->second.enabled : extension->builtin;
+            row.insert(QStringLiteral("enabled"), !extension->superseded && switchedOn && consented(manifest));
             row.insert(QStringLiteral("health"), healthOf(*m_health, manifest.id));
             if (!extension->builtin) {
                 const auto remembered = m_publishers.find(manifest.id);
@@ -1625,7 +1625,7 @@ std::string ExtensionHost::diagnosticsText() const
         list.push_back({{"id", manifest.id},
                         {"version", manifest.version.text()},
                         {"builtin", extension.builtin},
-                        {"enabled", state != states.end() && state->second.enabled},
+                        {"enabled", state != states.end() ? state->second.enabled : extension.builtin},
                         {"active", extension.active},
                         {"native", manifest.contributes.native.has_value()},
                         {"granted", state != states.end() ? state->second.granted : std::vector<std::string>{}}});
@@ -2487,11 +2487,25 @@ bool ExtensionHost::setEnabled(const std::string& id, bool enabled)
         return false;
     }
     settings::ExtensionStates states = m_settings.extensions();
+    const bool builtin = std::ranges::any_of(m_extensions, [&](const Extension& extension) {
+        return extension.builtin && extension.manifest && extension.manifest->id == id;
+    });
+    const bool known = states.contains(id);
     settings::ExtensionState& state = states[id];
-    if (state.enabled == enabled && (!enabled || consented(*manifest))) {
+    // A built-in extension is on while it has no entry (see resolve); turning it off keeps an entry that says so.
+    const bool wasOn = known ? state.enabled : builtin;
+    if (wasOn == enabled && (!enabled || consented(*manifest)) && (known || !enabled)) {
+        if (!known) {
+            states.erase(id);
+        }
         return true;
     }
     state.enabled = enabled;
+    if (builtin && !enabled && manifest != nullptr && state.version.empty()) {
+        state.version = manifest->version.text();
+    } else if (builtin && enabled) {
+        state.version.clear();
+    }
     if (enabled) {
         state.granted.clear();
         for (const ext::Permission& permission : manifest->permissions) {
@@ -2738,6 +2752,14 @@ void ExtensionHost::resolve()
         for (const auto& [id, state] : states) {
             if (state.enabled && !heldBack.contains(id) && (!m_bisect || m_bisect->loads(id))) {
                 enabled.push_back(id);
+            }
+        }
+        // A built-in extension is on until the user turns it off (it has no entry in the settings until then).
+        for (const Extension& extension : m_extensions) {
+            if (extension.builtin && extension.usable() && !states.contains(extension.manifest->id) &&
+                !heldBack.contains(extension.manifest->id) && (!m_bisect || m_bisect->loads(extension.manifest->id)) &&
+                std::ranges::find(enabled, extension.manifest->id) == enabled.end()) {
+                enabled.push_back(extension.manifest->id);
             }
         }
         ext::Resolution resolution = ext::resolveDependencies(candidates, enabled);

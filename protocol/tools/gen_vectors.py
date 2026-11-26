@@ -212,6 +212,7 @@ def _touch_frame(w: Writer, f: dict) -> None:
         w.u16(p["x"])
         w.u16(p["y"])
         w.u16(p["pressure"])
+    w.u32(f["hostTimeMs"])
 
 
 @message("Key", 0x0102, "control")
@@ -765,18 +766,19 @@ def handshake_vectors() -> list[dict]:
 def input_vectors() -> list[dict]:
     return [
         ok("touch-frame-single-down", "TouchFrame", {
-            "videoSession": 1, "points": [touch_point("down", 0, 32768, 32768, 65535)]}),
+            "videoSession": 1, "points": [touch_point("down", 0, 32768, 32768, 65535)], "hostTimeMs": 0}),
         ok("touch-frame-joystick-and-camera", "TouchFrame", {
             "videoSession": 2, "points": [touch_point("move", 0, 9000, 48000, 65535),
-                                          touch_point("move", 1, 41000, 20000, 65535)]}),
+                                          touch_point("move", 1, 41000, 20000, 65535)],
+            "hostTimeMs": 123456789}),
         ok("touch-frame-mixed-actions", "TouchFrame", {
             "videoSession": 3, "points": [touch_point("up", 1, 100, 200, 0),
                                           touch_point("move", 2, 300, 400, 30000),
                                           touch_point("down", 3, 500, 600, 65535),
-                                          touch_point("cancel", 7, 0, 0, 1)]}),
+                                          touch_point("cancel", 7, 0, 0, 1)], "hostTimeMs": 1}),
         ok("touch-frame-max", "TouchFrame", {
             "videoSession": 65535,
-            "points": [touch_point("move", i, 65535, 65535, 0) for i in range(32)]}),
+            "points": [touch_point("move", i, 65535, 65535, 0) for i in range(32)], "hostTimeMs": 0xFFFFFFFF}),
         ok("key-down-w", "Key", {"action": "down", "keycode": 51, "metaState": 0, "repeat": 0}),
         ok("key-up-alt", "Key", {"action": "up", "keycode": 51, "metaState": 0x02, "repeat": 0}),
         ok("key-extremes", "Key", {"action": "down", "keycode": 0xFFFFFFFF,
@@ -1219,9 +1221,9 @@ def companion_settings_payload(name: bytes = b"PC", link: int = 0, accent: int =
 
 def malformed_vectors() -> list[dict]:
     point = struct.pack(">BBHHH", 0, 0, 1, 2, 3)
-    touch_payload = struct.pack(">HB", 1, 1) + point
+    touch_payload = struct.pack(">HB", 1, 1) + point + struct.pack(">I", 0)
     duplicate_points = (struct.pack(">HB", 1, 2) + struct.pack(">BBHHH", 0, 3, 1, 2, 3)
-                        + struct.pack(">BBHHH", 2, 3, 4, 5, 6))
+                        + struct.pack(">BBHHH", 2, 3, 4, 5, 6) + struct.pack(">I", 0))
     welcome_resumed_2 = (b"\x00" * 4 + struct.pack(">H", 28) + b"\x00" * 4
                          + struct.pack(">I", 0) + b"\x02")
     long_text = struct.pack(">H", 4097) + b"a" * 4097
@@ -2205,6 +2207,150 @@ def companion_lan_vectors() -> list[dict]:
     }]
 
 
+MIRROR_MAGIC = b"GSCM"
+MIRROR_CONTEXT = b"GSCP/1 companion mirror"
+MIRROR_TOKEN_CONTEXT = b"GSCP/1 companion mirror token"
+MIRROR_DATA_MAX = 1024 * 1024
+MIRROR_LINK = 0xFF
+MIRROR_OP = ["open", "accept", "close"]
+MIRROR_CHANNEL = {"control": 0, "video": 1, "audio": 2, "bulk": 3}
+MIRROR_MIN_RECORD = 5 + 1 + LAN_TAG_SIZE
+MIRROR_MAX_RECORD = 5 + MIRROR_DATA_MAX + LAN_TAG_SIZE
+
+
+def mirror_session_key(key: bytes, hello: bytes, reply: bytes) -> bytes:
+    return hmac.new(key, MIRROR_CONTEXT + hello + reply, hashlib.sha256).digest()
+
+
+def mirror_token(session: bytes) -> bytes:
+    return hmac.new(session, MIRROR_TOKEN_CONTEXT, hashlib.sha256).digest()[:16]
+
+
+def mirror_data(channel: str, data: bytes) -> bytes:
+    assert 1 <= len(data) <= MIRROR_DATA_MAX
+    return struct.pack(">BI", MIRROR_CHANNEL[channel], len(data)) + data
+
+
+def mirror_op(op: str, channel: str) -> bytes:
+    return struct.pack(">BIBB", MIRROR_LINK, 2, MIRROR_OP.index(op), MIRROR_CHANNEL[channel])
+
+
+def mirror_record(session: bytes, direction: str, counter: int, mux: bytes) -> bytes:
+    prefix = struct.pack(">I", len(mux) + LAN_TAG_SIZE)
+    nonce = struct.pack(">IQ", LAN_DIRECTION[direction], counter)
+    return prefix + aes_gcm_seal(session, nonce, mux, prefix)
+
+
+def companion_mirror_vectors() -> list[dict]:
+    key = bytes((0x30 + 7 * i) & 0xFF for i in range(32))
+    phone = bytes.fromhex("5f1e0c9a3b7d42e8a6c1f09d8e7b6a51")
+    pc = bytes.fromhex("c0ffee00112233445566778899aabbcc")
+    hello = lan_hello("", phone, pattern_bytes(16, 13), magic=MIRROR_MAGIC)
+    reply = MIRROR_MAGIC + lan_reply("accepted", pc, pattern_bytes(16, 29))[4:]
+    session = mirror_session_key(key, hello, reply)
+    token = mirror_token(session)
+    control_nonce = pattern_bytes(16, 51)
+    video_nonce = pattern_bytes(16, 83)
+    hello_proof = hmac.new(token, b"GSCP/1 hello" + control_nonce, hashlib.sha256).digest()
+    video_proof = hmac.new(token, b"GSCP/1 channel" + video_nonce + bytes([1]), hashlib.sha256).digest()
+    welcome = {
+        "serverVersion": "companion 2.2.0", "manufacturer": "samsung", "model": "SM-F971B",
+        "androidRelease": "14", "sdkInt": 34, "serialNo": "",
+        "displays": [{"displayId": 0, "width": 1080, "height": 2520, "rotation": 0, "densityDpi": 420,
+                      "refreshMilliHz": 120000, "safeLeft": 0, "safeTop": 0, "safeRight": 0, "safeBottom": 0}],
+        "encoders": [{"codec": "h264", "name": "c2.exynos.h264.encoder", "hardware": True}],
+        "audioStatus": "available", "capabilities": 0, "resumed": False}
+    session_description = encode_media("VideoSession", {
+        "session": 1, "codec": "h264", "frameWidth": 1080, "frameHeight": 2520, "displayId": 0,
+        "displayWidth": 1080, "displayHeight": 2520, "rotation": 0})
+    config = encode_media("MediaConfig", {"session": 1, "payload": "00000001674d401fe8802800b50000000168ee3c80"})
+    exchange = [
+        ("toCompanion", "open control", mirror_op("open", "control")),
+        ("toComputer", "accept control", mirror_op("accept", "control")),
+        ("toComputer", "ServerHello", mirror_data("control", encode_frame(
+            "ServerHello", {"protocolVersion": 1, "nonce": control_nonce.hex()}))),
+        ("toCompanion", "ClientHello", mirror_data("control", encode_frame(
+            "ClientHello", {"protocolVersion": 1, "clientVersion": "2.2.0", "proof": hello_proof.hex()}))),
+        ("toComputer", "Welcome", mirror_data("control", encode_frame("Welcome", welcome))),
+        ("toCompanion", "open video", mirror_op("open", "video")),
+        ("toComputer", "accept video", mirror_op("accept", "video")),
+        ("toComputer", "ServerHello", mirror_data("video", encode_frame(
+            "ServerHello", {"protocolVersion": 1, "nonce": video_nonce.hex()}))),
+        ("toCompanion", "ChannelOpen", mirror_data("video", encode_frame(
+            "ChannelOpen", {"channel": "video", "proof": video_proof.hex()}))),
+        ("toComputer", "ChannelAccepted", mirror_data("video", encode_frame("ChannelAccepted", {"channel": "video"}))),
+        ("toComputer", "VideoSession (first part)", mirror_data("video", session_description[:9])),
+        ("toComputer", "VideoSession (rest) and MediaConfig",
+         mirror_data("video", session_description[9:] + config)),
+        ("toCompanion", "ConfigureAudio", mirror_data("control", encode_frame(
+            "ConfigureAudio", {"enabled": True, "bitrate": 128000}))),
+        ("toCompanion", "open bulk", mirror_op("open", "bulk")),
+        ("toComputer", "close bulk (refused)", mirror_op("close", "bulk")),
+        ("toCompanion", "close bulk", mirror_op("close", "bulk")),
+        ("toCompanion", "close video", mirror_op("close", "video")),
+        ("toComputer", "close video", mirror_op("close", "video")),
+    ]
+    counters = {"toCompanion": 0, "toComputer": 0}
+    records = []
+    for direction, what, mux in exchange:
+        records.append({"direction": direction, "counter": counters[direction], "what": what, "mux": mux.hex(),
+                        "hex": mirror_record(session, direction, counters[direction], mux).hex()})
+        counters[direction] += 1
+    malformed_mux = [
+        {"name": "short-header", "direction": "toComputer", "hex": mirror_data("video", b"x")[:4].hex(),
+         "error": "Truncated"},
+        {"name": "data-truncated", "direction": "toComputer",
+         "hex": (struct.pack(">BI", 1, 3) + b"xy").hex(), "error": "Truncated"},
+        {"name": "data-trailing", "direction": "toComputer",
+         "hex": (struct.pack(">BI", 1, 1) + b"xy").hex(), "error": "TrailingBytes"},
+        {"name": "data-empty", "direction": "toComputer", "hex": struct.pack(">BI", 1, 0).hex(),
+         "error": "OutOfRange"},
+        {"name": "data-too-long", "direction": "toComputer",
+         "hex": struct.pack(">BI", 1, MIRROR_DATA_MAX + 1).hex(), "error": "LengthExceeded"},
+        {"name": "unknown-channel", "direction": "toComputer", "hex": (struct.pack(">BI", 4, 1) + b"x").hex(),
+         "error": "InvalidEnum"},
+        {"name": "op-wrong-length", "direction": "toComputer",
+         "hex": struct.pack(">BIBBB", MIRROR_LINK, 3, 1, 0, 0).hex(), "error": "OutOfRange"},
+        {"name": "op-unknown", "direction": "toComputer", "hex": struct.pack(">BIBB", MIRROR_LINK, 2, 3, 0).hex(),
+         "error": "InvalidEnum"},
+        {"name": "op-unknown-channel", "direction": "toComputer",
+         "hex": struct.pack(">BIBB", MIRROR_LINK, 2, 1, 4).hex(), "error": "InvalidEnum"},
+        {"name": "open-from-companion", "direction": "toComputer", "hex": mirror_op("open", "video").hex(),
+         "error": "WrongDirection"},
+        {"name": "accept-from-computer", "direction": "toCompanion", "hex": mirror_op("accept", "video").hex(),
+         "error": "WrongDirection"},
+    ]
+    malformed_records = [
+        {"name": "too-short", "direction": "toComputer", "counter": 0,
+         "hex": (struct.pack(">I", MIRROR_MIN_RECORD - 1) + bytes(MIRROR_MIN_RECORD - 1)).hex(),
+         "error": "OutOfRange"},
+        {"name": "too-long", "direction": "toComputer", "counter": 0,
+         "hex": struct.pack(">I", MIRROR_MAX_RECORD + 1).hex(), "error": "OutOfRange"},
+        {"name": "lan-key-context", "direction": "toCompanion", "counter": 0,
+         "hex": mirror_record(lan_session_key(key, hello, reply), "toCompanion", 0,
+                              mirror_op("open", "control")).hex(), "error": "BadTag"},
+    ]
+    refused_hello = lan_hello("", bytes(16), pattern_bytes(16, 5), magic=MIRROR_MAGIC)
+    with_token = lan_hello(base64url(bytes(range(0xA0, 0xB0))), phone, pattern_bytes(16, 5), magic=MIRROR_MAGIC)
+    unknown_reply = (MIRROR_MAGIC + lan_reply("unknown", bytes(16), bytes(16))[4:]).hex()
+    return [{
+        "key": key.hex(),
+        "phone": phone.hex(),
+        "pc": pc.hex(),
+        "context": MIRROR_CONTEXT.decode("ascii"),
+        "tokenContext": MIRROR_TOKEN_CONTEXT.decode("ascii"),
+        "hello": hello.hex(),
+        "reply": reply.hex(),
+        "sessionKey": session.hex(),
+        "token": token.hex(),
+        "records": records,
+        "refused": [{"name": "not-paired", "hello": refused_hello.hex(), "reply": unknown_reply},
+                    {"name": "with-token", "hello": with_token.hex(), "reply": unknown_reply}],
+        "malformedMux": malformed_mux,
+        "malformedRecords": malformed_records,
+    }]
+
+
 FAMILIES: dict[str, Callable[[], list[dict]]] = {
     "handshake": handshake_vectors,
     "input": input_vectors,
@@ -2264,6 +2410,12 @@ def main() -> None:
     text = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
     (out_dir / "companion" / "lan.json").write_text(text, encoding="utf-8", newline="\n")
     print(f"wrote the companion LAN handshake, record and AES-256-GCM vectors to {out_dir / 'companion'}")
+
+    mirror = companion_mirror_vectors()
+    document = {"format": "gamescrcpy.companion-mirror-vectors", "spec": "11.10", "vectors": mirror}
+    text = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
+    (out_dir / "companion" / "mirror.json").write_text(text, encoding="utf-8", newline="\n")
+    print(f"wrote the companion mirror handshake, link and record vectors to {out_dir / 'companion'}")
 
 
 if __name__ == "__main__":

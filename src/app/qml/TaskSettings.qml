@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 Item {
     id: settings
@@ -247,7 +247,7 @@ Item {
 
             SectionTitle {
                 text: qsTr("How it starts")
-                info: qsTr("At that time GameScrcpy connects the ticked phones, turns their screens on and starts "
+                info: qsTr("At that time anmacgamer connects the ticked phones, turns their screens on and starts "
                            + "the task, and tells you when it is done or fails.")
             }
 

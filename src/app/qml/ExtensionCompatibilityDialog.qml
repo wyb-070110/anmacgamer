@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 Dialog {
     id: dialog
@@ -22,16 +22,16 @@ Dialog {
     function reasonText(code: string, writtenFor: string): string {
         if (code === "host-api-outdated")
             return writtenFor !== ""
-                   ? qsTr("Made for GameScrcpy %1; does not work with %2").arg(writtenFor)
+                   ? qsTr("Made for anmacgamer %1; does not work with %2").arg(writtenFor)
                          .arg(ExtensionHost.hostVersion)
-                   : qsTr("Made for an older GameScrcpy")
+                   : qsTr("Made for an older anmacgamer")
         return writtenFor !== ""
-               ? qsTr("Made for GameScrcpy %1; needs a newer GameScrcpy").arg(writtenFor)
-               : qsTr("Needs a newer GameScrcpy")
+               ? qsTr("Made for anmacgamer %1; needs a newer anmacgamer").arg(writtenFor)
+               : qsTr("Needs a newer anmacgamer")
     }
 
     objectName: "extensionCompatibility"
-    title: qsTr("Some extensions do not work with GameScrcpy %1").arg(ExtensionHost.hostVersion)
+    title: qsTr("Some extensions do not work with anmacgamer %1").arg(ExtensionHost.hostVersion)
     acceptText: dialog.hasUpdates ? qsTr("Check for updates") : qsTr("Open Extensions")
     rejectText: qsTr("Close")
     alternativeText: dialog.hasUpdates ? qsTr("Open Extensions") : ""
@@ -63,7 +63,7 @@ Dialog {
             Text {
                 width: parent.width
                 textFormat: Text.PlainText
-                text: qsTr("Newer versions of these extensions may fit this GameScrcpy, from their authors or through Check for updates.")
+                text: qsTr("Newer versions of these extensions may fit this anmacgamer, from their authors or through Check for updates.")
                 color: Theme.colors.textSecondary
                 font.pixelSize: Theme.type.body.size
                 wrapMode: Text.Wrap

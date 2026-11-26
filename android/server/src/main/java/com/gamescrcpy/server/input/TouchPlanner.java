@@ -66,9 +66,52 @@ public final class TouchPlanner {
         return pool[index];
     }
 
+    // Frames reach the phone bunched together (USB and adb deliver in bursts), so stamping each with its arrival
+    // makes a swipe look several times faster than the fingers were, and the phone flings too far (two pages
+    // instead of one). The computer stamps each frame with its own clock: within a gesture each event keeps the
+    // computer's spacing, anchored on the frame that arrived soonest after it was made, so no event is stamped
+    // later than it arrived. A gap of more than MAX_LAG_MILLIS starts over from the arrival time.
+    private static final long MAX_LAG_MILLIS = 1000;
+    private boolean paced;
+    private long hostDelay;
+    private long hostRaw;
+    private long hostUnwrapped;
+    private long lastEventTime = Long.MIN_VALUE;
+
+    long eventTimeFor(long hostTimeMs, long arrival) {
+        long time = arrival;
+        if (hostTimeMs != 0) {
+            if (!paced || active == 0) {
+                paced = true;
+                hostRaw = hostTimeMs;
+                hostUnwrapped = 0;
+                hostDelay = arrival;
+            } else {
+                hostUnwrapped += (int) (hostTimeMs - hostRaw);
+                hostRaw = hostTimeMs;
+            }
+            final long delay = arrival - hostUnwrapped;
+            if (delay < hostDelay) {
+                hostDelay = delay;
+            }
+            time = hostUnwrapped + hostDelay;
+            if (arrival - time > MAX_LAG_MILLIS) {
+                hostDelay = delay;
+                time = arrival;
+            }
+        } else {
+            paced = false;
+        }
+        if (time < lastEventTime) {
+            time = lastEventTime;
+        }
+        lastEventTime = time;
+        return time;
+    }
+
     public int plan(TouchFrame frame, TouchGeometry current, long nowMillis) {
         final boolean stale = current == null || frame.videoSession != current.session();
-        final long eventTime = nowMillis - leadMillis;
+        final long eventTime = eventTimeFor(frame.hostTimeMs, nowMillis - leadMillis);
         boolean moved = false;
         int lifts = 0;
         int presses = 0;

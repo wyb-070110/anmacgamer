@@ -2,10 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Item {
     id: page
@@ -231,7 +231,7 @@ Item {
             objectName: "gridButton"
             enabled: gridCommand.enabled
             iconName: gridCommand.icon
-            text: qsTr("Grid")
+            text: qsTr("Grid view")
             onClicked: gridCommand.trigger()
         }
 
@@ -503,61 +503,53 @@ Item {
             {
                 centered: true,
                 title: qsTr("Devices"),
-                text: qsTr("Every phone connected to this computer gets a card here, and so do capture cards and "
-                           + "the devices extensions add, such as touch boxes. A card shows up as soon as the device "
-                           + "connects; there is nothing to refresh.")
+                text: qsTr("Connected phones, capture cards, and extension hardware appear here automatically as "
+                           + "cards.")
             },
             {
                 target: function() { return list.count > 0 ? list.itemAtIndex(0) : list.headerItem },
                 title: qsTr("Connect a phone"),
-                text: qsTr("Plug the phone in with a USB cable and turn on USB debugging in its developer options. "
-                           + "The first time, the phone asks whether to allow USB debugging from this computer: tap "
-                           + "Allow.")
+                text: qsTr("Plug in via USB with USB debugging on, then tap Allow on your phone's authorization "
+                           + "prompt.")
             },
             {
                 target: pairButton,
                 title: qsTr("Wireless pairing"),
-                text: qsTr("No cable at hand? Turn on Wireless debugging on the phone and pair with the code or QR "
-                           + "code it shows. After that the phone reconnects by itself on the same Wi-Fi.")
+                text: qsTr("Pair over Wi-Fi using a pairing code or QR code under Wireless debugging.")
             },
             {
                 target: function() { return tour.findItem(list, "deviceTransport") },
-                title: qsTr("How the picture travels"),
-                text: qsTr("The adb tunnel goes through USB or wireless debugging and works everywhere. WiFi direct "
-                           + "sends the picture straight over Wi-Fi with less delay. Auto picks for you.")
+                title: qsTr("Connection mode"),
+                text: qsTr("Choose adb tunnel (works anywhere), WiFi direct (lower Wi-Fi latency), or Auto.")
             },
             {
                 target: function() { return tour.findItem(list, "deviceMirror") },
                 optional: true,
                 title: qsTr("Start mirroring"),
-                text: qsTr("Mirroring opens the phone's screen on this computer. Click and type there to work the "
-                           + "phone, or pick a profile so that keys tap the screen for you. Try it now.")
+                text: qsTr("Open the phone's mirror window. Click and type directly, or use a key profile. Try it now.")
             },
             {
                 target: function() { return tour.findItem(list, "deviceSettings") },
                 optional: true,
-                title: qsTr("Settings for this phone"),
-                text: qsTr("Resolution, frame rate, bitrate and the other mirroring settings can be set for each "
-                           + "phone. Whatever you leave alone follows the settings for all phones.")
+                title: qsTr("Device settings"),
+                text: qsTr("Override resolution, FPS, bitrate, or audio for this phone; other options follow global "
+                           + "defaults.")
             },
             {
                 target: function() { return tour.findItem(list, "deviceMore") },
                 optional: true,
-                title: qsTr("More for this phone"),
-                text: qsTr("Apps, files, keeping the screen on and ending a wireless connection are in this menu.")
+                title: qsTr("More options"),
+                text: qsTr("Open apps, browse files, keep the screen on, or disconnect wireless debugging here.")
             },
             {
                 target: function() { return tour.findItem(page, "gridButton") },
-                title: qsTr("Grid"),
-                text: qsTr("With several phones connected, Grid puts them side by side in one window so you can "
-                           + "watch and work them together.")
+                title: qsTr("Grid view"),
+                text: qsTr("View and control multiple mirrored phones side by side in one window.")
             },
             {
                 centered: true,
-                title: qsTr("That's the devices page"),
-                text: qsTr("The other pages are on the left: profiles hold your key mappings, tasks run things on a "
-                           + "schedule, extensions add features. Each page has its own tour, and Help can replay "
-                           + "them.")
+                title: qsTr("Devices tour complete"),
+                text: qsTr("Use the left sidebar for Profiles, Tasks, and Extensions. Replay any tour anytime in Help.")
             }
         ]
         advance: {

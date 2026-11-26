@@ -18,13 +18,13 @@ class TopHint(context: Context, private val onTap: () -> Unit) {
         if (shown != null) {
             return
         }
-        val ui = Ui(windowContext, Look.palette(windowContext, null))
-        val pill = ui.text(Look.LABEL, ui.palette.textPrimary, R.string.ime_typing_top).apply {
-            background = ui.pressable(ui.rounded(ui.palette.bgElevated, PILL_RADIUS, ui.palette.strokeStrong), PILL_RADIUS)
+        val ui = Ui(windowContext, Look.palette(windowContext))
+        val pill = ui.text(Look.LABEL, ui.palette.onSecondaryContainer, R.string.ime_typing_top).apply {
+            background = ui.pressable(ui.rounded(ui.palette.secondaryContainer, PILL_RADIUS), PILL_RADIUS)
             gravity = Gravity.CENTER_VERTICAL
             minHeight = ui.px(Look.CONTROL)
             setPaddingRelative(ui.px(Look.SPACE_MD), ui.px(Look.SPACE_XS), ui.px(Look.SPACE_LG), ui.px(Look.SPACE_XS))
-            ui.lead(this, R.drawable.ic_keyboard, ui.palette.accent)
+            ui.lead(this, R.drawable.ic_keyboard, ui.palette.onSecondaryContainer)
             isClickable = true
             isFocusable = false
             setOnClickListener { onTap() }

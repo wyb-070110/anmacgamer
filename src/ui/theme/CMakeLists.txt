@@ -1,11 +1,11 @@
-# GameScrcpy.Theme: design tokens of the Obsidian design system (ADR-0011).
+# Anmacgamer.Theme: design tokens of the Obsidian design system (ADR-0011).
 # Components must read every color, size and duration from here instead of hard-coding values.
 
 set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_library(gs_ui_theme STATIC)
 qt_add_qml_module(gs_ui_theme
-    URI GameScrcpy.Theme
+    URI Anmacgamer.Theme
     VERSION 1.0
     IMPORT_PATH "${QT_QML_OUTPUT_DIRECTORY}"
     QML_FILES

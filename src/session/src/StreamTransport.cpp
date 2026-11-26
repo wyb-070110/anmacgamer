@@ -27,12 +27,12 @@ class StreamLink final : public Link
 public:
     StreamLink(std::shared_ptr<PhoneStreams> streams, LaunchParams params, std::chrono::milliseconds handshakeTimeout,
                StreamHandle control, protocol::Welcome welcome)
-        : m_streams(std::move(streams)), m_params(std::move(params)), m_handshakeTimeout(handshakeTimeout),
+        : m_kind(streams->kind()), m_streams(std::move(streams)), m_params(std::move(params)), m_handshakeTimeout(handshakeTimeout),
           m_control(std::move(control), protocol::FrameContext::Control), m_welcome(std::move(welcome))
     {
     }
 
-    TransportKind kind() const noexcept override { return TransportKind::Extension; }
+    TransportKind kind() const noexcept override { return m_kind; }
 
     const protocol::Welcome& welcome() const override { return m_welcome; }
 
@@ -79,6 +79,7 @@ private:
         return stream;
     }
 
+    TransportKind m_kind;
     std::shared_ptr<PhoneStreams> m_streams;
     LaunchParams m_params;
     std::chrono::milliseconds m_handshakeTimeout;
@@ -104,9 +105,12 @@ Expected<std::unique_ptr<Link>, SessionFailure> StreamTransport::establish(const
     if (!stream) {
         return makeUnexpected(std::move(stream.error()));
     }
+    if (const std::optional<Token> carried = m_streams->sessionToken()) {
+        params.token = *carried;
+    }
     Expected<protocol::Welcome, SessionFailure> welcome = [&] {
         const std::stop_callback interrupt(stop, [&opened = **stream] { opened.interrupt(); });
-        return handshake(**stream, token, clientVersion);
+        return handshake(**stream, params.token, clientVersion);
     }();
     if (!welcome) {
         return makeUnexpected(std::move(welcome.error()));

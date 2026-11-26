@@ -186,6 +186,9 @@ class SettingsSync(private val store: SyncStore, private val clock: () -> Long) 
         last = store.read(LAST)?.takeIf { it in computers }
     }
 
+    @Volatile
+    var onPcReplaced: ((String) -> Unit)? = null
+
     val values: SyncValues
         get() = synchronized(lock) { shownLocked() }
 
@@ -238,6 +241,7 @@ class SettingsSync(private val store: SyncStore, private val clock: () -> Long) 
 
     fun snapshot(link: Link, message: Messages.CompanionSettings) {
         val out = ArrayList<Messages.CompanionSettingChange>()
+        var replacedPc: String? = null
         synchronized(lock) {
             if (link !in links) {
                 return
@@ -245,6 +249,9 @@ class SettingsSync(private val store: SyncStore, private val clock: () -> Long) 
             val id = Hex.encode(message.computer)
             val values = SyncValues.of(message)
             val earlier = computers[id]
+            if (link.pc.isNotEmpty() && earlier != null && earlier.pc.isNotEmpty() && earlier.pc != link.pc) {
+                replacedPc = earlier.pc
+            }
             computers[id] = KnownComputer(
                 id = id,
                 name = message.name,
@@ -276,6 +283,7 @@ class SettingsSync(private val store: SyncStore, private val clock: () -> Long) 
             }
             saveLocked()
         }
+        replacedPc?.let { onPcReplaced?.invoke(it) }
         out.forEach(link.send)
         changed()
     }

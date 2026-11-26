@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The system backend off Windows: no serial, HID or Bluetooth devices yet (IOKit and Core Bluetooth would
 // list them on macOS). Scripts see an empty list, a scan that finds nothing, and every open reports the device
 // as not connected, as Windows does for one that was unplugged.

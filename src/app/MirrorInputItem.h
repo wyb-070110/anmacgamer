@@ -24,6 +24,8 @@
 
 namespace gs::app {
 
+class PreeditBubble;
+
 class MirrorInputItem final : public QQuickItem
 {
     Q_OBJECT
@@ -105,7 +107,10 @@ private:
     void flickStep();
     void startFlick(QPointF direction);
     void startFling();
+    [[nodiscard]] QPointF releaseVelocity() const;
+    void releaseSwipe();
     void releaseKeys();
+    void showPreedit(const QString& text, int cursor);
     void follow(QPointF position);
     [[nodiscard]] bool pressRelative(QMouseEvent* event, bool down);
 
@@ -137,6 +142,12 @@ private:
     // The swipe's last movement and how long it took, for the natural fling's speed.
     QPointF m_lastSwipeDelta;
     qint64 m_lastSwipeMs = 1;
+    // The finger's recent positions (ms since the swipe began, point), for its speed when the fingers leave.
+    QElapsedTimer m_moveClock;
+    // Since the finger last lifted: macOS's first momentum event can come as the start of a new scroll, with
+    // movement, a few ms after the fingers left; it must not put a new finger down (that stops the phone's fling).
+    QElapsedTimer m_liftClock;
+    std::vector<std::pair<qint64, QPointF>> m_recentMoves;
     // The page-turn flick under way: steps left, each step, and the clock between them.
     int m_flickSteps = 0;
     QPointF m_flickStep;
@@ -144,6 +155,8 @@ private:
     // How far the finger has coasted, in points of the picture.
     double m_coasted = 0.0;
     QPointF m_lastPress;
+    // The pinyin (or other text) the input method is still composing, shown on the picture.
+    PreeditBubble* m_preedit = nullptr;
     bool m_capturing = false;
     bool m_typing = false;
     bool m_touching = false;

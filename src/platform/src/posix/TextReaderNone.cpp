@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Systems without a text reader (Linux serves only as a test bed for the port): no language can be read.
 #include "gs/platform/TextReader.h"
 

@@ -1504,7 +1504,7 @@ void ExtensionPanels::readIcons() const
     if (std::exchange(m_iconsRead, true)) {
         return;
     }
-    QFile icons(QStringLiteral(":/qt/qml/GameScrcpy/Icons/IconPaths.js"));
+    QFile icons(QStringLiteral(":/qt/qml/Anmacgamer/Icons/IconPaths.js"));
     if (!icons.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return;
     }

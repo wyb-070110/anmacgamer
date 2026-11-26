@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Frames timed to the screen (FrameSlot with a known refresh): each one is due a steady time after the phone's
 // timestamp, the newest due frame is shown and older ones skipped, a frame not due yet waits, and immediate
 // presentation (low-latency mode) never waits.

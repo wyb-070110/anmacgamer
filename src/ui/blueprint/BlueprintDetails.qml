@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Controls
 
 Item {
     id: panel

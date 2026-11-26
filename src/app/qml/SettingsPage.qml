@@ -3,10 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQml.Models
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 import "ExtensionLook.js" as ExtensionLook
 
 Item {
@@ -72,38 +72,35 @@ Item {
             {
                 centered: true,
                 title: qsTr("Settings"),
-                text: qsTr("Every setting is here, and a change takes effect right away; there is nothing to save.")
+                text: qsTr("Changes take effect immediately—no save button needed.")
             },
             {
                 target: search,
                 title: qsTr("Search settings"),
-                text: qsTr("Not sure where a setting is? Search for it, such as frame rate or key hints."),
+                text: qsTr("Search by keyword, such as “frame rate” or “key hints”."),
                 keys: searchCommand.shortcut
             },
             {
                 target: nav,
-                title: qsTr("Groups"),
-                text: qsTr("The settings are grouped: mirroring and quality, audio, input and keys, shortcuts, "
-                           + "general, appearance, extensions and AI. A number next to a group counts the settings a "
-                           + "phone has changed for itself.")
+                title: qsTr("Categories"),
+                text: qsTr("Browse by category. A badge shows how many settings are overridden for the selected phone.")
             },
             {
                 target: content,
-                title: qsTr("The settings"),
-                text: qsTr("Each row says what it is for on the left and has its control on the right.")
+                title: qsTr("Options"),
+                text: qsTr("Each row explains the option on the left with its control on the right.")
             },
             {
                 target: scopeRow,
                 optional: true,
-                title: qsTr("All phones or this phone"),
-                text: qsTr("With a phone connected, choose this phone to change a setting for it alone; the rest "
-                           + "follow the default for all phones. Reset takes a changed setting back to that "
-                           + "default.")
+                title: qsTr("Global vs. per-phone"),
+                text: qsTr("Switch to a connected phone to override settings just for it, or reset back to global "
+                           + "defaults.")
             },
             {
                 centered: true,
-                title: qsTr("That's settings"),
-                text: qsTr("The AI assistant's service and key are set up under AI. Help can replay this tour.")
+                title: qsTr("Settings tour complete"),
+                text: qsTr("Configure your AI model and MCP access under AI. Replay this tour in Help.")
             }
         ]
     }
@@ -487,6 +484,10 @@ Item {
                         labels: ({ ask: qsTr("Ask the first time"), keep: qsTr("Keep mirroring"),
                                    disconnect: qsTr("Stop mirroring") })
                     }
+                    SwitchSetting {
+                        objectName: "screenOffWhileMirroringSwitch"
+                        path: "display.screenOffWhileMirroring"
+                    }
                 }
 
                 SettingCard {
@@ -587,7 +588,7 @@ Item {
 
                 SettingCard {
                     objectName: "phoneCursorCard"
-                    title: qsTr("GameScrcpy Companion on the phone")
+                    title: qsTr("anmacgamer Companion on the phone")
                     iconName: "monitor-smartphone"
                     tone: "lime"
 
@@ -667,8 +668,8 @@ Item {
                                 return qsTr("Up to 16 fingers. On an independent display touches still go the normal way.")
                             if (touchMethod.current === "aoa")
                                 return qsTr("A touch screen, mouse and keyboard on the USB cable that work even without "
-                                            + "USB debugging. AOA over USB is not available on macOS yet; use Normal or "
-                                            + "UHID touch screen instead.")
+                                            + "USB debugging. macOS needs no extra driver; without USB or wireless "
+                                            + "debugging there is no picture.")
                             if (touchMethod.current === "none")
                                 return qsTr("Only shows the picture; taps, swipes and key mapping do not reach the phone.")
                             return ""
@@ -783,7 +784,7 @@ Item {
                             tone: "ghost"
                             small: true
                             iconName: "circle-help"
-                            text: qsTr("About AOA on macOS")
+                            text: qsTr("How AOA touch over USB works")
                             onClicked: Commands.trigger("app.help", "aoa-driver")
                         }
                     }
@@ -934,7 +935,7 @@ Item {
                         note: ExtensionLinks.registration === "this"
                               ? qsTr("Links on web pages that install or show extensions open in this copy.")
                               : ExtensionLinks.registration === "other"
-                                ? qsTr("Another copy of GameScrcpy opens these links now.")
+                                ? qsTr("Another copy of anmacgamer opens these links now.")
                                 : qsTr("Web pages can offer extensions through gamescrcpy:// links. This portable copy "
                                        + "opens them once you register it.")
 
@@ -1163,7 +1164,7 @@ Item {
                          + "blueprint of the profile you edit. Only when you send a message, it sends what you wrote, "
                          + "the profile with its logic and, when it needs one, a picture of the phone's screen, to "
                          + "the model service you choose here. Its changes wait in a draft until you apply them."),
-                    qsTr("AI clients on this computer can use GameScrcpy through MCP: look up the script API, try "
+                    qsTr("AI clients on this computer can use anmacgamer through MCP: look up the script API, try "
                          + "logic on recordings, see a phone's picture, read the log, change profiles and run "
                          + "scripts. They connect through a local Unix socket that only your macOS user account can open; no "
                          + "network port is opened.")

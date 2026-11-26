@@ -18,9 +18,10 @@
             "y": 32768,
             "pressure": 65535
           }
-        ]
+        ],
+        "hostTimeMs": 0
       },
-      "hex": "01010000000b000101000080008000ffff"
+      "hex": "01010000000f000101000080008000ffff00000000"
     },
     {
       "name": "touch-frame-joystick-and-camera",
@@ -44,9 +45,10 @@
             "y": 20000,
             "pressure": 65535
           }
-        ]
+        ],
+        "hostTimeMs": 123456789
       },
-      "hex": "01010000001300020202002328bb80ffff0201a0284e20ffff"
+      "hex": "01010000001700020202002328bb80ffff0201a0284e20ffff075bcd15"
     },
     {
       "name": "touch-frame-mixed-actions",
@@ -84,9 +86,10 @@
             "y": 0,
             "pressure": 1
           }
-        ]
+        ],
+        "hostTimeMs": 1
       },
-      "hex": "0101000000230003040101006400c800000202012c01907530000301f40258ffff0307000000000001"
+      "hex": "0101000000270003040101006400c800000202012c01907530000301f40258ffff030700000000000100000001"
     },
     {
       "name": "touch-frame-max",
@@ -320,9 +323,10 @@
             "y": 65535,
             "pressure": 0
           }
-        ]
+        ],
+        "hostTimeMs": 4294967295
       },
-      "hex": "010100000103ffff200200ffffffff00000201ffffffff00000202ffffffff00000203ffffffff00000204ffffffff00000205ffffffff00000206ffffffff00000207ffffffff00000208ffffffff00000209ffffffff0000020affffffff0000020bffffffff0000020cffffffff0000020dffffffff0000020effffffff0000020fffffffff00000210ffffffff00000211ffffffff00000212ffffffff00000213ffffffff00000214ffffffff00000215ffffffff00000216ffffffff00000217ffffffff00000218ffffffff00000219ffffffff0000021affffffff0000021bffffffff0000021cffffffff0000021dffffffff0000021effffffff0000021fffffffff0000"
+      "hex": "010100000107ffff200200ffffffff00000201ffffffff00000202ffffffff00000203ffffffff00000204ffffffff00000205ffffffff00000206ffffffff00000207ffffffff00000208ffffffff00000209ffffffff0000020affffffff0000020bffffffff0000020cffffffff0000020dffffffff0000020effffffff0000020fffffffff00000210ffffffff00000211ffffffff00000212ffffffff00000213ffffffff00000214ffffffff00000215ffffffff00000216ffffffff00000217ffffffff00000218ffffffff00000219ffffffff0000021affffffff0000021bffffffff0000021cffffffff0000021dffffffff0000021effffffff0000021fffffffff0000ffffffff"
     },
     {
       "name": "key-down-w",

@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Templates as T
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 T.ToolTip {
     id: control

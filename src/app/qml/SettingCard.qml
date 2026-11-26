@@ -1,7 +1,7 @@
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 Card {
     id: card

@@ -1,10 +1,10 @@
-# GameScrcpy.Controls: the components of the design system (DESIGN_SYSTEM.md 3), drawn on Qt Quick
+# Anmacgamer.Controls: the components of the design system (DESIGN_SYSTEM.md 3), drawn on Qt Quick
 # Templates (ADR-0002) from the theme's tokens alone; tools/check_source_rules.py rejects bare
 # colors, durations and sizes here (UI-001).
 
 qt_add_library(gs_ui_controls STATIC)
 qt_add_qml_module(gs_ui_controls
-    URI GameScrcpy.Controls
+    URI Anmacgamer.Controls
     VERSION 1.0
     IMPORT_PATH "${QT_QML_OUTPUT_DIRECTORY}"
     QML_FILES

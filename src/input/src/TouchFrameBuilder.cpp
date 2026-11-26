@@ -94,6 +94,7 @@ void TouchFrameBuilder::add(TouchAction action, std::uint8_t pointerId, Vec2 pos
                           .x = fixedCoordinate(position.x),
                           .y = fixedCoordinate(position.y),
                           .pressure = lifting ? std::uint16_t{0} : kFullPressure};
+    m_openLatest = stamp();
     if (TouchPoint* existing = findPoint(m_open, pointerId)) {
         if (merge(*existing, next)) {
             return;
@@ -112,6 +113,9 @@ void TouchFrameBuilder::closeOpenFrame()
         return;
     }
     m_open.videoSession = m_videoSession;
+    // 0 means "unknown" on the wire, so a clock reading of exactly 0 ms is sent as 1.
+    m_open.hostTimeMs = std::max<std::uint32_t>(
+        static_cast<std::uint32_t>(static_cast<std::uint64_t>(m_openLatest.count()) / 1000U), 1U);
     m_ready.push_back({.frame = m_open, .since = m_openSince});
     m_open.points.clear();
 }

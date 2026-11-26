@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "gamescrcpy.games",
+  "version": "1.0.2",
+  "gamescrcpy": "2.2",
+  "name": "Game profiles",
+  "description": "Ready-made key mapping profiles for popular games. They show up when the game is on screen and has no profile yet.",
+  "authors": [
+    "anmacgamer"
+  ],
+  "license": "GPL-3.0-or-later",
+  "requires": {
+    "profile": "^1.0",
+    "script": "^1.0"
+  },
+  "contributes": {
+    "profiles": [
+      {
+        "name": "honkai-star-rail",
+        "file": "profiles/honkai-star-rail/profile.json"
+      },
+      {
+        "name": "honkai-star-rail-cloud",
+        "file": "profiles/honkai-star-rail-cloud/profile.json"
+      }
+    ]
+  },
+  "permissions": [
+    {
+      "name": "input.read",
+      "reason": "The Star Rail profiles switch between exploring and combat on the ` key and pause detection on F8."
+    },
+    {
+      "name": "mapping",
+      "reason": "The Star Rail profiles turn their combat-mode switch on and off, which changes the keys."
+    },
+    {
+      "name": "device.screen",
+      "reason": "The Star Rail profiles read a few words on screen to tell whether a battle is on."
+    }
+  ],
+  "l10n": {
+    "zh_CN": {
+      "name": "游戏键位方案",
+      "description": "常见游戏的现成键位方案：游戏在画面上、还没有方案时就会出现。"
+    }
+  }
+}

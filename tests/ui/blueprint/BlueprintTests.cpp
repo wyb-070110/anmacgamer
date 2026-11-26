@@ -6,10 +6,10 @@
 
 #include "../../unit/support/ThreadCpuTime.h"
 
-Q_IMPORT_QML_PLUGIN(GameScrcpy_ThemePlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_IconsPlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_ControlsPlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_BlueprintPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_ThemePlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_IconsPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_ControlsPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_BlueprintPlugin)
 
 class ThreadCpu final : public QObject
 {

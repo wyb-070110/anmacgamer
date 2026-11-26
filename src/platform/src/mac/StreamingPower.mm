@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Keeping a streaming session responsive on macOS. While any session streams, the process declares a user
 // initiated, latency critical activity, so macOS neither naps it (App Nap) nor coalesces its timers, nor sleeps
 // while idle (Windows keeps the process out of EcoQoS). Windows also turns on the WLAN media streaming mode for

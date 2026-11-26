@@ -4,9 +4,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQml.Models
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
 
 Column {
     id: blocks

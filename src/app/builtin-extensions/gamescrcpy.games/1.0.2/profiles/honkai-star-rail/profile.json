@@ -1,0 +1,442 @@
+{
+  "format": "gamescrcpy.profile",
+  "version": 3,
+  "meta": {
+    "name": "崩坏：星穹铁道（PC 键位）",
+    "app": "com.miHoYo.hkrpg",
+    "orientation": "landscape"
+  },
+  "screen": {
+    "scaleMode": "shortSide",
+    "safeArea": "ignore"
+  },
+  "vars": [
+    {
+      "id": "inCombat",
+      "name": "战斗模式",
+      "initial": false
+    }
+  ],
+  "controls": [
+    {
+      "id": "move",
+      "name": "移动 (WASD)",
+      "type": "wasd",
+      "when": "!inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.312, -0.187],
+      "radius": 0.12,
+      "sprintScale": 1.5,
+      "inputs": {
+        "up": "KeyW",
+        "down": "KeyS",
+        "left": "KeyA",
+        "right": "KeyD",
+        "sprint": "ShiftLeft"
+      }
+    },
+    {
+      "id": "view",
+      "name": "跑图视角",
+      "type": "camera",
+      "when": "!inCombat",
+      "anchor": "center",
+      "offset": [0.216, -0.081],
+      "lockKey": "Tab",
+      "inputs": {
+        "look": "Mouse.Move"
+      }
+    },
+    {
+      "id": "tempCursor",
+      "name": "按住显光标",
+      "type": "tempCursor",
+      "when": "!inCombat",
+      "anchor": "top",
+      "offset": [0.0, 0.05],
+      "inputs": {
+        "press": "AltLeft"
+      }
+    },
+    {
+      "id": "overworldAttack",
+      "name": "跑图普攻",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.28, -0.224],
+      "inputs": {
+        "press": {
+          "input": "Mouse.Left",
+          "claim": "lock"
+        }
+      }
+    },
+    {
+      "id": "technique",
+      "name": "秘技",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.435, -0.128],
+      "inputs": {
+        "press": "KeyE"
+      }
+    },
+    {
+      "id": "sprintBtn",
+      "name": "冲刺",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.12, -0.128],
+      "inputs": {
+        "press": {
+          "input": "Mouse.Right",
+          "claim": "lock"
+        }
+      }
+    },
+    {
+      "id": "interact",
+      "name": "交互",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "center",
+      "offset": [0.22, 0.04],
+      "inputs": {
+        "press": "KeyF"
+      }
+    },
+    {
+      "id": "member1",
+      "name": "切换角色 1",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "right",
+      "offset": [-0.12, -0.236],
+      "inputs": {
+        "press": "Digit1"
+      }
+    },
+    {
+      "id": "member2",
+      "name": "切换角色 2",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "right",
+      "offset": [-0.12, -0.134],
+      "inputs": {
+        "press": "Digit2"
+      }
+    },
+    {
+      "id": "member3",
+      "name": "切换角色 3",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "right",
+      "offset": [-0.12, -0.033],
+      "inputs": {
+        "press": "Digit3"
+      }
+    },
+    {
+      "id": "member4",
+      "name": "切换角色 4",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "right",
+      "offset": [-0.12, 0.063],
+      "inputs": {
+        "press": "Digit4"
+      }
+    },
+    {
+      "id": "phoneMenu",
+      "name": "手机菜单",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topLeft",
+      "offset": [0.045, 0.072],
+      "inputs": {
+        "press": "Escape"
+      }
+    },
+    {
+      "id": "map",
+      "name": "地图",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topLeft",
+      "offset": [0.136, 0.147],
+      "inputs": {
+        "press": "KeyM"
+      }
+    },
+    {
+      "id": "missions",
+      "name": "任务列表",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topLeft",
+      "offset": [0.045, 0.248],
+      "inputs": {
+        "press": "KeyJ"
+      }
+    },
+    {
+      "id": "missionTrack",
+      "name": "任务追踪",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topLeft",
+      "offset": [0.152, 0.328],
+      "inputs": {
+        "press": "KeyV"
+      }
+    },
+    {
+      "id": "characterMenu",
+      "name": "角色",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.083, 0.049],
+      "inputs": {
+        "press": "KeyC"
+      }
+    },
+    {
+      "id": "teamSetup",
+      "name": "编队",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.168, 0.049],
+      "inputs": {
+        "press": "KeyT"
+      }
+    },
+    {
+      "id": "inventory",
+      "name": "背包",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.253, 0.049],
+      "inputs": {
+        "press": "KeyB"
+      }
+    },
+    {
+      "id": "warpMenu",
+      "name": "跃迁",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.339, 0.049],
+      "inputs": {
+        "press": "F3"
+      }
+    },
+    {
+      "id": "guideMenu",
+      "name": "星际和平指南",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.424, 0.049],
+      "inputs": {
+        "press": "F4"
+      }
+    },
+    {
+      "id": "honorMenu",
+      "name": "无名勋礼",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.512, 0.049],
+      "inputs": {
+        "press": "F2"
+      }
+    },
+    {
+      "id": "eventsMenu",
+      "name": "旅情事记",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.595, 0.049],
+      "inputs": {
+        "press": "F1"
+      }
+    },
+    {
+      "id": "storeMenu",
+      "name": "商店",
+      "type": "tap",
+      "when": "!inCombat",
+      "anchor": "topRight",
+      "offset": [-0.683, 0.049],
+      "inputs": {
+        "press": "F5"
+      }
+    },
+    {
+      "id": "basicAtk",
+      "name": "战斗普攻",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.285, -0.155],
+      "inputs": {
+        "press": "KeyQ"
+      }
+    },
+    {
+      "id": "skill",
+      "name": "战斗战技",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.115, -0.247],
+      "inputs": {
+        "press": "KeyE"
+      }
+    },
+    {
+      "id": "confirmCast",
+      "name": "确认释放 (空格)",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomRight",
+      "offset": [-0.285, -0.155],
+      "inputs": {
+        "press": "Space"
+      }
+    },
+    {
+      "id": "ult1",
+      "name": "终结技 1",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.301, -0.181],
+      "inputs": {
+        "press": "Digit1"
+      }
+    },
+    {
+      "id": "ult2",
+      "name": "终结技 2",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.536, -0.181],
+      "inputs": {
+        "press": "Digit2"
+      }
+    },
+    {
+      "id": "ult3",
+      "name": "终结技 3",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.771, -0.187],
+      "inputs": {
+        "press": "Digit3"
+      }
+    },
+    {
+      "id": "ult4",
+      "name": "终结技 4",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [1.005, -0.181],
+      "inputs": {
+        "press": "Digit4"
+      }
+    },
+    {
+      "id": "battleSpeed",
+      "name": "二倍速",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "topRight",
+      "offset": [-0.275, 0.051],
+      "inputs": {
+        "press": "KeyB"
+      }
+    },
+    {
+      "id": "autoBattle",
+      "name": "自动战斗",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "topRight",
+      "offset": [-0.163, 0.051],
+      "inputs": {
+        "press": "KeyV"
+      }
+    },
+    {
+      "id": "battlePause",
+      "name": "战斗暂停",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "topRight",
+      "offset": [-0.061, 0.051],
+      "inputs": {
+        "press": "Escape"
+      }
+    },
+    {
+      "id": "allyInfo",
+      "name": "战斗实况 / 我方详情",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.064, -0.237],
+      "inputs": {
+        "press": "KeyC"
+      }
+    },
+    {
+      "id": "enemyInfo",
+      "name": "敌方详情",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "bottomLeft",
+      "offset": [0.064, -0.162],
+      "inputs": {
+        "press": "KeyZ"
+      }
+    },
+    {
+      "id": "targetLeft",
+      "name": "左侧目标",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "center",
+      "offset": [-0.24, -0.09],
+      "inputs": {
+        "press": "KeyA"
+      }
+    },
+    {
+      "id": "targetRight",
+      "name": "右侧目标",
+      "type": "tap",
+      "when": "inCombat",
+      "anchor": "center",
+      "offset": [0.24, -0.09],
+      "inputs": {
+        "press": "KeyD"
+      }
+    }
+  ]
+}

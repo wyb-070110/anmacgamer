@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.App
 
 Column {
     id: block
@@ -30,8 +30,8 @@ Column {
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         textFormat: Text.PlainText
-        text: block.offline ? qsTr("Connect this computer to the phone's Wi-Fi to connect GameScrcpy Companion")
-                            : qsTr("Scan with GameScrcpy Companion to connect")
+        text: block.offline ? qsTr("Connect this computer to the phone's Wi-Fi to connect anmacgamer Companion")
+                            : qsTr("Scan with anmacgamer Companion to connect")
         color: Theme.colors.textSecondary
         font.pixelSize: Theme.type.label.size
         font.weight: Font.DemiBold

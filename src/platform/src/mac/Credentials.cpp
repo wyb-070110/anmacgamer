@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Saved secrets on macOS: generic passwords in the user's login keychain, service "GameScrcpy", one account per
 // target. Errors are OSStatus codes in a category of their own; a missing item is errSecItemNotFound.
 #include "gs/platform/Credentials.h"

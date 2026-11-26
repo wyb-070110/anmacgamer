@@ -33,6 +33,14 @@ constexpr auto kKeyNames = std::to_array<Names>({
     {"NumpadEnter", "Num Enter"},
 });
 
+// On a Mac keyboard the keys carry their Mac names: Option and Command rather than Alt and Win.
+constexpr auto kMacKeyNames = std::to_array<Names>({
+    {"ShiftLeft", "\u21E7 Shift"},    {"ShiftRight", "\u21E7 Shift"},   {"ControlLeft", "\u2303 Control"},
+    {"ControlRight", "\u2303 Control"}, {"AltLeft", "\u2325 Option"},    {"AltRight", "\u2325 Option"},
+    {"MetaLeft", "\u2318 Command"},   {"MetaRight", "\u2318 Command"},  {"Backspace", "\u232B Delete"},
+    {"Delete", "\u2326"},             {"CapsLock", "\u21EA Caps"},
+});
+
 constexpr auto kGamepadNames = std::to_array<Names>({
     {"LeftShoulder", "LB"}, {"RightShoulder", "RB"}, {"LeftThumb", "L3"},   {"RightThumb", "R3"},
     {"LeftTrigger", "LT"},  {"RightTrigger", "RT"},  {"LeftStick", "LS"},   {"RightStick", "RS"},
@@ -57,6 +65,11 @@ QString keyboardText(input::InputSource source, std::string_view name)
     if (name.starts_with(kNumpadPrefix) && name.size() == kNumpadPrefix.size() + 1) {
         return QStringLiteral("Num") + QChar::fromLatin1(name.back());
     }
+#if defined(Q_OS_MACOS)
+    if (std::ranges::any_of(kMacKeyNames, [&](const Names& entry) { return entry.first == name; })) {
+        return lookup(name, kMacKeyNames);
+    }
+#endif
     const bool named = std::ranges::any_of(kKeyNames, [&](const Names& entry) { return entry.first == name; });
     if (!named) {
         if (const std::optional<std::uint16_t> code = input::scanCodeOf(source)) {
@@ -190,14 +203,23 @@ QString extensionText(std::string_view name)
 std::vector<KeyLabel> keyCaps(const input::Chord& chord)
 {
     std::vector<KeyLabel> caps;
+#if defined(Q_OS_MACOS)
+    const QString ctrl = QStringLiteral(u"\u2303 Control");
+    const QString shift = QStringLiteral(u"\u21E7 Shift");
+    const QString alt = QStringLiteral(u"\u2325 Option");
+#else
+    const QString ctrl = QStringLiteral("Ctrl");
+    const QString shift = QStringLiteral("Shift");
+    const QString alt = QStringLiteral("Alt");
+#endif
     if ((chord.modifiers & input::modifier::kCtrl) != 0) {
-        caps.push_back({QStringLiteral("Ctrl"), false});
+        caps.push_back({ctrl, false});
     }
     if ((chord.modifiers & input::modifier::kShift) != 0) {
-        caps.push_back({QStringLiteral("Shift"), false});
+        caps.push_back({shift, false});
     }
     if ((chord.modifiers & input::modifier::kAlt) != 0) {
-        caps.push_back({QStringLiteral("Alt"), false});
+        caps.push_back({alt, false});
     }
     const std::string name = input::sourceName(chord.source);
     switch (chord.source.device) {

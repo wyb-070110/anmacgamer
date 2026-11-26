@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The character a key types with no modifier in the current keyboard layout, on macOS (UCKeyTranslate).
 #include "gs/platform/KeyboardLayout.h"
 

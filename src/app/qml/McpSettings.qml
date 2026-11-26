@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 SettingCard {
     id: card
@@ -31,7 +31,7 @@ SettingCard {
         visible: allowed.matched
         divider: true
         title: qsTr("Approved clients")
-        description: qsTr("The clients you allowed and asked GameScrcpy to remember. They connect without asking again; "
+        description: qsTr("The clients you allowed and asked anmacgamer to remember. They connect without asking again; "
                           + "removing one disconnects it at once.")
         note: McpServer.clients.length === 0 ? qsTr("None yet.") : ""
         below: Repeater {
@@ -82,7 +82,7 @@ SettingCard {
         visible: allowed.matched && McpServer.allowedNow.length > 0
         divider: true
         title: qsTr("Allowed without asking")
-        description: qsTr("Until GameScrcpy closes, these clients run scripts or use tools without asking you each "
+        description: qsTr("Until anmacgamer closes, these clients run scripts or use tools without asking you each "
                           + "time. Take one back to be asked again.")
         below: Repeater {
             model: McpServer.allowedNow
@@ -134,7 +134,7 @@ SettingCard {
         visible: allowed.matched
         divider: true
         title: qsTr("Configuration for AI clients")
-        description: qsTr("Copies what an AI client, such as Claude Desktop or Cursor, needs to start GameScrcpy's MCP "
+        description: qsTr("Copies what an AI client, such as Claude Desktop or Cursor, needs to start anmacgamer's MCP "
                           + "server. Paste it into the client's MCP settings.")
         note: card.copied ? qsTr("Copied. Paste it into the AI client's MCP settings.") : ""
 
@@ -153,7 +153,7 @@ SettingCard {
         visible: allowed.matched
         divider: true
         title: qsTr("Skill for AI coding apps")
-        description: qsTr("Installs a short guide that teaches Cursor and Claude Code how to work with GameScrcpy: what "
+        description: qsTr("Installs a short guide that teaches Cursor and Claude Code how to work with anmacgamer: what "
                           + "to ask you first, which tools to use and how to check their work.")
         note: card.skillNote
 

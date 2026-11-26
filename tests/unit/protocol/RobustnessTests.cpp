@@ -37,7 +37,7 @@ TEST_CASE("decoders never read out of bounds on mutated or random input")
 {
     std::mt19937 rng{20261001U};
     const std::vector<Bytes> seeds{
-        fromHex("01010000000b000101000080008000ffff"),
+        fromHex("01010000000f000101000080008000ffff00000000"),
         fromHex("8001000000164753435000010001020304050607080900010203040506"),
         fromHex("0103000000070005616263"),
         fromHex("02000001000000000000000000000000000000000000000e01043809600000000004380960"),
@@ -82,13 +82,13 @@ TEST_CASE("input messages encode into a caller-provided buffer without allocatin
     const TouchFrame frame{.videoSession = 7,
                            .points = {TouchPoint{.action = TouchAction::Move, .pointerId = 3,
                                                  .x = 100, .y = 200, .pressure = 0xFFFF}}};
-    std::array<std::uint8_t, kFrameHeaderSize + 11> buffer{};
+    std::array<std::uint8_t, kFrameHeaderSize + 15> buffer{};
     const auto written = encodeFrameInto(frame, buffer);
     REQUIRE(written.has_value());
     CHECK(*written == buffer.size());
-    CHECK(gs::protocol::testing::toHex(buffer) == "01010000000b0007010203006400c8ffff");
+    CHECK(gs::protocol::testing::toHex(buffer) == "01010000000f0007010203006400c8ffff00000000");
 
-    std::array<std::uint8_t, kFrameHeaderSize + 10> tooSmall{};
+    std::array<std::uint8_t, kFrameHeaderSize + 14> tooSmall{};
     const auto rejected = encodeFrameInto(frame, tooSmall);
     REQUIRE_FALSE(rejected.has_value());
     CHECK(rejected.error() == EncodeError::BufferTooSmall);
@@ -181,12 +181,12 @@ TEST_CASE("the encoder refuses to produce frames the decoder would reject")
 
 TEST_CASE("frame headers can be validated before the payload arrives")
 {
-    const Bytes frame = fromHex("01010000000b000101000080008000ffff");
+    const Bytes frame = fromHex("01010000000f000101000080008000ffff00000000");
     const auto header = decodeFrameHeader(FrameContext::Control, Direction::ToServer,
                                           std::span<const std::uint8_t>(frame).first(kFrameHeaderSize));
     REQUIRE(header.has_value());
     CHECK(header->type == static_cast<std::uint16_t>(MessageType::TouchFrame));
-    CHECK(header->length == 11);
+    CHECK(header->length == 15);
 }
 
 TEST_CASE("the companion context admits its own messages and the keep-alive messages only")

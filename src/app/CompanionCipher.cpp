@@ -70,7 +70,7 @@ Expected<std::uint8_t, LanError> checkHead(std::span<const std::uint8_t> bytes, 
     if (bytes.size() < size) {
         return makeUnexpected(LanError::Truncated);
     }
-    if (!std::equal(kLanMagic.begin(), kLanMagic.end(), bytes.begin())) {
+    if (!std::equal(kLanMagic.begin(), kLanMagic.end(), bytes.begin()) && !isMirrorHello(bytes)) {
         return makeUnexpected(LanError::BadMagic);
     }
     if (bytes[4] != kLanVersion) {
@@ -271,9 +271,15 @@ Expected<LanHello, LanError> decodeLanHello(std::span<const std::uint8_t> bytes)
     return hello;
 }
 
-std::vector<std::uint8_t> encodeLanReply(const LanReply& reply)
+bool isMirrorHello(std::span<const std::uint8_t> head) noexcept
 {
-    std::vector<std::uint8_t> out(kLanMagic.begin(), kLanMagic.end());
+    return head.size() >= kMirrorMagic.size() && std::equal(kMirrorMagic.begin(), kMirrorMagic.end(), head.begin());
+}
+
+std::vector<std::uint8_t> encodeLanReply(const LanReply& reply, bool mirror)
+{
+    std::vector<std::uint8_t> out = mirror ? std::vector<std::uint8_t>(kMirrorMagic.begin(), kMirrorMagic.end())
+                                           : std::vector<std::uint8_t>(kLanMagic.begin(), kLanMagic.end());
     out.push_back(kLanVersion);
     out.push_back(static_cast<std::uint8_t>(reply.status));
     out.insert(out.end(), reply.pc.begin(), reply.pc.end());
@@ -302,6 +308,19 @@ LanKey lanSessionKey(const LanKey& key, std::span<const std::uint8_t> hello, std
     return platform::hmacSha256(key, {bytesOf(kLanContext), hello, reply});
 }
 
+LanKey mirrorSessionKey(const LanKey& key, std::span<const std::uint8_t> hello, std::span<const std::uint8_t> reply)
+{
+    return platform::hmacSha256(key, {bytesOf(kMirrorContext), hello, reply});
+}
+
+MirrorToken mirrorToken(const LanKey& session)
+{
+    const auto digest = platform::hmacSha256(session, {bytesOf(kMirrorTokenContext)});
+    MirrorToken token{};
+    std::copy_n(digest.begin(), token.size(), token.begin());
+    return token;
+}
+
 LanSealer::LanSealer(const LanKey& session, LanDirection direction, std::uint64_t counter) noexcept
     : m_key(session), m_direction(direction), m_counter(counter)
 {
@@ -318,8 +337,8 @@ std::vector<std::uint8_t> LanSealer::seal(std::span<const std::uint8_t> frame)
     return record;
 }
 
-LanOpener::LanOpener(const LanKey& session, LanDirection direction, std::uint64_t counter) noexcept
-    : m_key(session), m_direction(direction), m_counter(counter)
+LanOpener::LanOpener(const LanKey& session, LanDirection direction, std::uint64_t counter, bool mirror) noexcept
+    : m_key(session), m_direction(direction), m_counter(counter), m_mirror(mirror)
 {
 }
 
@@ -332,10 +351,19 @@ Expected<std::uint32_t, LanError> LanOpener::recordLength(const LanPrefix& prefi
     return length;
 }
 
+Expected<std::uint32_t, LanError> LanOpener::mirrorRecordLength(const LanPrefix& prefix) noexcept
+{
+    const std::uint32_t length = loadBigEndian<std::uint32_t>(prefix);
+    if (length < kMirrorMinRecord || length > kMirrorMaxRecord) {
+        return makeUnexpected(LanError::OutOfRange);
+    }
+    return length;
+}
+
 Expected<std::vector<std::uint8_t>, LanError> LanOpener::open(const LanPrefix& prefix,
                                                                std::span<const std::uint8_t> body)
 {
-    const auto length = recordLength(prefix);
+    const auto length = m_mirror ? mirrorRecordLength(prefix) : recordLength(prefix);
     if (!length) {
         return makeUnexpected(length.error());
     }

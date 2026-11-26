@@ -1,7 +1,7 @@
 import QtQuick
 import QtTest
-import GameScrcpy.Theme
-import GameScrcpy.Blueprint
+import Anmacgamer.Theme
+import Anmacgamer.Blueprint
 
 Item {
     id: root

@@ -57,13 +57,20 @@ class LanConnector(
         fun paired(pairing: Pairing)
     }
 
-    private class Joined(val connection: LanConnection, val pc: ByteArray)
+    private sealed interface Outcome {
+        class Joined(val connection: LanConnection, val pc: ByteArray) : Outcome
+
+        class OtherPc(val pc: String) : Outcome
+
+        data object Failed : Outcome
+    }
 
     private val lock = ReentrantLock()
     private val changed = lock.newCondition()
     private val random = SecureRandom()
     private var running = true
     private var nudged = false
+    private var resetBackoff = false
     private var pending: QrLink? = null
     private var worker: Thread? = null
 
@@ -79,6 +86,7 @@ class LanConnector(
                 pending = link
             }
             nudged = true
+            resetBackoff = true
             changed.signalAll()
             if (worker == null) {
                 worker = Thread(::run, "companion-lan").also {
@@ -95,21 +103,29 @@ class LanConnector(
     fun nudge() {
         lock.withLock {
             nudged = true
+            resetBackoff = true
+            changed.signalAll()
+        }
+    }
+
+    fun stop() {
+        lock.withLock {
+            running = false
             changed.signalAll()
         }
     }
 
     override fun close() {
-        lock.withLock {
-            running = false
-            changed.signalAll()
-        }
+        stop()
         current?.close()
     }
 
     private fun run() {
         var backoff = timing.firstBackoffMillis
         while (isRunning()) {
+            if (takeBackoffReset()) {
+                backoff = timing.firstBackoffMillis
+            }
             val link = takePending()
             val connection = if (link != null) {
                 events.state(LanState.PAIRING)
@@ -154,7 +170,11 @@ class LanConnector(
                 }
                 events.state(LanState.SEARCHING)
                 pause(backoff)
-                backoff = (backoff * 2).coerceAtMost(timing.mostBackoffMillis)
+                backoff = if (takeBackoffReset()) {
+                    timing.firstBackoffMillis
+                } else {
+                    (backoff * 2).coerceAtMost(timing.mostBackoffMillis)
+                }
                 continue
             }
             val paired = pairings.all().isNotEmpty()
@@ -171,13 +191,17 @@ class LanConnector(
             }
             events.state(if (link != null) LanState.FAILED else LanState.SEARCHING)
             pause(backoff)
-            backoff = (backoff * 2).coerceAtMost(timing.mostBackoffMillis)
+            backoff = if (takeBackoffReset()) {
+                timing.firstBackoffMillis
+            } else {
+                (backoff * 2).coerceAtMost(timing.mostBackoffMillis)
+            }
         }
         lock.withLock { worker = null }
     }
 
     private fun pair(link: QrLink): LanConnection? {
-        val joined = join(link.host, link.port, link.token, link.key, null) ?: return null
+        val joined = join(link.host, link.port, link.token, link.key, null) as? Outcome.Joined ?: return null
         val pairing = Pairing(Hex.encode(joined.pc), Hex.encode(link.key), link.host, link.port)
         pairings.remember(pairing)
         events.paired(pairing)
@@ -189,8 +213,25 @@ class LanConnector(
         if (known.isEmpty()) {
             return null
         }
+        val byPc = known.associateBy { it.pc }
+        val seenAt = HashMap<LanAddress, String>()
         for (pairing in known) {
-            attempt(pairing, pairing.host, pairing.port)?.let { return it }
+            val endpoint = LanAddress(pairing.host, pairing.port)
+            val seen = seenAt[endpoint]
+            if (seen != null && seen != pairing.pc) {
+                continue
+            }
+            when (val outcome = attemptOutcome(pairing, pairing.host, pairing.port)) {
+                is Outcome.Joined -> return outcome.connection
+                is Outcome.OtherPc -> {
+                    seenAt[endpoint] = outcome.pc
+                    val actual = byPc[outcome.pc]
+                    if (actual != null) {
+                        (attemptOutcome(actual, pairing.host, pairing.port) as? Outcome.Joined)?.let { return it.connection }
+                    }
+                }
+                Outcome.Failed -> Unit
+            }
             if (!isRunning() || hasPending()) {
                 return null
             }
@@ -201,20 +242,22 @@ class LanConnector(
             if (address.host == pairing.host && address.port == pairing.port) {
                 continue
             }
-            attempt(pairing, address.host, address.port)?.let { return it }
+            (attemptOutcome(pairing, address.host, address.port) as? Outcome.Joined)?.let { return it.connection }
         }
         return null
     }
 
-    private fun attempt(pairing: Pairing, host: String, port: Int): LanConnection? {
-        val joined = join(host, port, "", pairing.keyBytes, pairing.pcBytes) ?: return null
-        pairings.remember(pairing.copy(host = host, port = port))
-        return joined.connection
+    private fun attemptOutcome(pairing: Pairing, host: String, port: Int): Outcome {
+        val outcome = join(host, port, "", pairing.keyBytes, pairing.pcBytes)
+        if (outcome is Outcome.Joined) {
+            pairings.remember(pairing.copy(host = host, port = port))
+        }
+        return outcome
     }
 
-    private fun join(host: String, port: Int, token: String, key: ByteArray, expectedPc: ByteArray?): Joined? {
+    private fun join(host: String, port: Int, token: String, key: ByteArray, expectedPc: ByteArray?): Outcome {
         if (key.size != LanCodec.KEY_SIZE) {
-            return null
+            return Outcome.Failed
         }
         val socket = Socket()
         try {
@@ -229,25 +272,33 @@ class LanConnector(
             val answer = ByteArray(LanCodec.REPLY_SIZE)
             DataInputStream(socket.getInputStream()).readFully(answer)
             val reply = LanCodec.parseReply(answer)
-            if (reply.status != LanStatus.ACCEPTED || (expectedPc != null && !reply.pc.contentEquals(expectedPc))) {
+            if (reply.status != LanStatus.ACCEPTED) {
                 socket.close()
-                return null
+                return Outcome.Failed
+            }
+            if (expectedPc != null && !reply.pc.contentEquals(expectedPc)) {
+                socket.close()
+                return Outcome.OtherPc(Hex.encode(reply.pc))
             }
             socket.soTimeout = 0
             val session = LanCodec.sessionKey(key, hello, answer)
-            return Joined(LanConnection(socket, session, Hex.encode(reply.pc)), reply.pc)
+            return Outcome.Joined(LanConnection(socket, session, Hex.encode(reply.pc), key.copyOf()), reply.pc)
         } catch (e: IOException) {
             runCatching { socket.close() }
-            return null
+            return Outcome.Failed
         } catch (e: IllegalArgumentException) {
             runCatching { socket.close() }
-            return null
+            return Outcome.Failed
         }
     }
 
     private fun isRunning(): Boolean = lock.withLock { running }
 
     private fun hasPending(): Boolean = lock.withLock { pending != null }
+
+    private fun takeBackoffReset(): Boolean = lock.withLock {
+        resetBackoff.also { resetBackoff = false }
+    }
 
     private fun takePending(): QrLink? = lock.withLock {
         nudged = false

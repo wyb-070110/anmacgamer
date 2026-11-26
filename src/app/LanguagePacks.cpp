@@ -178,7 +178,7 @@ void LanguagePacks::apply()
     if (m_qt.load(u"qtbase_"_s + (pack != nullptr ? pack->locale : language), u":/i18n/qt"_s)) {
         QCoreApplication::installTranslator(&m_qt);
     }
-    if (m_builtin.load(u"gamescrcpy_"_s + (pack != nullptr ? u"en"_s : language), u":/i18n"_s)) {
+    if (m_builtin.load(u"anmacgamer_"_s + (pack != nullptr ? u"en"_s : language), u":/i18n"_s)) {
         QCoreApplication::installTranslator(&m_builtin);
     }
     if (pack != nullptr) {

@@ -65,6 +65,8 @@ public:
 
     [[nodiscard]] QVariantMap values() const;
     Q_INVOKABLE bool setValue(const QString& path, const QVariant& value);
+    // Puts one setting back to its default.
+    Q_INVOKABLE bool resetValue(const QString& path);
     [[nodiscard]] QVariantMap overrides() const;
     Q_INVOKABLE bool setDeviceValue(const QString& id, const QString& path, const QVariant& value);
     Q_INVOKABLE void resetDeviceValue(const QString& id, const QString& path);

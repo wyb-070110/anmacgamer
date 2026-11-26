@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.App
+import Anmacgamer.App
 
 UiPanelView {
     id: block

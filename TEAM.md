@@ -2,6 +2,8 @@
 
 > 由 Claude（总协调）维护。用户只和 Claude 对接：有问题、要下载、要用户在 Mac 上点授权，都写进自己的日志里，由 Claude 汇总后去问用户。
 > 现状、构建命令、代码红线见根目录 `HANDOFF.md` 与 `AGENTS.md`，开工前先读这两份。
+> 仓库（2026-11-26 起）：`origin` = 私有的 `wyb-070110/anmacgamer`（代码和发布都在这里）；`public` = 旧的公开仓库
+> `wyb-070110/GameScrcpy-macos`（不再推送）；`upstream` = `NuoRan/GameScrcpy`。只有 Claude 推送，且要用户同意。
 
 ## 1. 角色
 
@@ -69,5 +71,17 @@ Antigravity 的模型：**Gemini 4 Carbon (Medium)**（Claude 系列在你的套
 | G7 | **macOS 版更新说明草稿**（中英）：从 `git log` 里本分支的提交整理出用户看得懂的变化列表，不写内部细节 | `docs/handoff/gemini/release-notes-macos.md` |
 
 G4 → G5 → G6 → G7 按顺序做，每篇开头写日期和结论，做完在 `docs/handoff/gemini/README.md` 记一笔。
+
+#### 第三批
+
+| # | 任务 | 产出 |
+|---|---|---|
+| G8 | **App 图标：你来定风格、出方案**。用户请你按用途来决定，不受现有标志限制。<br>**用途**：GameScrcpy for macOS 把安卓手机（以游戏为主）投到 Mac 上，用 Mac 的键盘、鼠标、触控板和手柄来玩、来操作手机；低延迟、原画质、高刷新率；还能做键位映射、自动化脚本和录屏。用户是想在 Mac 上玩手机游戏、或用 Mac 操作手机的人。软件界面是 macOS 26 的 Liquid Glass 风格，强调色是系统蓝 #0A84FF。<br>**限制**：macOS 26 及以后用 Icon Composer 分层图标（一个背景填充 + 最多 4 组前景图层；图层是 1024×1024 的透明 PNG 或 SVG；系统自己加圆角形状、边距、玻璃高光和阴影）；不能有文字；16 px 时还要认得出；不用安卓机器人、任何品牌标志或游戏角色。现在的临时标志是 `docs/images/logo.png`（横放的手机 + 准星），可以参考，也可以推翻。<br>**要交**：3–5 个方向，每个写清寓意、构图、颜色（具体色值）以及为什么适合这个用途；能出图就把概念图放进 `docs/handoff/gemini/icon/`；最后推荐一个，并把它拆成图层（背景色或渐变、每层画什么、位置和大小），让 Claude 照着做成 Icon Composer 图标 | `docs/handoff/gemini/icon.md`（+ `icon/` 概念图） |
+
+#### 第四批（2026-11-26，Antigravity 没额度，用户请 Claude 和 Gemini 配合）
+
+| # | 任务 | 产出 |
+|---|---|---|
+| G9 | **文档改成英文为主、去掉 AI 味，并改用新名字 anmacgamer**。项目已改名 **anmacgamer**（程序、窗口、DMG 都会叫这个名字；上游 NuoRan/GameScrcpy 的出处、许可证与致谢必须保留原样）。<br>**范围**：仓库根目录的 `README.md`、`README.en.md`、`CONTRIBUTING*.md`、`SECURITY.md`、`CODE_OF_CONDUCT.md`（行为准则正文是公约原文，只改前言）、`LICENSING.md`（只改文字，许可证事实一个字都不能变）、`CHANGELOG.md` 里本 macOS 版的部分、`docs/README.md`、`docs/macos-port.md`、`docs/architecture.md`、`docs/extensions/*.md`。<br>**要求**：① 英文版做主：`README.md` 变成英文，中文版改名 `README.zh-CN.md`（其他成对的 `*.en.md` 同理：英文去掉 `.en` 作主文件，中文加 `.zh-CN`），两份互相链接、内容一致。② 去 AI 味：不要套话、营销腔、排比、emoji、"强大/无缝/一站式"之类的词，不要每段都加粗；句子短，直接说能做什么、怎么做；功能列表只写已经做好、测过的（看 `git log` 和 `docs/macos-port.md`），没做完的写在"Not yet"里。③ 链接、代码块、命令、文件路径保持可用（改了文件名就把所有指向它的链接一起改）。<br>**不要动**：`protocol/SPEC.md`、`docs/handoff/` 下别人的文件、`src/` 下的任何文件（程序内帮助 `src/app/help/` 由 Claude 处理）、`TEAM.md`。<br>**交付**：直接改上面这些文件（不提交 git，Claude 审阅后提交）；在 `docs/handoff/gemini/README.md` 记一笔：改了哪些文件、重命名了哪些、哪里拿不准。 | 上述文件 |
 
 Gemini 桌面版如果不能直接写文件，就把成文的 Markdown 交给用户，存到上面的路径即可，Claude 会读。

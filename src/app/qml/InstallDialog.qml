@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Dialog {
     id: dialog
@@ -33,12 +33,12 @@ Dialog {
     readonly property bool madeForOlder: dialog.problems.some(problem => problem.code === "host-api-outdated")
     readonly property string compatibilityText: [
         dialog.needsNewer ? (dialog.writtenFor !== ""
-                             ? qsTr("Made for GameScrcpy %1; needs a newer GameScrcpy").arg(dialog.writtenFor)
-                             : qsTr("Needs a newer GameScrcpy")) : "",
+                             ? qsTr("Made for anmacgamer %1; needs a newer anmacgamer").arg(dialog.writtenFor)
+                             : qsTr("Needs a newer anmacgamer")) : "",
         dialog.madeForOlder ? (dialog.writtenFor !== ""
-                               ? qsTr("Made for GameScrcpy %1; does not work with %2").arg(dialog.writtenFor)
+                               ? qsTr("Made for anmacgamer %1; does not work with %2").arg(dialog.writtenFor)
                                      .arg(ExtensionHost.hostVersion)
-                               : qsTr("Made for an older GameScrcpy")) : ""
+                               : qsTr("Made for an older anmacgamer")) : ""
     ].filter(part => part !== "").join(" · ")
     readonly property var security: info.security ?? ({})
     readonly property bool nativeCode: dialog.security.native === true
@@ -122,7 +122,7 @@ Dialog {
                     textFormat: Text.PlainText
                     text: [dialog.version !== "" ? qsTr("Version %1").arg(dialog.version) : "",
                            dialog.authors.length > 0 ? qsTr("By %1").arg(dialog.authors.join(qsTr(", ", "list separator"))) : "",
-                           dialog.writtenFor !== "" ? qsTr("Made for GameScrcpy %1").arg(dialog.writtenFor) : ""]
+                           dialog.writtenFor !== "" ? qsTr("Made for anmacgamer %1").arg(dialog.writtenFor) : ""]
                           .filter(part => part !== "").join(" · ")
                     color: Theme.colors.textSecondary
                     font.pixelSize: Theme.type.caption.size
@@ -205,7 +205,7 @@ Dialog {
                 visible: dialog.compatibilityText !== ""
                 tone: "bad"
                 title: dialog.compatibilityText
-                detail: qsTr("Ask its author for a version made for this GameScrcpy, or check for updates.")
+                detail: qsTr("Ask its author for a version made for this anmacgamer, or check for updates.")
             }
 
             Column {
@@ -340,7 +340,7 @@ Dialog {
                 Text {
                     width: parent.width
                     textFormat: Text.PlainText
-                    text: qsTr("GameScrcpy checked this code before installing:")
+                    text: qsTr("anmacgamer checked this code before installing:")
                     color: Theme.colors.textSecondary
                     font.pixelSize: Theme.type.caption.size
                     wrapMode: Text.Wrap

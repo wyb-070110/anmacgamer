@@ -283,6 +283,7 @@ gs_add_unit_test(gs_session_tests
         fakes/RecordingListener.h
         unit/adb/FakeAdbServer.h
         unit/session/AdbServerHostTests.cpp
+        unit/session/CompanionMirrorTests.cpp
         unit/session/DatagramVectors.h
         unit/session/DirectHandshakeTests.cpp
         unit/session/DirectTransportTests.cpp

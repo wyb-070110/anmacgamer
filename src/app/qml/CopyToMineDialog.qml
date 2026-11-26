@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Controls
 
 Dialog {
     id: dialog
@@ -30,7 +30,7 @@ Dialog {
         width: parent.width
         textFormat: Text.PlainText
         wrapMode: Text.Wrap
-        text: qsTr("After copying, its code runs in GameScrcpy and can do what your own logic can do.")
+        text: qsTr("After copying, its code runs in anmacgamer and can do what your own logic can do.")
         color: Theme.colors.textSecondary
         font.pixelSize: Theme.type.body.size
     }

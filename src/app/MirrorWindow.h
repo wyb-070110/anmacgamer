@@ -66,6 +66,9 @@ public:
     [[nodiscard]] bool fullScreen() const noexcept { return m_fullScreen; }
     void setMini(bool on);
     [[nodiscard]] bool mini() const noexcept { return m_mini; }
+    // Above the windows of every app and on every desktop (the mini window always is).
+    void setOnTop(bool on);
+    [[nodiscard]] bool onTop() const noexcept { return m_onTop; }
     void setEditor(ProfileEditor* editor);
     [[nodiscard]] ProfileEditor* editor() const noexcept { return m_editor; }
     [[nodiscard]] bool editing() const noexcept { return m_editor != nullptr; }
@@ -163,6 +166,7 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
+    void applyOnTop();
     bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) override;
     void restOnTitle(bool resting);
     void titleRested();
@@ -215,6 +219,7 @@ private:
     bool m_restoreMaximized = false;
     QRect m_normalGeometry;
     bool m_mini = false;
+    bool m_onTop = false;
     Qt::WindowStates m_miniStates;
     QRect m_miniRestore;
     std::optional<QPoint> m_miniPosition;

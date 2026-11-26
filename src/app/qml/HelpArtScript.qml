@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
 
 Item {
     id: art

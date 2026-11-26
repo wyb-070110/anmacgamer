@@ -3,8 +3,8 @@
 IDI_ICON1 ICON "@GS_APP_ICON@"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION @GameScrcpy_VERSION_MAJOR@,@GameScrcpy_VERSION_MINOR@,@GameScrcpy_VERSION_PATCH@,0
- PRODUCTVERSION @GameScrcpy_VERSION_MAJOR@,@GameScrcpy_VERSION_MINOR@,@GameScrcpy_VERSION_PATCH@,0
+ FILEVERSION @anmacgamer_VERSION_MAJOR@,@anmacgamer_VERSION_MINOR@,@anmacgamer_VERSION_PATCH@,0
+ PRODUCTVERSION @anmacgamer_VERSION_MAJOR@,@anmacgamer_VERSION_MINOR@,@anmacgamer_VERSION_PATCH@,0
  FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
  FILEFLAGS 0x0L
  FILEOS VOS_NT_WINDOWS32
@@ -17,12 +17,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "GameScrcpy"
             VALUE "FileDescription", "GameScrcpy"
-            VALUE "FileVersion", "@GameScrcpy_VERSION@"
+            VALUE "FileVersion", "@anmacgamer_VERSION@"
             VALUE "InternalName", "GameScrcpy"
             VALUE "LegalCopyright", "Licensed under the Apache License 2.0"
             VALUE "OriginalFilename", "GameScrcpy.exe"
             VALUE "ProductName", "GameScrcpy"
-            VALUE "ProductVersion", "@GameScrcpy_VERSION@"
+            VALUE "ProductVersion", "@anmacgamer_VERSION@"
         END
     END
     BLOCK "VarFileInfo"

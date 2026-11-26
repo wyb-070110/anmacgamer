@@ -35,6 +35,8 @@ namespace {
 constexpr std::string_view kLog = "session";
 constexpr std::int64_t kProbeSpacingUs = 100'000;
 constexpr std::int64_t kTouchWaitLimitUs = 5'000;
+// How long a lost link waits for the control reader to read what already arrived (a ServerGoodbye) before resuming.
+constexpr std::chrono::milliseconds kGoodbyeDrain{500};
 
 using SteadyClock = std::chrono::steady_clock;
 
@@ -272,8 +274,8 @@ private:
             {
                 std::unique_lock lock(m_eventMutex);
                 m_wake.wait_until(lock, stop, std::min(nextPing, nextReport),
-                                  [this] { return m_fatal.has_value() || m_lost.has_value(); });
-                if (stop.stop_requested()) {
+                                  [this] { return m_serverStopped || m_fatal.has_value() || m_lost.has_value(); });
+                if (stop.stop_requested() || m_serverStopped) {
                     return std::nullopt;
                 }
                 if (m_fatal) {
@@ -314,12 +316,26 @@ private:
     std::optional<SessionFailure> resume(const std::stop_token& stop, SessionFailure lost)
     {
         GS_ASSERT_ON_THREAD(m_onSessionThread);
+        // A phone that ends the session sends ServerGoodbye and then closes the control channel; a Ping sent in
+        // that moment fails and reports the loss before the reader got to the goodbye. Let the reader take what
+        // already arrived (it ends at the channel's end) so a goodbye still ends the session instead of a resume.
+        {
+            std::unique_lock lock(m_eventMutex);
+            m_wake.wait_until(lock, SteadyClock::now() + kGoodbyeDrain,
+                              [this] { return m_controlReaderDone || m_serverStopped; });
+        }
         closeChannels();
+        if (serverStopped()) {
+            return std::nullopt;
+        }
         setPhase(SessionPhase::Reconnecting, lost);
         const auto deadline = SteadyClock::now() + m_options.linger;
         SessionFailure last = std::move(lost);
         bool afterFailure = false;
         while (!stop.stop_requested()) {
+            if (serverStopped()) {
+                return std::nullopt;
+            }
             if (std::optional<SessionFailure> ended = takeFatal()) {
                 return ended;
             }
@@ -354,15 +370,17 @@ private:
         if (requested) {
             setPhase(SessionPhase::Stopping);
         }
-        protocol::Goodbye goodbye;
-        if (!requested) {
-            goodbye.reason = ended && ended->kind == FailureKind::ProtocolError ? protocol::ErrorCode::MalformedFrame
-                                                                                 : protocol::ErrorCode::InternalError;
-        }
-        if (send(goodbye)) {
-            const auto deadline = SteadyClock::now() + m_options.stopGrace;
-            flush(deadline);
-            finishControl(deadline);
+        if (!serverStopped()) {
+            protocol::Goodbye goodbye;
+            if (!requested) {
+                goodbye.reason = ended && ended->kind == FailureKind::ProtocolError ? protocol::ErrorCode::MalformedFrame
+                                                                                    : protocol::ErrorCode::InternalError;
+            }
+            if (send(goodbye)) {
+                const auto deadline = SteadyClock::now() + m_options.stopGrace;
+                flush(deadline);
+                finishControl(deadline);
+            }
         }
         closeChannels();
         m_host->stop(m_options.stopGrace);
@@ -569,6 +587,12 @@ private:
         m_listener.onStateChanged(state);
     }
 
+    bool serverStopped()
+    {
+        const std::lock_guard lock(m_eventMutex);
+        return m_serverStopped;
+    }
+
     std::optional<SessionFailure> takeFatal()
     {
         const std::lock_guard lock(m_eventMutex);
@@ -605,6 +629,16 @@ private:
             if (const auto* pong = std::get_if<protocol::Pong>(&*message)) {
                 onPong(*pong);
             } else if (const auto* goodbye = std::get_if<protocol::ServerGoodbye>(&*message)) {
+                if (goodbye->reason == protocol::ErrorCode::None) {
+                    log::info(kLog, "[{}] the phone ended the session{}", m_id,
+                              goodbye->message.empty() ? "" : std::format(": {}", goodbye->message));
+                    {
+                        const std::lock_guard lock(m_eventMutex);
+                        m_serverStopped = true;
+                    }
+                    m_wake.notify_all();
+                    return;
+                }
                 SessionFailure ended = failure(FailureKind::ServerEnded,
                                                std::format("the server said goodbye ({}): {}",
                                                            protocol::enumName(goodbye->reason), goodbye->message));
@@ -847,6 +881,7 @@ private:
     std::condition_variable_any m_wake;
     std::optional<SessionFailure> m_lost;
     std::optional<SessionFailure> m_fatal;
+    bool m_serverStopped = false;
     bool m_controlReaderDone = true;
 
     std::jthread m_sessionThread;

@@ -58,6 +58,7 @@ enum class TransportKind : std::uint8_t {
     AdbTunnel,
     WifiDirect,
     Extension,
+    Companion,
 };
 
 class Link

@@ -139,7 +139,14 @@ fs::path dataFolder()
         return programFolder() / "data";
     }
     const std::string home = environmentText("HOME");
-    return home.empty() ? fs::path() : pathOf(home) / "Library" / "Application Support" / "GameScrcpy";
+    if (home.empty()) {
+        return {};
+    }
+    const fs::path support = pathOf(home) / "Library" / "Application Support";
+    // Before the app first runs as anmacgamer (and moves the folder), it is still called GameScrcpy.
+    return !fs::exists(support / "anmacgamer", error) && fs::is_directory(support / "GameScrcpy", error)
+               ? support / "GameScrcpy"
+               : support / "anmacgamer";
 }
 
 void writeTo(Stream stream, std::string_view text)

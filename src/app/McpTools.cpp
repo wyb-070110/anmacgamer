@@ -1804,7 +1804,7 @@ McpOutcome McpTools::readLogs(const QJsonObject& given) const
         return args.problem();
     }
     if (m_setup.logFile.empty()) {
-        return failure(QStringLiteral("GS-MCP-010"), QStringLiteral("GameScrcpy keeps no log in this run"));
+        return failure(QStringLiteral("GS-MCP-010"), QStringLiteral("anmacgamer keeps no log in this run"));
     }
     const qsizetype least = level.isEmpty() ? 1 : kLevels.indexOf(level);
     static const QRegularExpression stamped(
@@ -2237,7 +2237,7 @@ McpOutcome McpTools::openDraftPreview(const McpCall& call) const
     }
     if (!m_setup.devices.openDraftPreview) {
         return failure(QStringLiteral("GS-MCP-010"),
-                       QStringLiteral("GameScrcpy cannot show a draft preview in this run"));
+                       QStringLiteral("anmacgamer cannot show a draft preview in this run"));
     }
     QString problem;
     if (!m_setup.devices.openDraftPreview(target, QString(), problem)) {

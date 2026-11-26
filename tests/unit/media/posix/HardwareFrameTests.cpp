@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Decoding with VideoToolbox (macOS): every picture comes back from the GPU, and its luma, luma readings and
 // snapshots match the pictures decoded in software byte for byte. VideoToolbox's chroma is not bit-exact with
 // FFmpeg's (a few values off by a little, carried to the next key frame), so chroma and thumbnails are held to a

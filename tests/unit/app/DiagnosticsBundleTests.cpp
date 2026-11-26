@@ -208,7 +208,7 @@ TEST_CASE("addresses with their ports and hardware addresses go, timestamps, ver
     CHECK(scrubAddresses("adb connect phone.lan:5555 and desktop-1.home:37099") ==
           "adb connect <host>:<port> and <host>:<port>");
     const std::string kept = "2026-10-30 18:58:12.345 info Qt 6.10.1, MSVC 19.44.35207, Windows 10.0.26100\n"
-                             "qrc:/qt/qml/GameScrcpy/App/qml/Main.qml:120:5: warning\n"
+                             "qrc:/qt/qml/Anmacgamer/App/qml/Main.qml:120:5: warning\n"
                              "Main.qml:12 and fps.json:3 and http://example.com/x\n"
                              "QObject::connect: no such signal std::string::size\n"
                              "localhost:5037 at 10:58:12, hash deadbeef:cafe and 3f2a\n"

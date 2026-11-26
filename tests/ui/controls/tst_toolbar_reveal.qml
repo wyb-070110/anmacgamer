@@ -1,7 +1,7 @@
 import QtQuick
 import QtTest
-import GameScrcpy.Theme
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Controls
 
 Item {
     id: root
@@ -87,7 +87,7 @@ Item {
 
         function test_defaultsComeFromTheTheme() {
             const fresh = createTemporaryQmlObject(
-                "import GameScrcpy.Controls\nToolbarRevealArea { toolbar: FloatingToolbar {} }", root)
+                "import Anmacgamer.Controls\nToolbarRevealArea { toolbar: FloatingToolbar {} }", root)
             compare(fresh.dwell, Theme.motion.toolbarDwell)
             compare(fresh.cooldown, Theme.motion.toolbarCooldown)
             compare(fresh.zoneHeight, Theme.size.toolbarReveal)

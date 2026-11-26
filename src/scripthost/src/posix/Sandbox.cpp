@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Starting gs-scripthost off Windows: two pipes, posix_spawn with only those inherited, and the child asked to
 // sandbox itself (macOS: the pure-computation profile, no files, network or other programs) before it reads
 // anything. A process group lets the parent end the child and anything it might start.

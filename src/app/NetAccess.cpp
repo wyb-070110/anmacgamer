@@ -519,7 +519,7 @@ void NetAccess::fetch(const LogicCaller& caller, quint64 id, const QString& json
         const std::string lower = name.toLower().toStdString();
         if (std::ranges::find(kOwnHeaders, std::string_view(lower)) != kOwnHeaders.end() ||
             lower.starts_with("proxy-") || lower.starts_with("sec-")) {
-            refuse(caller.logic, id, invalidWith(QStringLiteral("GameScrcpy sets the header %1 itself").arg(name)));
+            refuse(caller.logic, id, invalidWith(QStringLiteral("anmacgamer sets the header %1 itself").arg(name)));
             return;
         }
         typed = typed || lower == "content-type";

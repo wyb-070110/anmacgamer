@@ -12,6 +12,8 @@ import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.graphics.drawable.Icon
 import android.hardware.display.DisplayManager
+import android.media.projection.MediaProjection
+import android.media.projection.MediaProjectionManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -19,6 +21,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import java.io.IOException
 import kotlin.concurrent.thread
 
@@ -26,6 +29,10 @@ class CompanionService : Service(), ProjectionHost {
     private val main = Handler(Looper.getMainLooper())
     private var capture: ScreenCapture? = null
     private var projectingNow = false
+    private var mirroringNow = false
+
+    @Volatile
+    private var mirror: MirrorServer? = null
     private val permissionWatcher = AppOpsManager.OnOpChangedListener { _, _ -> main.post { refreshOverlay() } }
     private val sink = CursorSink { sample -> overlay?.update(sample) }
     private val hints = object : KeyHintSink {
@@ -69,6 +76,7 @@ class CompanionService : Service(), ProjectionHost {
 
     override fun onCreate() {
         super.onCreate()
+        PhoneSpeaker.restore(this)
         val channel = NotificationChannel(
             CHANNEL,
             getString(R.string.notification_channel),
@@ -79,6 +87,7 @@ class CompanionService : Service(), ProjectionHost {
             .startWatchingMode(AppOpsManager.OPSTR_SYSTEM_ALERT_WINDOW, packageName, permissionWatcher)
         capture = ScreenCapture(this, this)
         autoConnect = sync.values.autoConnect
+        sync.onPcReplaced = { stalePc -> PairingStore(this).forget(stalePc) }
         sync.addListener(syncListener)
         options.addListener(optionsListener)
         ImeBridge.watch(boxWatcher)
@@ -125,6 +134,7 @@ class CompanionService : Service(), ProjectionHost {
     }
 
     override fun onDestroy() {
+        sync.onPcReplaced = null
         sync.removeListener(syncListener)
         options.removeListener(optionsListener)
         ImeBridge.unwatch(boxWatcher)
@@ -139,6 +149,8 @@ class CompanionService : Service(), ProjectionHost {
         networkWatcher = null
         connector?.close()
         connector = null
+        mirror?.close()
+        mirror = null
         server?.close()
         server = null
         lanServer?.close()
@@ -208,7 +220,10 @@ class CompanionService : Service(), ProjectionHost {
             connector = LanConnector(
                 pairings,
                 NsdDiscovery(this),
-                { connection -> queue.offer(connection) },
+                { connection ->
+                    queue.offer(connection)
+                    mirrorOver(connection)
+                },
                 events,
                 keepTrying = { sync.values.autoConnect },
             )
@@ -216,6 +231,85 @@ class CompanionService : Service(), ProjectionHost {
             refreshOverlay()
         }
         connector?.start(link)
+    }
+
+    private fun mirrorOver(connection: LanConnection) {
+        val pc = Hex.decode(connection.pc) ?: return
+        val phone = PairingStore(this).phone
+        thread(name = "companion-mirror", isDaemon = true) {
+            val link = MirrorConnection.join(connection.host, connection.port, phone, connection.key, pc)
+                ?: return@thread
+            val server = MirrorServer(link, mirrorHost)
+            mirror?.close()
+            mirror = server
+            thread(name = "companion-mirror-watch", isDaemon = true) {
+                connection.awaitClosed(Long.MAX_VALUE)
+                server.close()
+            }
+            server.run()
+            if (mirror === server) {
+                mirror = null
+            }
+        }
+    }
+
+    private val mirrorHost = object : MirrorHost {
+        override val context = this@CompanionService
+
+        override fun askProjection(done: (MediaProjection?) -> Unit) {
+            main.post {
+                CaptureGrants.listen { grant -> main.post { mirrorGranted(grant, done) } }
+                try {
+                    startActivity(
+                        Intent(this@CompanionService, CaptureActivity::class.java)
+                            .putExtra(CaptureActivity.EXTRA_AUDIO, true)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION),
+                    )
+                } catch (e: RuntimeException) {
+                    CaptureGrants.listen(null)
+                    done(null)
+                    return@post
+                }
+                capturePrompt(true)
+            }
+        }
+
+        override fun projectionEnded() {
+            main.post {
+                mirroringNow = false
+                refreshNotification()
+            }
+        }
+
+        override fun audioAllowed(): Boolean =
+            checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun mirrorGranted(grant: CaptureGrant?, done: (MediaProjection?) -> Unit) {
+        CaptureGrants.listen(null)
+        capturePrompt(false)
+        if (grant == null) {
+            done(null)
+            return
+        }
+        mirroringNow = true
+        try {
+            goForeground()
+        } catch (e: RuntimeException) {
+            mirroringNow = false
+            done(null)
+            return
+        }
+        val made = try {
+            getSystemService(MediaProjectionManager::class.java)?.getMediaProjection(grant.resultCode, grant.data)
+        } catch (e: RuntimeException) {
+            null
+        }
+        if (made == null) {
+            mirroringNow = false
+            refreshNotification()
+        }
+        done(made)
     }
 
     private fun syncChanged() {
@@ -251,14 +345,18 @@ class CompanionService : Service(), ProjectionHost {
     private fun stopByUser() {
         val local = server?.takeUnless { it.ended }
         val remote = lanServer?.takeUnless { it.ended }
-        connector?.close()
-        if (local == null && remote == null) {
+        val activeMirror = mirror
+        connector?.stop()
+        if (local == null && remote == null && activeMirror == null) {
+            connector?.close()
             stopSelf()
             return
         }
         thread(name = "companion-stop", isDaemon = true) {
+            activeMirror?.stop()
             local?.stop()
             remote?.stop()
+            connector?.close()
             main.post { stopSelf() }
         }
     }
@@ -392,7 +490,7 @@ class CompanionService : Service(), ProjectionHost {
         }
         val builder = Notification.Builder(this, CHANNEL)
             .setSmallIcon(icon)
-            .setColor(Look.OPAQUE or (computer?.accent ?: Look.EMBER))
+            .setColor(Look.OPAQUE or (computer?.accent ?: Look.BRAND))
             .setContentTitle(title)
             .setContentIntent(open)
             .setOngoing(true)
@@ -409,23 +507,47 @@ class CompanionService : Service(), ProjectionHost {
         }
         val notification = builder.build()
         foreground = true
+        val capturing = projecting || mirroringNow
+        val microphone = if (mirroringNow && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+            checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        ) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+        } else {
+            0
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val type = if (projecting) {
+            val type = if (capturing) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
             } else {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
             }
-            startForeground(NOTIFICATION_ID, notification, type)
+            startTyped(notification, type, microphone)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val type = if (projecting) {
+            val type = if (capturing) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
             } else {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
             }
-            startForeground(NOTIFICATION_ID, notification, type)
+            startTyped(notification, type, microphone)
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
+    }
+
+    // The microphone type lets the playback capture record while the companion is in the background; when the
+    // phone refuses it (a microphone service started from the background on Android 14), mirroring goes on with
+    // the screen-capture type alone.
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun startTyped(notification: Notification, type: Int, microphone: Int) {
+        if (microphone != 0) {
+            try {
+                startForeground(NOTIFICATION_ID, notification, type or microphone)
+                return
+            } catch (e: SecurityException) {
+                Unit
+            }
+        }
+        startForeground(NOTIFICATION_ID, notification, type)
     }
 
     private inner class ServerEvents : CompanionServer.Events {
@@ -445,10 +567,11 @@ class CompanionService : Service(), ProjectionHost {
                 if (owner !== server) {
                     return@post
                 }
-                if (lanServer == null) {
+                CompanionState.update(listening = false, connected = false)
+                if (lanServer == null && sync.values.autoConnect && PairingStore(this@CompanionService).all().isNotEmpty()) {
+                    startLan(null)
+                } else if (lanServer == null) {
                     stopSelfResult(lastStartId)
-                } else {
-                    CompanionState.update(listening = false, connected = false)
                 }
             }
         }

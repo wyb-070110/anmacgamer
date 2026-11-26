@@ -81,7 +81,7 @@ void GridWindow::attachOverlay(QQmlEngine& engine)
     if (m_overlay != nullptr) {
         return;
     }
-    QQmlComponent component(&engine, QStringLiteral("GameScrcpy.App"), QStringLiteral("GridOverlay"));
+    QQmlComponent component(&engine, QStringLiteral("Anmacgamer.App"), QStringLiteral("GridOverlay"));
     QObject* created = component.create();
     auto* overlay = qobject_cast<QQuickItem*>(created);
     if (overlay == nullptr) {
@@ -105,7 +105,7 @@ void GridWindow::attachOverlay(QQmlEngine& engine)
     m_metrics.inset = metric("inset", m_metrics.inset);
     m_metrics.menu = metric("menuWidth", m_metrics.menu);
     connect(overlay, SIGNAL(releaseWanted()), this, SLOT(releaseTarget()));
-    QQmlComponent hintComponent(&engine, QStringLiteral("GameScrcpy.App"), QStringLiteral("GridHintLayer"));
+    QQmlComponent hintComponent(&engine, QStringLiteral("Anmacgamer.App"), QStringLiteral("GridHintLayer"));
     QObject* hintObject = hintComponent.create();
     if (auto* hints = qobject_cast<QQuickItem*>(hintObject); hints != nullptr) {
         hints->setParent(contentItem());

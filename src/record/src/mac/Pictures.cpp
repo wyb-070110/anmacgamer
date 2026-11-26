@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Pictures on macOS: ImageIO reads them, Core Graphics draws them into non-premultiplied RGBA (as WIC gives
 // on Windows) and scales them with its best interpolation.
 #include "Pictures.h"

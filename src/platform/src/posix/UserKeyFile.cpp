@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The per-user key in a file of the user's own (mode 0600) under $XDG_DATA_HOME/GameScrcpy. On macOS only
 // userKeyInFile is used here, for programs outside an app bundle (see UserKeyKeychain.cpp).
 #include "UserKey.h"

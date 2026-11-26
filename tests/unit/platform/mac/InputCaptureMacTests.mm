@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The capture thread on macOS: tasks, wakeups, and a capture target set and cleared. Keys and the mouse need the
 // program in front with a key window, which a test run does not have; they are tried in the app.
 #include "gs/platform/InputCapture.h"

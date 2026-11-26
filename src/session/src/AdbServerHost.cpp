@@ -10,6 +10,7 @@
 #include "gs/protocol/Constants.h"
 
 #include <algorithm>
+#include <atomic>
 #include <array>
 #include <charconv>
 #include <condition_variable>
@@ -189,6 +190,49 @@ private:
     SessionFailure m_failure;
 };
 
+// Automatic transport on a wireless phone: WiFi direct first; when its datagrams do not get through (a VPN on the
+// computer routing the phone's address into its tunnel, macOS refusing the app the local network, a router that
+// drops UDP), the adb tunnel, which the server in UDP mode always listens on as well. Once the tunnel was needed,
+// this host keeps using it.
+class FallbackTransport final : public Transport
+{
+public:
+    FallbackTransport(std::unique_ptr<Transport> direct, std::unique_ptr<Transport> tunnel, std::string id,
+                      std::shared_ptr<std::atomic<bool>> tunnelOnly)
+        : m_direct(std::move(direct)), m_tunnel(std::move(tunnel)), m_id(std::move(id)),
+          m_tunnelOnly(std::move(tunnelOnly))
+    {
+    }
+
+    [[nodiscard]] Expected<std::unique_ptr<Link>, SessionFailure> establish(const Token& token,
+                                                                            const std::string& clientVersion,
+                                                                            std::stop_token stop) override
+    {
+        if (!m_tunnelOnly->load()) {
+            auto link = m_direct->establish(token, clientVersion, stop);
+            if (link || stop.stop_requested() || !unreachable(link.error().kind)) {
+                return link;
+            }
+            log::warning(kLog, "[{}] WiFi direct did not get through ({}); using the adb tunnel instead", m_id,
+                         link.error().detail);
+            m_tunnelOnly->store(true);
+        }
+        return m_tunnel->establish(token, clientVersion, stop);
+    }
+
+private:
+    [[nodiscard]] static bool unreachable(FailureKind kind) noexcept
+    {
+        return kind == FailureKind::DirectUnreachable || kind == FailureKind::DirectNoAddress ||
+               kind == FailureKind::ConnectFailed || kind == FailureKind::Timeout;
+    }
+
+    std::unique_ptr<Transport> m_direct;
+    std::unique_ptr<Transport> m_tunnel;
+    std::string m_id;
+    std::shared_ptr<std::atomic<bool>> m_tunnelOnly;
+};
+
 }
 
 std::shared_ptr<const ServerPackage> ServerPackage::load(const std::filesystem::path& path)
@@ -285,13 +329,15 @@ class AdbServerHost::Impl
 {
 public:
     Impl(adb::AdbClient client, std::string serial, std::shared_ptr<const ServerPackage> package,
-         TransportChoice choice, DirectRoute direct)
+         TransportChoice choice, DirectRoute direct, bool automatic)
         : m_client(client), m_serial(std::move(serial)), m_package(std::move(package)), m_choice(choice),
-          m_direct(std::move(direct))
+          m_direct(std::move(direct)), m_automatic(automatic)
     {
     }
 
     [[nodiscard]] TransportChoice choice() const noexcept { return m_choice; }
+    [[nodiscard]] bool automatic() const noexcept { return m_automatic; }
+    [[nodiscard]] const std::shared_ptr<std::atomic<bool>>& tunnelOnly() const noexcept { return m_tunnelOnly; }
     [[nodiscard]] const std::string& id() const noexcept { return m_id; }
 
     [[nodiscard]] Expected<platform::UdpEndpoint, SessionFailure> directEndpoint()
@@ -715,6 +761,8 @@ private:
     const std::shared_ptr<const ServerPackage> m_package;
     const TransportChoice m_choice;
     const DirectRoute m_direct;
+    const bool m_automatic;
+    const std::shared_ptr<std::atomic<bool>> m_tunnelOnly = std::make_shared<std::atomic<bool>>(false);
 
     LaunchParams m_params;
     std::string m_id;
@@ -740,7 +788,7 @@ private:
 AdbServerHost::AdbServerHost(adb::AdbClient client, std::string serial, std::shared_ptr<const ServerPackage> package,
                              TransportChoice choice, DirectRoute direct)
     : m_impl(std::make_unique<Impl>(client, serial, std::move(package), resolvedTransport(choice, serial),
-                                    std::move(direct)))
+                                    std::move(direct), choice == TransportChoice::Auto))
 {
 }
 
@@ -761,10 +809,14 @@ std::unique_ptr<Transport> AdbServerHost::transport(std::chrono::milliseconds ha
         return ServerHost::transport(handshakeTimeout);
     }
     auto endpoint = m_impl->directEndpoint();
-    if (!endpoint) {
-        return std::make_unique<UnreachableTransport>(std::move(endpoint.error()));
+    std::unique_ptr<Transport> direct =
+        endpoint ? std::unique_ptr<Transport>(std::make_unique<detail::DirectTransport>(*endpoint))
+                 : std::make_unique<UnreachableTransport>(std::move(endpoint.error()));
+    if (!m_impl->automatic()) {
+        return direct;
     }
-    return std::make_unique<detail::DirectTransport>(*endpoint);
+    return std::make_unique<FallbackTransport>(std::move(direct), ServerHost::transport(handshakeTimeout), m_impl->id(),
+                                               m_impl->tunnelOnly());
 }
 
 AdbServerHost::~AdbServerHost() = default;

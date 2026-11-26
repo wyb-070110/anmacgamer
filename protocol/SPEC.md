@@ -189,7 +189,7 @@ adb 隧道传输（v1）：服务端在抽象 socket 上监听，客户端经 `a
 
 | 类型 | 名称 | 负载 |
 |---|---|---|
-| 0x0101 | TouchFrame | `videoSession u16` · `count u8（1–32）` · `count × TouchPoint`；**TouchPoint**（8 字节）=`action u8`（0 按下、1 抬起、2 移动、3 取消）· `pointerId u8（0–31）` · `x u16` · `y u16` · `pressure u16`；同一帧内 `pointerId` 不得重复 |
+| 0x0101 | TouchFrame | `videoSession u16` · `count u8（1–32）` · `count × TouchPoint`；**TouchPoint**（8 字节）=`action u8`（0 按下、1 抬起、2 移动、3 取消）· `pointerId u8（0–31）` · `x u16` · `y u16` · `pressure u16`；之后是 `hostTimeMs u32`（客户端生成这一帧时它自己单调时钟的毫秒数，会回绕；0 表示不知道。手机按它保持触摸原本的节奏，帧挤在一起到达时也不会把滑动算快）；同一帧内 `pointerId` 不得重复 |
 | 0x0102 | Key | `action u8`（0 按下、1 抬起）· `keycode u32`（Android KEYCODE）· `metaState u32` · `repeat u16`（共 11 字节） |
 | 0x0103 | Text | `text str16（≤ 4096）` |
 | 0x0104 | Scroll | `x u16` · `y u16` · `videoSession u16` · `hScroll i16` · `vScroll i16`（单位：1/256 格） |
@@ -467,7 +467,7 @@ control（通道 0）与 bulk（通道 3）各是一条双向的可靠字节流�
 
 ## 11. 伴侣 App 连接（ADR-0086、ADR-0023 修订）
 
-> 状态：2026-11-02 补充（CMP-001～004）。四条消息的格式由金标准向量 `vectors/companion.json` 与 `vectors/malformed.json` 锁定。2026-11-06 补充第二批（ADR-0104，CMP-005～007）：输入法与键位提示的五条消息（0x0603～0x0606、0x8603）与局域网连接（11.7 节，握手、密钥与加密记录由 `vectors/companion/lan.json` 锁定）；仍在发布前，不升版本号。同日补充截图（ADR-0105 第 5 节，HID-008）：三条消息（0x0607、0x8604、0x8605）与 11.8 节，向量在 `vectors/companion.json` 与 `vectors/malformed.json`。2026-11-11 补充版本 2（ADR-0112 第 5.2 节）：版本协商（11.2 节）、两条消息（0x0608、0x8606）与设置同步（11.9 节），向量同样在 `vectors/companion.json` 与 `vectors/malformed.json`。
+> 状态：2026-11-02 补充（CMP-001～004）。四条消息的格式由金标准向量 `vectors/companion.json` 与 `vectors/malformed.json` 锁定。2026-11-06 补充第二批（ADR-0104，CMP-005～007）：输入法与键位提示的五条消息（0x0603～0x0606、0x8603）与局域网连接（11.7 节，握手、密钥与加密记录由 `vectors/companion/lan.json` 锁定）；仍在发布前，不升版本号。同日补充截图（ADR-0105 第 5 节，HID-008）：三条消息（0x0607、0x8604、0x8605）与 11.8 节，向量在 `vectors/companion.json` 与 `vectors/malformed.json`。2026-11-11 补充版本 2（ADR-0112 第 5.2 节）：版本协商（11.2 节）、两条消息（0x0608、0x8606）与设置同步（11.9 节），向量同样在 `vectors/companion.json` 与 `vectors/malformed.json`。2026-11-25 补充伴侣投屏（11.10 节）：没有 adb 时伴侣当服务端，经加密的 `GSCM` 连接与复用记录传第 2～3 章的会话；向量在 `vectors/companion/mirror.json`。
 
 伴侣 App（包名 `com.gamescrcpy.companion`）是装在手机上的普通应用，与服务端无关：它自己起前台服务、自己监听，电脑经 adb 转发直接连它。第一批只有手机上的光标；第二批加上输入法（识别输入框、接收电脑打的字）、手机上的键位提示，以及没有 adb 时经局域网扫码连接（11.7 节）；没有画面时编辑键位用的手机截图见 11.8 节。
 
@@ -606,3 +606,38 @@ control（通道 0）与 bulk（通道 3）各是一条双向的可靠字节流�
 - **没连着时改**：伴侣把改动记下来（重启手机也在）并显示在开关上；连上一台说版本 2 的电脑、收到它的第一份快照后，把与快照不同的项逐项发出，相同的直接作废。发出后连接断了、没等到回执的，下次连上再发。只说版本 1 的电脑收不到这些改动，伴侣继续记着。
 - **伴侣记的**：每台电脑（按 `computer`）的名字、连接方式、强调色、最后一份快照与最后连上的时间。没连着时开关显示最近连过的那台电脑的值，再加上还没发出的改动。
 - **自动连接**（`autoConnect`）：关掉时伴侣不在后台重连局域网上配对过的电脑（11.7 节"重连"：断开后、网络变化时都不再自己去连），只在用户点"现在连接"或扫码时连一次；经 adb 的连接由电脑发起，不受影响。电脑只保存这一项。
+
+### 11.10 伴侣投屏（没有 adb 时的画面与声音，`docs/handoff/no-adb-mirroring.md`）
+
+> 状态：2026-11-25 补充。没有 adb（如只有 AOA 的手机）时，伴侣在手机上当服务端：用录屏（`MediaProjection`）采集画面、用 `AudioPlaybackCapture` 采集声音，在一条加密的"投屏连接"上按第 2～3 章的会话协议发给电脑。只新增连接与复用层，已有消息的字节布局不变，不升版本号。握手、复用记录与加密记录由金标准向量 `vectors/companion/mirror.json` 锁定。
+
+**投屏连接**：伴侣的局域网连接（11.7 节）进入工作状态后，伴侣另开一条 TCP 连接到同一地址与端口，以 4 字节 `GSCM` 开头，作为这台手机的投屏连接待命；局域网连接结束时伴侣关闭它。电脑每台手机只留最新的一条，新的到来时关闭旧的。电脑据此知道这台手机的伴侣能投屏。
+
+**握手**：字节布局同 11.7 节的表，`magic` 为 `GSCM`。
+- `token` 必须为空：只有配对过的手机能开投屏连接（配对只经 11.7 节）。`token` 不为空、或电脑不认识 `phone` 时回 `status` 1。
+- 会话密钥 `S = HMAC-SHA256(K, "GSCP/1 companion mirror" ‖ hello ‖ reply)`，`K` 是这台手机配对时的密钥。伴侣核对回复里的 `pc` 与记下的相同，不同就关闭。握手 5 秒内没完成即关闭。
+- 会话令牌（第 2 章的 `token`，用来算 `ClientHello`、`ChannelOpen` 的证明）`= HMAC-SHA256(S, "GSCP/1 companion mirror token")` 的前 16 字节。
+
+**加密记录**：同 11.7 节（AES-256-GCM，随机数 = `direction u32 ‖ counter u64`，附加数据为 `length` 的 4 字节），只是 `length` 的范围为 22 ≤ `length` ≤ 5 + 1 MiB + 16，明文恰好是一条复用记录。`length` 越界、标签不对、明文不是一条合法的复用记录：关闭连接。
+
+**复用记录**：`channel u8` · `length u32` · `data bytes[length]`。
+- `channel` 0～3 是第 2.2 节的通道（control、video、audio、bulk），`data` 是这个通道上原样的字节流的一段（1 ≤ `length` ≤ 1 MiB）：一条通道的字节可以任意切成多条记录，接收方按顺序拼起来，所以超过 1 MiB 的媒体包分几条记录发。
+- `channel` 255 是链路操作：`length` 必须为 2，`data` = `op u8` · `target u8（0–3）`。`op`：0 `open` 打开（只由电脑发）；1 `accept` 接受（只由伴侣发）；2 `close` 关闭（双方）。
+- 解码检查顺序：头不足 5 字节或 `data` 不足 → `Truncated`；`channel` 不是 0～3 或 255 → `InvalidEnum`；数据记录 `length` 为 0 → `OutOfRange`，超过 1 MiB → `LengthExceeded`；链路操作 `length` 不为 2 → `OutOfRange`，`op` 或 `target` 非法 → `InvalidEnum`，方向不对 → `WrongDirection`；记录之后还有字节 → `TrailingBytes`。
+
+**虚拟连接**：每条通道在一条投屏连接上同一时间至多一条"虚拟连接"，它代替 adb 隧道里那条通道自己的 TCP 连接（2.2 节），里面的内容与 adb 隧道完全相同（2.3 节开局、3.1 节消息帧、3.2 节媒体包）。
+1. 电脑发 `open`。伴侣能服务就回 `accept`，随后像接受了一条新连接一样先发 `ServerHello`；不能服务（如 bulk：伴侣没有 bulk 通道）就回 `close`。
+2. control 通道的 `open` 是投屏的开始：伴侣没有录屏授权时先在手机上弹系统的录屏确认，用户同意后才回 `accept`；用户拒绝时回 `accept`，以 `HandshakeError(PermissionDenied)` 代替 `ServerHello`，再 `close`；手机做不了录屏时同样以 `HandshakeError(UnsupportedAndroid)` 结束。电脑为 control 的 `open` 最多等 60 秒（用户要在手机上确认），其余通道 5 秒。
+3. 任一方发 `close` 后不再在这条通道上发数据；收到 `close` 时，自己还没为这条虚拟连接发过 `close` 就回一个。双方都发过 `close` 后这条通道才能再 `open`。不处于打开状态的通道上的数据记录丢弃。
+4. 投屏连接断开等于所有虚拟连接断开。
+
+**伴侣作为服务端**：
+- `Welcome`：`serverVersion` 为 `companion <版本名>`；`manufacturer`、`model`、`androidRelease`、`sdkInt` 照 `Build`；`serialNo` 为空（普通应用读不到序列号，电脑按投屏连接所属的手机识别）；一个显示器（主显示器，安全区按 `DisplayCutout`）；编码器只列 H.264（`video/avc`）的；`capabilities` 为 0；`resumed` 为 0。`audioStatus`：Android 10 以前为 1；没有录音权限（`RECORD_AUDIO`，`AudioPlaybackCapture` 要求）或采集失败为 2。
+- control 通道上处理 `Ping`、`Goodbye`、`ConfigureVideo`、`SetVideoBitrate`、`SetMaxFps`、`RequestKeyFrame`、`SetVideoPaused`、`ConfigureAudio` 与 `ReceiverReport`；其余合法的消息丢弃（触控、按键走 AOA，第 7 章没有置位的能力不处理）。`ConfigureVideo` 只认物理显示器（`source` 0、`displayId` 0）与 H.264，其余回 `Notice(error, ChannelUnavailable)`。
+- 画面：录屏的 `VirtualDisplay` 画进 H.264 编码器的输入 Surface，帧尺寸按 `maxSize` 等比缩小，宽高取 8 的倍数；`ptsUs` 是 Surface 帧的时间戳（`CLOCK_MONOTONIC`），`encodeDelayUs` 为编码器交出这一帧时与它的差。旋转或尺寸变化时以新的会话号重建编码（同第 7 章）；同一份录屏授权只建一个 `VirtualDisplay`，之后只改它的尺寸与 Surface。
+- 声音：48 kHz 立体声，Opus，会话描述与编解码配置同 3.2 节。
+- 积压：视频积压超过 4 MiB 时伴侣丢弃数据帧直到下一个关键帧，并立即要一个关键帧（同第 7 章"拥塞"）。
+- 授权的生命周期：录屏授权保持到投屏连接断开，或 control 通道上收到 `Goodbye`；之后再开 control 通道要重新确认。录屏期间状态栏有录屏图标，前台服务类型加上 `mediaProjection`（有录音权限时另加 `microphone`）。
+- 触控：不经投屏连接；电脑照旧经 AOA 注入（ADR-0104）。
+
+金标准向量 `vectors/companion/mirror.json`：握手字节、会话密钥与会话令牌、一段完整的开局（control 与 video 的 `open`／`accept`、`ServerHello`、带证明的 `ClientHello`、`Welcome`、`ChannelOpen`、被切成两条记录的会话描述、被拒的 bulk、`close`）的复用记录与加密记录，以及畸形的复用记录与加密记录。

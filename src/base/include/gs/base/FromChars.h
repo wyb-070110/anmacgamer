@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // std::from_chars for integers and floating point everywhere: libc++ before LLVM 20 (Apple Clang included)
 // has no floating-point from_chars, so there it parses with strtod in the C locale, keeping from_chars' rules.
 // Newer libc++ (22 at least) writes ±inf or 0 into the value on result_out_of_range, where the standard keeps

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Capture cards off Windows are not listed yet (AVFoundation would list them on macOS).
 #include "gs/capture/CaptureDevices.h"
 

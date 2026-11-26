@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // POSIX atomic files: write a sibling temporary, flush it to the disk (F_FULLFSYNC on macOS), rename it over
 // the target and flush the directory. POSIX has no sharing modes, so a file is never busy here.
 #include "gs/platform/AtomicFile.h"

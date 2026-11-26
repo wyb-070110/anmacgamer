@@ -1,14 +1,21 @@
-qt_add_executable(GameScrcpy MACOSX_BUNDLE
+qt_add_executable(anmacgamer MACOSX_BUNDLE
     main.cpp
+    resources/GameScrcpy.icns
+    resources/Assets.car
 )
-set_target_properties(GameScrcpy PROPERTIES
-    MACOSX_BUNDLE_BUNDLE_NAME "GameScrcpy"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.nuoran.gamescrcpy"
+# The Dock, Finder and Launchpad icon, compiled from packaging/macos/icon/GameScrcpy.icon by
+# packaging/macos/icon/build_icon.sh: Assets.car for macOS 26 and later, GameScrcpy.icns before.
+set_source_files_properties(resources/GameScrcpy.icns resources/Assets.car PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+# anmacgamer.app, with its own bundle identifier.
+set_target_properties(anmacgamer PROPERTIES
+    MACOSX_BUNDLE_ICON_FILE "GameScrcpy"
+    MACOSX_BUNDLE_BUNDLE_NAME "anmacgamer"
+    MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.wyb070110.anmacgamer"
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in"
 )
 
-qt_add_qml_module(GameScrcpy
-    URI GameScrcpy.App
+qt_add_qml_module(anmacgamer
+    URI Anmacgamer.App
     VERSION 1.0
     IMPORT_PATH "${QT_QML_OUTPUT_DIRECTORY}"
     QML_FILES
@@ -381,6 +388,8 @@ qt_add_qml_module(GameScrcpy
         PhoneVendors.cpp
         PhoneVendors.h
         PictureTouch.cpp
+        PreeditBubble.cpp
+        PreeditBubble.h
         PictureTouch.h
         PictureZoom.cpp
         PictureZoom.h
@@ -540,7 +549,7 @@ qt_add_resources(gs_help_articles "help_api"
 )
 target_link_libraries(gs_help_articles PRIVATE Qt6::Core)
 
-target_link_libraries(GameScrcpy PRIVATE
+target_link_libraries(anmacgamer PRIVATE
     gs::base
     gs::capture
     gs::ext
@@ -572,21 +581,21 @@ target_link_libraries(GameScrcpy PRIVATE
     Qt6::Quick
     gs::blueprint
 )
-target_compile_definitions(GameScrcpy PRIVATE GS_BUILD_CONFIG="$<CONFIG>")
+target_compile_definitions(anmacgamer PRIVATE GS_BUILD_CONFIG="$<CONFIG>")
 set_source_files_properties(WindowChromeMac.mm PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
-target_link_libraries(GameScrcpy PRIVATE "-framework AppKit")
-gs_apply_compiler_policy(GameScrcpy)
+target_link_libraries(anmacgamer PRIVATE "-framework AppKit")
+gs_apply_compiler_policy(anmacgamer)
 
 # Qt's own texts in Chinese (the macOS application menu's Hide, Quit, Services…), built in like the app's.
 set(gs_qt_translation "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS}/qtbase_zh_CN.qm")
 if(EXISTS "${gs_qt_translation}")
-    qt_add_resources(GameScrcpy gs_qt_translations PREFIX "/i18n/qt" BASE "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS}"
+    qt_add_resources(anmacgamer gs_qt_translations PREFIX "/i18n/qt" BASE "${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS}"
                      FILES "${gs_qt_translation}")
 endif()
 
-qt_add_translations(GameScrcpy
-    TS_FILES i18n/gamescrcpy_zh_CN.ts
-    PLURALS_TS_FILE i18n/gamescrcpy_en.ts
+qt_add_translations(anmacgamer
+    TS_FILES i18n/anmacgamer_zh_CN.ts
+    PLURALS_TS_FILE i18n/anmacgamer_en.ts
     SOURCES "${PROJECT_SOURCE_DIR}/sdk/i18n/api-texts.js"
     RESOURCE_PREFIX /i18n
     LUPDATE_OPTIONS -no-obsolete -locations none -tr-function-alias QT_TRANSLATE_NOOP+=GS_TRANSLATE_NOOP
@@ -595,46 +604,72 @@ qt_add_translations(GameScrcpy
 # Helper executables live in Contents/MacOS; non-code data and the TypeScript library live in Contents/Resources so
 # codesign can seal the bundle and bind Info.plist (needed for macOS Local Network and Notification permissions).
 add_custom_target(gs_server_package ALL
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources"
     COMMAND "${CMAKE_COMMAND}"
         "-DSOURCE=${PROJECT_SOURCE_DIR}/android/server/build/outputs/apk/release/server-release-unsigned.apk"
-        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/gs-server.apk"
+        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/gs-server.apk"
         -P "${PROJECT_SOURCE_DIR}/cmake/CopyIfExists.cmake"
-    COMMENT "Placing the server build inside GameScrcpy.app/Contents/Resources"
+    COMMENT "Placing the server build inside anmacgamer.app/Contents/Resources"
     VERBATIM
 )
 
 add_custom_target(gs_companion_package ALL
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources"
     COMMAND "${CMAKE_COMMAND}"
         "-DSOURCE=${PROJECT_SOURCE_DIR}/android/companion/build/outputs/apk/debug/companion-debug.apk"
-        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/gs-companion.apk"
+        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/gs-companion.apk"
         -P "${PROJECT_SOURCE_DIR}/cmake/CopyIfExists.cmake"
     COMMAND "${CMAKE_COMMAND}"
         "-DSOURCE=${PROJECT_SOURCE_DIR}/android/companion/build/outputs/apk/debug/output-metadata.json"
-        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/gs-companion.json"
+        "-DDESTINATION=$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/gs-companion.json"
         -P "${PROJECT_SOURCE_DIR}/cmake/CopyIfExists.cmake"
-    COMMENT "Placing the companion app build inside GameScrcpy.app/Contents/Resources"
+    COMMENT "Placing the companion app build inside anmacgamer.app/Contents/Resources"
     VERBATIM
 )
 
 add_custom_target(gs_builtin_components
-    COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/components"
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/components"
     COMMAND "${CMAKE_COMMAND}" -E copy_directory "${PROJECT_SOURCE_DIR}/examples/components"
-        "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/components"
-    COMMENT "Placing the example components inside GameScrcpy.app/Contents/Resources"
+        "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/components"
+    COMMENT "Placing the example components inside anmacgamer.app/Contents/Resources"
     VERBATIM
 )
 
 add_custom_target(gs_builtin_tasks
-    COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/tasks"
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/tasks"
     COMMAND "${CMAKE_COMMAND}" -E copy_directory "${PROJECT_SOURCE_DIR}/examples/tasks"
-        "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/tasks"
-    COMMENT "Placing the example tasks inside GameScrcpy.app/Contents/Resources"
+        "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/tasks"
+    COMMENT "Placing the example tasks inside anmacgamer.app/Contents/Resources"
     VERBATIM
 )
 
-add_dependencies(GameScrcpy
+# Built-in extensions (official, read-only): ready-made game profiles and the like.
+add_custom_target(gs_builtin_extensions
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/extensions"
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/builtin-extensions"
+        "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/extensions"
+    COMMENT "Placing the built-in extensions inside anmacgamer.app/Contents/Resources"
+    VERBATIM
+)
+
+# Signing. Ad hoc ("-") by default. macOS knows an ad-hoc signed app by the hash of its code, so every rebuild is a
+# new program to the login keychain and asks for the password again. With a code-signing identity named
+# "anmacgamer Local Signing" in the keychain (a self-signed certificate made on this Mac), builds are signed with it
+# and keep one identity. GS_SIGN_IDENTITY overrides either.
+set(GS_SIGN_IDENTITY "" CACHE STRING "codesign identity for anmacgamer.app; empty finds anmacgamer Local Signing or signs ad hoc")
+set(gs_sign_identity "${GS_SIGN_IDENTITY}")
+if(gs_sign_identity STREQUAL "")
+    set(gs_sign_identity "-")
+    execute_process(COMMAND /usr/bin/security find-identity -p codesigning
+        OUTPUT_VARIABLE gs_identities ERROR_QUIET RESULT_VARIABLE gs_identities_result)
+    if(gs_identities_result EQUAL 0 AND gs_identities MATCHES "([0-9A-F]+) \"anmacgamer Local Signing\"")
+        set(gs_sign_identity "${CMAKE_MATCH_1}")
+        message(STATUS "Signing anmacgamer.app with anmacgamer Local Signing (${gs_sign_identity})")
+    endif()
+endif()
+
+add_dependencies(anmacgamer
+    gs_builtin_extensions
     gs_exthost_program
     gs_scripthost_program
     gs_cli
@@ -644,34 +679,34 @@ add_dependencies(GameScrcpy
     gs_builtin_components
     gs_builtin_tasks
 )
-add_custom_command(TARGET GameScrcpy POST_BUILD
+add_custom_command(TARGET anmacgamer POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E rm -rf
-            "$<TARGET_FILE_DIR:GameScrcpy>/components"
-            "$<TARGET_FILE_DIR:GameScrcpy>/tasks"
-            "$<TARGET_FILE_DIR:GameScrcpy>/typescript"
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs-server.apk"
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs-companion.apk"
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs-companion.json"
+            "$<TARGET_FILE_DIR:anmacgamer>/components"
+            "$<TARGET_FILE_DIR:anmacgamer>/tasks"
+            "$<TARGET_FILE_DIR:anmacgamer>/typescript"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs-server.apk"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs-companion.apk"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs-companion.json"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:gs_exthost_program>"
-            "$<TARGET_FILE:gs_scripthost_program>" "$<TARGET_FILE:gs_cli>" "$<TARGET_FILE_DIR:GameScrcpy>"
+            "$<TARGET_FILE:gs_scripthost_program>" "$<TARGET_FILE:gs_cli>" "$<TARGET_FILE_DIR:anmacgamer>"
     COMMAND "${CMAKE_COMMAND}" -E copy_directory_if_different "${PROJECT_SOURCE_DIR}/third_party/typescript/lib"
-            "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/typescript"
-    COMMAND /usr/bin/codesign --force --sign -
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs-exthost"
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs-scripthost"
-            "$<TARGET_FILE_DIR:GameScrcpy>/gs"
-            "$<TARGET_BUNDLE_CONTENT_DIR:GameScrcpy>/Resources/typescript/tsc"
-    COMMAND /usr/bin/codesign --force --sign - "$<TARGET_BUNDLE_DIR:GameScrcpy>"
-    COMMENT "Assembling and ad-hoc signing GameScrcpy.app"
+            "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/typescript"
+    COMMAND /usr/bin/codesign --force --sign "${gs_sign_identity}"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs-exthost"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs-scripthost"
+            "$<TARGET_FILE_DIR:anmacgamer>/gs"
+            "$<TARGET_BUNDLE_CONTENT_DIR:anmacgamer>/Resources/typescript/tsc"
+    COMMAND /usr/bin/codesign --force --sign "${gs_sign_identity}" "$<TARGET_BUNDLE_DIR:anmacgamer>"
+    COMMENT "Assembling and signing anmacgamer.app"
     VERBATIM
 )
 
 if(GS_BUILD_TESTS)
-    add_test(NAME gs_app_smoke COMMAND GameScrcpy --smoke-test)
+    add_test(NAME gs_app_smoke COMMAND anmacgamer --smoke-test)
     set_tests_properties(gs_app_smoke PROPERTIES TIMEOUT 60
         ENVIRONMENT "GS_DATA_DIR=${CMAKE_CURRENT_BINARY_DIR}/smoke-data"
     )
-    add_test(NAME gs_app_smoke_mirror COMMAND GameScrcpy --smoke-test
+    add_test(NAME gs_app_smoke_mirror COMMAND anmacgamer --smoke-test
         --demo-device "${PROJECT_SOURCE_DIR}/tests/data/video/emulator_h264.media")
     set_tests_properties(gs_app_smoke_mirror PROPERTIES TIMEOUT 60
         ENVIRONMENT "GS_DATA_DIR=${CMAKE_CURRENT_BINARY_DIR}/smoke-mirror-data"

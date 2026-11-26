@@ -81,10 +81,10 @@ Advice FailureAdvice::forFailure(const session::SessionFailure& failure, bool wi
         return {tr("The device is offline"),
                 tr("Unplug and replug the cable. If it stays offline, turn USB debugging off and on again.")};
     case FailureKind::UnsupportedAndroid:
-        return {tr("This Android version is too old"), tr("GameScrcpy needs Android 9 or newer.")};
+        return {tr("This Android version is too old"), tr("anmacgamer needs Android 9 or newer.")};
     case FailureKind::DeployFailed:
         return {tr("Could not install the server component"),
-                tr("Make sure the phone has free storage. If the problem remains, reinstall GameScrcpy.")};
+                tr("Make sure the phone has free storage. If the problem remains, reinstall anmacgamer.")};
     case FailureKind::LaunchFailed:
         return {tr("The server on the phone did not start"), tr("Restart the phone and try again.")};
     case FailureKind::TunnelFailed:
@@ -96,11 +96,11 @@ Advice FailureAdvice::forFailure(const session::SessionFailure& failure, bool wi
     case FailureKind::HandshakeRejected:
         if (failure.code == protocol::ErrorCode::VersionMismatch) {
             return {tr("The server on the phone is a different version"),
-                    tr("Update GameScrcpy; the matching server is installed automatically.")};
+                    tr("Update anmacgamer; the matching server is installed automatically.")};
         }
         return {tr("The phone refused the connection"), tr("Try again.")};
     case FailureKind::ProtocolError:
-        return {tr("Communication with the phone failed"), tr("Update GameScrcpy and try again.")};
+        return {tr("Communication with the phone failed"), tr("Update anmacgamer and try again.")};
     case FailureKind::Timeout:
         return {tr("The phone did not respond in time"), tr("Unlock the phone, keep the screen on and try again.")};
     case FailureKind::ConnectionLost:
@@ -117,8 +117,8 @@ Advice FailureAdvice::forFailure(const session::SessionFailure& failure, bool wi
     case FailureKind::DirectUnreachable:
         return {tr("The phone did not answer over WiFi direct"),
                 tr("Make sure the computer and the phone are on the same network, that the router does not isolate "
-                   "its devices (AP isolation), that GameScrcpy is allowed under System Settings > Privacy & Security "
-                   "> Local Network, and that no firewall or security software blocks GameScrcpy's UDP traffic. Or "
+                   "its devices (AP isolation), that anmacgamer is allowed under System Settings > Privacy & Security "
+                   "> Local Network, and that no firewall or security software blocks anmacgamer's UDP traffic. Or "
                    "switch the connection to adb tunnel.")};
     }
     return {};
@@ -127,7 +127,7 @@ Advice FailureAdvice::forFailure(const session::SessionFailure& failure, bool wi
 Advice FailureAdvice::forReconnecting(const session::SessionFailure& failure)
 {
     return {forFailure(failure).problem,
-            tr("Check the cable or the network. GameScrcpy reconnects by itself once the device is back.")};
+            tr("Check the cable or the network. anmacgamer reconnects by itself once the device is back.")};
 }
 
 std::optional<Advice> FailureAdvice::forRefusal(protocol::ErrorCode code, std::string_view manufacturer)
@@ -191,8 +191,8 @@ Advice FailureAdvice::forSoftwareRendering(const QString& reason)
 
 Advice FailureAdvice::forMissingPackage()
 {
-    return {tr("GameScrcpy is not installed completely"),
-            tr("The server component (gs-server.apk) is missing. Reinstall GameScrcpy.")};
+    return {tr("anmacgamer is not installed completely"),
+            tr("The server component (gs-server.apk) is missing. Reinstall anmacgamer.")};
 }
 
 Advice FailureAdvice::forWirelessConnect(const adb::AdbError& error)

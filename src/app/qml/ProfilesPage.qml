@@ -3,10 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Item {
     id: page
@@ -1206,58 +1206,53 @@ Item {
             {
                 centered: true,
                 title: qsTr("Profiles"),
-                text: qsTr("A profile is a set of keys: which key taps where on the screen and how it feels, "
-                           + "optionally with logic and pictures to look for. A game can have several, and you can "
-                           + "switch between them at any time.")
+                text: qsTr("Profiles store key mappings, logic, and vision targets for your games. Switch between them"
+                           + " anytime.")
             },
             {
                 target: function() { return tour.findItem(page, "newProfile") },
                 title: qsTr("New profile"),
-                text: qsTr("Start from a template or a blank one, or let the AI assistant build one with you. Then "
-                           + "edit its keys in the mirror window.")
+                text: qsTr("Create a profile from a template, blank canvas, or with the AI assistant, then edit keys "
+                           + "on the mirror window.")
             },
             {
                 target: search,
                 title: qsTr("Search"),
-                text: qsTr("Narrow the list down by profile or game name.")
+                text: qsTr("Filter profiles by profile or game name.")
             },
             {
                 target: function() { return tour.findItem(page, "allChip") },
                 title: qsTr("Filters"),
-                text: qsTr("Show only the profiles for this game, the ones you made, the ones that came with "
-                           + "extensions, or the ones with a problem to fix.")
+                text: qsTr("Filter by current game, your own profiles, extension profiles, or ones with errors.")
             },
             {
                 target: function() { return tour.findItem(page, "profileCard") },
                 optional: true,
-                title: qsTr("A profile card"),
-                text: qsTr("The card tells which game the profile is for, which phone is using it and whether "
-                           + "something needs fixing.")
+                title: qsTr("Profile card"),
+                text: qsTr("Shows the linked game, active devices, and any errors or warnings.")
             },
             {
                 target: function() { return tour.findItem(page, "useProfile") },
                 optional: true,
-                title: qsTr("Use it on a phone"),
-                text: qsTr("Use puts the profile on a phone that is mirroring. A profile linked to a game comes on "
-                           + "by itself when the game opens.")
+                title: qsTr("Apply profile"),
+                text: qsTr("Apply this profile to a mirrored phone. Linked profiles load automatically when the game "
+                           + "opens.")
             },
             {
                 target: function() { return tour.findItem(page, "profileMore") },
                 optional: true,
-                title: qsTr("More for a profile"),
-                text: qsTr("Linking a game, vision resources, editing logic, exporting, restoring the original and "
-                           + "deleting are in this menu.")
+                title: qsTr("More actions"),
+                text: qsTr("Link a game, edit vision resources or logic, export, restore originals, or delete here.")
             },
             {
                 target: function() { return tour.findItem(page, "importProfile") },
                 title: qsTr("Import"),
-                text: qsTr("Add a profile file someone shared with you; dropping the file on the window works too.")
+                text: qsTr("Import a shared .json or .gsprofile file, or drop it onto the window.")
             },
             {
                 centered: true,
-                title: qsTr("That's profiles"),
-                text: qsTr("Share a profile you made by exporting it, or pack it as an extension. Help can replay "
-                           + "this tour.")
+                title: qsTr("Profiles tour complete"),
+                text: qsTr("Export profiles to share or package them as extensions. Replay this tour in Help.")
             }
         ]
         advance: {

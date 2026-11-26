@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Starting gs-exthost off Windows (posix/Bridge.h): it inherits only what it is given, as Windows hands it only the
 // channel's handles (macOS: POSIX_SPAWN_CLOEXEC_DEFAULT with an inherit list; Linux: fork and exec).
 #include "Bridge.h"

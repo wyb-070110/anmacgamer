@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // A macOS dylib for the Mach-O checks: it exports gs_ext_main and, with GS_PROBE_EVERYTHING, imports functions
 // the install check sorts into network, files, processes and injection. Nothing here is ever called.
 #include <cstdio>

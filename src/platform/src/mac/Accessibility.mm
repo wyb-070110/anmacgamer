@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The system's motion and transparency settings on macOS: Accessibility > Display, Reduce motion and Reduce
 // transparency.
 #include "gs/platform/Accessibility.h"

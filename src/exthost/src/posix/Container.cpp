@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Containers of restricted native extensions off Windows (see posix/Sandbox.h).
 #include "../Container.h"
 #include "Bridge.h"
@@ -63,7 +63,7 @@ std::filesystem::path dataFolder()
     if (home == nullptr || *home != '/') {
         return {};
     }
-    return std::filesystem::path(home) / "Library" / "Application Support" / "GameScrcpy" / "Containers";
+    return std::filesystem::path(home) / "Library" / "Application Support" / "anmacgamer" / "Containers";
 #else
     if (const char* data = std::getenv("XDG_DATA_HOME"); data != nullptr && *data == '/') {
         return std::filesystem::path(data) / "GameScrcpy" / "Containers";

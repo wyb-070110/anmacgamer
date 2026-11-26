@@ -35,3 +35,17 @@ Desktop.ini
 # ---- Logs and local user data ----
 *.log
 userdata.ini
+
+# ---- Secrets: signing keys, certificates, keystores, environment files ----
+*.p12
+*.pem
+*.key
+*.keystore
+*.jks
+.env
+.env.*
+
+# ---- AI agent settings and notes kept per machine ----
+# Files already tracked stay tracked (.agents/rules/project.md, which Antigravity reads); new ones need `git add -f`.
+.claude/
+.agents/

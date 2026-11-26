@@ -1,6 +1,6 @@
 import QtQuick
 import QtTest
-import GameScrcpy.Blueprint
+import Anmacgamer.Blueprint
 
 Item {
     id: root

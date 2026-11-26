@@ -1,7 +1,7 @@
 import QtQuick
 import QtTest
-import GameScrcpy.Theme
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Controls
 
 Item {
     id: root
@@ -467,7 +467,7 @@ Item {
 
         function test_menuWidensToItsWidestItem() {
             const wide = createTemporaryQmlObject(
-                'import GameScrcpy.Controls\nMenu { MenuItem { text: "Show the window of this device"; shortcut: "Ctrl Shift Enter" } }',
+                'import Anmacgamer.Controls\nMenu { MenuItem { text: "Show the window of this device"; shortcut: "Ctrl Shift Enter" } }',
                 root)
             const item = wide.itemAt(0)
             verify(item.implicitWidth > Theme.size.menuMinWidth)
@@ -476,7 +476,7 @@ Item {
 
         function test_menuItemDescriptionAddsALine() {
             const menu = createTemporaryQmlObject(
-                'import GameScrcpy.Controls\nMenu { MenuItem { text: "Launch" } MenuItem { text: "Launch"; description: "On the phone screen" } }',
+                'import Anmacgamer.Controls\nMenu { MenuItem { text: "Launch" } MenuItem { text: "Launch"; description: "On the phone screen" } }',
                 root)
             compare(menu.itemAt(0).implicitHeight, Theme.size.menuItem)
             compare(menu.itemAt(1).implicitHeight, Theme.size.menuItem + Theme.type.caption.lineHeight)
@@ -484,11 +484,11 @@ Item {
         }
 
         function test_joinedButtonsSquareTheInnerCorners() {
-            const start = createTemporaryQmlObject('import GameScrcpy.Controls\nButton { joined: "start"; text: "Launch" }', root)
+            const start = createTemporaryQmlObject('import Anmacgamer.Controls\nButton { joined: "start"; text: "Launch" }', root)
             compare(start.background.topRightRadius, 0)
             compare(start.background.bottomRightRadius, 0)
             compare(start.background.topLeftRadius, Theme.radius.sm)
-            const end = createTemporaryQmlObject('import GameScrcpy.Controls\nButton { joined: "end"; iconName: "chevron-down" }', root)
+            const end = createTemporaryQmlObject('import Anmacgamer.Controls\nButton { joined: "end"; iconName: "chevron-down" }', root)
             compare(end.background.topLeftRadius, 0)
             compare(end.background.bottomRightRadius, Theme.radius.sm)
         }
@@ -602,7 +602,7 @@ Item {
         }
 
         function test_infoOpensOnHoverAndStaysOnceClicked() {
-            const info = createTemporaryQmlObject('import GameScrcpy.Controls\nInfoButton { x: 40; y: 40; title: "Frame rate"; info: "How many frames"; delay: 50 }', root)
+            const info = createTemporaryQmlObject('import Anmacgamer.Controls\nInfoButton { x: 40; y: 40; title: "Frame rate"; info: "How many frames"; delay: 50 }', root)
             compare(info.Accessible.description, "How many frames")
             mouseMove(info, info.width / 2, info.height / 2)
             verify(!info.shown)
@@ -625,7 +625,7 @@ Item {
         }
 
         function test_infoLeavesTheHoverAloneWhenThePointerPassesBy() {
-            const info = createTemporaryQmlObject('import GameScrcpy.Controls\nInfoButton { x: 40; y: 40; title: "A"; info: "B"; delay: 200 }', root)
+            const info = createTemporaryQmlObject('import Anmacgamer.Controls\nInfoButton { x: 40; y: 40; title: "A"; info: "B"; delay: 200 }', root)
             mouseMove(info, info.width / 2, info.height / 2)
             mouseMove(root, 1, 1)
             wait(info.delay * 2)
@@ -633,7 +633,7 @@ Item {
         }
 
         function test_infoWorksFromTheKeyboardAndClosesOnEscape() {
-            const info = createTemporaryQmlObject('import GameScrcpy.Controls\nInfoButton { x: 40; y: 40; title: "A"; info: "B" }', root)
+            const info = createTemporaryQmlObject('import Anmacgamer.Controls\nInfoButton { x: 40; y: 40; title: "A"; info: "B" }', root)
             info.forceActiveFocus(Qt.TabFocusReason)
             keyClick(Qt.Key_Return)
             verify(info.pinned)
@@ -650,7 +650,7 @@ Item {
         }
 
         function test_numberScaleMapsLinearValues() {
-            const numbers = createTemporaryQmlObject('import GameScrcpy.Controls\nNumberScale { minimum: 0; maximum: 8192; from: 480; to: 3200; step: 40 }', root)
+            const numbers = createTemporaryQmlObject('import Anmacgamer.Controls\nNumberScale { minimum: 0; maximum: 8192; from: 480; to: 3200; step: 40 }', root)
             compare(numbers.position(480), 0)
             compare(numbers.position(3200), 1)
             fuzzyCompare(numbers.position(1920), 0.5294, 0.001)
@@ -663,7 +663,7 @@ Item {
         }
 
         function test_numberScaleMapsLogarithmicValues() {
-            const numbers = createTemporaryQmlObject('import GameScrcpy.Controls\nNumberScale { minimum: 0.5; maximum: 100; from: 1; to: 100; decimals: 1; logarithmic: true }', root)
+            const numbers = createTemporaryQmlObject('import Anmacgamer.Controls\nNumberScale { minimum: 0.5; maximum: 100; from: 1; to: 100; decimals: 1; logarithmic: true }', root)
             compare(numbers.position(1), 0)
             fuzzyCompare(numbers.position(10), 0.5, 1e-9)
             fuzzyCompare(numbers.position(8), 0.4515, 0.001)
@@ -678,7 +678,7 @@ Item {
         }
 
         function test_numberScaleReadsTypedNumbers() {
-            const numbers = createTemporaryQmlObject('import GameScrcpy.Controls\nNumberScale { decimals: 1 }', root)
+            const numbers = createTemporaryQmlObject('import Anmacgamer.Controls\nNumberScale { decimals: 1 }', root)
             compare(numbers.parse(" 12.34 "), 12.3)
             compare(numbers.parse("\uFF11\uFF12\uFF0C\uFF15"), 12.5)
             verify(Number.isNaN(numbers.parse("")))
@@ -689,7 +689,7 @@ Item {
         }
 
         function numberField(): var {
-            const field = createTemporaryQmlObject('import GameScrcpy.Controls\nNumberField { x: 40; y: 120; unit: "fps"; value: 60; numbers: NumberScale { minimum: 0; maximum: 240 } }', root)
+            const field = createTemporaryQmlObject('import Anmacgamer.Controls\nNumberField { x: 40; y: 120; unit: "fps"; value: 60; numbers: NumberScale { minimum: 0; maximum: 240 } }', root)
             const spy = createTemporaryQmlObject('import QtTest\nSignalSpy { signalName: "submitted" }', root)
             spy.target = field
             return { field: field, spy: spy }
@@ -751,7 +751,7 @@ Item {
         }
 
         function test_numberFieldPrefixSitsBeforeTheNumber() {
-            const field = createTemporaryQmlObject('import GameScrcpy.Controls\nNumberField { x: 40; y: 120; width: 120; prefix: "X"; unit: "%"; value: 76; numbers: NumberScale { decimals: 1 } }', root)
+            const field = createTemporaryQmlObject('import Anmacgamer.Controls\nNumberField { x: 40; y: 120; width: 120; prefix: "X"; unit: "%"; value: 76; numbers: NumberScale { decimals: 1 } }', root)
             const prefix = findChild(field, "prefix")
             verify(prefix.visible)
             compare(prefix.text, "X")
@@ -775,7 +775,7 @@ Item {
         }
 
         function test_sliderTickLabelsJumpWithoutMovingTheKnob() {
-            const ticked = createTemporaryQmlObject('import GameScrcpy.Controls\nSlider { x: 20; y: 200; width: 300; value: 0.2; showValue: false; ticks: [{ position: 0, text: "1", current: false }, { position: 0.5, text: "10", current: true }, { position: 1, text: "100", current: false }] }', root)
+            const ticked = createTemporaryQmlObject('import Anmacgamer.Controls\nSlider { x: 20; y: 200; width: 300; value: 0.2; showValue: false; ticks: [{ position: 0, text: "1", current: false }, { position: 0.5, text: "10", current: true }, { position: 1, text: "100", current: false }] }', root)
             const spy = createTemporaryQmlObject('import QtTest\nSignalSpy { signalName: "tickActivated" }', root)
             spy.target = ticked
             compare(ticked.implicitHeight, Theme.size.sliderTicked)
@@ -793,7 +793,7 @@ Item {
         }
 
         function test_sliderShowsItsAutomaticStateAndADragBubble() {
-            const plain = createTemporaryQmlObject('import GameScrcpy.Controls\nSlider { x: 20; y: 260; width: 300; value: 0.5; showValue: false; valueText: "50 %" }', root)
+            const plain = createTemporaryQmlObject('import Anmacgamer.Controls\nSlider { x: 20; y: 260; width: 300; value: 0.5; showValue: false; valueText: "50 %" }', root)
             const knob = findChild(plain, "knob")
             const fill = findChild(plain, "fill")
             const bubble = findChild(plain, "bubble")
@@ -811,7 +811,7 @@ Item {
         }
 
         function test_settingsRowStacksWhatGoesBelow() {
-            const stacked = createTemporaryQmlObject('import QtQuick\nimport GameScrcpy.Controls\nSettingsRow {\nwidth: 480\ntitle: "Bit rate"\nNumberField { objectName: "field"; value: 8 }\nbelow: [Rectangle { objectName: "wide"; width: parent ? parent.width : 0; height: 40 }]\n}', root)
+            const stacked = createTemporaryQmlObject('import QtQuick\nimport Anmacgamer.Controls\nSettingsRow {\nwidth: 480\ntitle: "Bit rate"\nNumberField { objectName: "field"; value: 8 }\nbelow: [Rectangle { objectName: "wide"; width: parent ? parent.width : 0; height: 40 }]\n}', root)
             verify(stacked.stacked)
             verify(!settingsRow.stacked)
             const field = findChild(stacked, "field")
@@ -822,7 +822,7 @@ Item {
         }
 
         function test_filterChipShowsItsCountAndSelection() {
-            const chip = createTemporaryQmlObject('import GameScrcpy.Controls\nFilterChip { x: 40; y: 320; text: "All"; count: 12 }', root)
+            const chip = createTemporaryQmlObject('import Anmacgamer.Controls\nFilterChip { x: 40; y: 320; text: "All"; count: 12 }', root)
             const spy = createTemporaryQmlObject('import QtTest\nSignalSpy { signalName: "clicked" }', root)
             spy.target = chip
             const count = findChild(chip, "count")
@@ -840,7 +840,7 @@ Item {
         }
 
         function test_tileTakesItsToneFromTheAccentHues() {
-            const tile = createTemporaryQmlObject('import GameScrcpy.Controls\nTile { iconName: "monitor"; tone: "teal" }', root)
+            const tile = createTemporaryQmlObject('import Anmacgamer.Controls\nTile { iconName: "monitor"; tone: "teal" }', root)
             const teal = Qt.color(Theme.accentChoices.teal)
             fuzzyCompare(tile.color.r, teal.r, 0.01)
             fuzzyCompare(tile.color.g, teal.g, 0.01)
@@ -910,7 +910,7 @@ Item {
 
         function test_contentPanelBuildsInEitherTheme() {
             const panel = createTemporaryQmlObject(
-                "import QtQuick\nimport GameScrcpy.Controls\nContentPanel { width: 300; height: 200; Item {} }", root)
+                "import QtQuick\nimport Anmacgamer.Controls\nContentPanel { width: 300; height: 200; Item {} }", root)
             verify(panel.topLeftRadius > 0)
             Theme.dark = false
             Theme.dark = true
@@ -928,7 +928,7 @@ Item {
 
         function test_menuItemOfAChoiceMarksTheChosenOne() {
             const menu = createTemporaryQmlObject(
-                'import GameScrcpy.Controls\nMenu { MenuItem { choice: true; chosen: true; text: "Portrait" } MenuItem { choice: true; text: "Landscape" } }',
+                'import Anmacgamer.Controls\nMenu { MenuItem { choice: true; chosen: true; text: "Portrait" } MenuItem { choice: true; text: "Landscape" } }',
                 root)
             compare(menu.itemAt(0).shownIcon, "check")
             compare(menu.itemAt(1).shownIcon, "")
@@ -937,7 +937,7 @@ Item {
         }
 
         function test_connectionStepperPhases() {
-            const stepper = createTemporaryQmlObject("import GameScrcpy.Controls\nConnectionStepper { current: 2 }", root)
+            const stepper = createTemporaryQmlObject("import Anmacgamer.Controls\nConnectionStepper { current: 2 }", root)
             compare([0, 1, 2, 3, 4].map(i => stepper.phaseOf(i)), ["done", "done", "current", "pending", "pending"])
             stepper.failed = true
             compare(stepper.phaseOf(2), "failed")
@@ -948,7 +948,7 @@ Item {
 
         function test_workbenchLeavesTheCanvasBetweenItsBars() {
             const bench = createTemporaryQmlObject(
-                "import QtQuick\nimport GameScrcpy.Controls\nWorkbench { width: 1000; height: 700 }", root)
+                "import QtQuick\nimport Anmacgamer.Controls\nWorkbench { width: 1000; height: 700 }", root)
             compare(bench.canvasRect.x, 0)
             compare(bench.canvasRect.y, Theme.size.workbenchBar)
             compare(bench.canvasRect.width, 1000 - Theme.size.workbenchSidebar)
@@ -964,7 +964,7 @@ Item {
 
         function test_workbenchToolsStepAsideOnRequest() {
             const bench = createTemporaryQmlObject(
-                "import QtQuick\nimport GameScrcpy.Controls\nWorkbench { width: 1000; height: 700; "
+                "import QtQuick\nimport Anmacgamer.Controls\nWorkbench { width: 1000; height: 700; "
                 + "toolsContent: [ToolbarButton { iconName: \"plus\"; text: \"Zoom in\" }] }", root)
             const tools = findChild(bench, "workbenchTools")
             tryVerify(() => tools.visible)
@@ -977,7 +977,7 @@ Item {
 
         function test_workbenchLeftPanelShiftsTheCanvasOnlyWhenOpen() {
             const bench = createTemporaryQmlObject(
-                "import QtQuick\nimport GameScrcpy.Controls\nWorkbench {\n    width: 1000; height: 700; bottomOpen: true\n"
+                "import QtQuick\nimport Anmacgamer.Controls\nWorkbench {\n    width: 1000; height: 700; bottomOpen: true\n"
                 + "    toolsContent: [ToolbarButton { iconName: \"plus\"; text: \"Zoom in\" }]\n"
                 + "    leftContent: [Item { objectName: \"files\"; anchors.fill: parent }]\n}", root)
             const left = findChild(bench, "workbenchLeft")
@@ -1053,7 +1053,7 @@ Item {
         }
 
         function test_everyControlBuildsInEitherTheme(data) {
-            const control = createTemporaryQmlObject("import QtQuick\nimport GameScrcpy.Controls\n" + data.qml, root)
+            const control = createTemporaryQmlObject("import QtQuick\nimport Anmacgamer.Controls\n" + data.qml, root)
             verify(control.implicitWidth > 0)
             verify(control.implicitHeight > 0)
             Theme.dark = false
@@ -1069,7 +1069,7 @@ Item {
 
         function test_unknownNameWarns() {
             ignoreWarning(/no icon named nonexistent/)
-            createTemporaryQmlObject('import GameScrcpy.Icons\nIcon { name: "nonexistent" }', root)
+            createTemporaryQmlObject('import Anmacgamer.Icons\nIcon { name: "nonexistent" }', root)
         }
     }
 }

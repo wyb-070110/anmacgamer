@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Column {
     id: table

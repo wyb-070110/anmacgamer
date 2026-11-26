@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Keyboard, mouse and gamepads for the key map, on macOS. A thread of its own runs a CFRunLoop: tasks posted to
 // the capture run there, gamepads are polled there with SDL (as on Windows), and the handler is woken when it asks
 // (nextWakeup).
@@ -245,6 +245,7 @@ struct InputCapture::Impl {
     void startPads()
     {
 #if defined(GS_HAVE_SDL3)
+        SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
         SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
         if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD)) {
             fail(std::string("could not start gamepad support: ") + SDL_GetError());

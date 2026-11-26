@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The per-user key as a generic password in the user's login keychain, for the app in its bundle.
 //
 // A program outside an app bundle (the test programs, development tools) keeps its own key in a file
@@ -114,7 +114,7 @@ bool inAppBundle() noexcept
     return bundle != nullptr && CFBundleGetIdentifier(bundle) != nullptr;
 }
 
-// ~/Library/Application Support/GameScrcpy/Unbundled/<program>-<hash of its full path>.key, so a debug and
+// ~/Library/Application Support/anmacgamer/Unbundled/<program>-<hash of its full path>.key, so a debug and
 // a release build of the same program never share a key.
 std::filesystem::path unbundledKeyFile()
 {
@@ -137,7 +137,7 @@ std::filesystem::path unbundledKeyFile()
     for (const char c : program.string()) {
         hash = (hash ^ static_cast<unsigned char>(c)) * 0x100000001b3ULL;
     }
-    return std::filesystem::path(home) / "Library" / "Application Support" / "GameScrcpy" / "Unbundled" /
+    return std::filesystem::path(home) / "Library" / "Application Support" / "anmacgamer" / "Unbundled" /
            std::format("{}-{:016x}.key", program.filename().string(), hash);
 }
 
@@ -152,17 +152,24 @@ std::optional<UserKey> userKey() noexcept
             return std::nullopt;
         }
     }
+    // Read once per process: every read of a login keychain item may show macOS's access dialog (each time, when
+    // the user picks "Allow" rather than "Always Allow"), and the key is asked for on every protect and unprotect.
     static std::mutex mutex;
+    static std::optional<UserKey> known;
     const std::lock_guard lock(mutex);
+    if (known) {
+        return known;
+    }
     const Ref service = string(kService);
     const Ref account = string(kAccount);
     if (service.get() == nullptr || account.get() == nullptr) {
         return std::nullopt;
     }
-    if (std::optional<UserKey> existing = find(service, account)) {
-        return existing;
+    known = find(service, account);
+    if (!known) {
+        known = add(service, account);
     }
-    return add(service, account);
+    return known;
 }
 
 }

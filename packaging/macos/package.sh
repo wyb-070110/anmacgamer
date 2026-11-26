@@ -1,13 +1,13 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
-# Makes a GameScrcpy .dmg for macOS from the built app (cmake --build --preset mac-release, or mac-app):
-#   - copies build/<preset>/bin/GameScrcpy.app to build/package/,
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
+# Makes an anmacgamer .dmg for macOS from the built app (cmake --build --preset mac-release, or mac-app):
+#   - copies build/<preset>/bin/anmacgamer.app to build/package/,
 #   - puts adb inside (Contents/Resources/adb), so a Mac without the Android tools can connect phones,
 #   - brings in Qt (frameworks, QML, plugins) and the other libraries the app and its helpers use (FFmpeg, SDL3,
 #     libusb, OpenSSL…) with macdeployqt, so nothing points at ~/Qt or /opt/homebrew any more,
 #   - signs everything ad hoc (no Apple developer account: testers open it with right-click → Open the first time),
-#   - makes GameScrcpy-<version>-<label>-macos-<arch>.dmg with the app and a link to Applications.
+#   - makes anmacgamer-<version>-<label>-macos-<arch>.dmg with the app and a link to Applications.
 #
 #   packaging/macos/package.sh [label]        (label defaults to "beta1")
 #
@@ -19,17 +19,17 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 LABEL=${1:-beta1}
 PRESET=${PRESET:-mac-release}
 QT_DIR=${QT_DIR:-$HOME/Qt/6.10.3/macos}
-SOURCE="$ROOT/build/$PRESET/bin/GameScrcpy.app"
+SOURCE="$ROOT/build/$PRESET/bin/anmacgamer.app"
 OUT="$ROOT/build/package"
-APP="$OUT/GameScrcpy.app"
+APP="$OUT/anmacgamer.app"
 
 [[ -d "$SOURCE" ]] || { echo "build the app first: cmake --build --preset $PRESET" >&2; exit 1; }
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$SOURCE/Contents/Info.plist")
-ARCH=$(lipo -archs "$SOURCE/Contents/MacOS/GameScrcpy" | tr ' ' '-')
+ARCH=$(lipo -archs "$SOURCE/Contents/MacOS/anmacgamer" | tr ' ' '-')
 [[ "$ARCH" == "x86_64-arm64" || "$ARCH" == "arm64-x86_64" ]] && ARCH=universal
-DMG="$OUT/GameScrcpy-$VERSION-$LABEL-macos-$ARCH.dmg"
+DMG="$OUT/anmacgamer-$VERSION-$LABEL-macos-$ARCH.dmg"
 
-echo "== GameScrcpy $VERSION ($LABEL, $ARCH)"
+echo "== anmacgamer $VERSION ($LABEL, $ARCH)"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 cp -R "$SOURCE" "$APP"
@@ -93,7 +93,12 @@ STAGE="$OUT/dmg"
 mkdir -p "$STAGE"
 cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
-hdiutil create -quiet -volname "GameScrcpy $VERSION $LABEL" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
+if [[ -f "$APP/Contents/Resources/GameScrcpy.icns" && -x /usr/bin/SetFile ]]; then
+    cp "$APP/Contents/Resources/GameScrcpy.icns" "$STAGE/.VolumeIcon.icns"
+    /usr/bin/SetFile -a V "$STAGE/.VolumeIcon.icns"
+    /usr/bin/SetFile -a C "$STAGE"
+fi
+hdiutil create -quiet -volname "anmacgamer $VERSION $LABEL" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
 rm -rf "$STAGE"
 du -h "$DMG"
 echo "$DMG"

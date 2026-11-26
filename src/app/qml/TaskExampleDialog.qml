@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 Dialog {
     id: dialog
@@ -98,7 +98,7 @@ Dialog {
                 visible: dialog.examples.length === 0
                 textFormat: Text.PlainText
                 wrapMode: Text.Wrap
-                text: qsTr("No examples were found next to GameScrcpy.")
+                text: qsTr("No examples were found next to anmacgamer.")
                 color: Theme.colors.textSecondary
                 font.pixelSize: Theme.type.body.size
             }

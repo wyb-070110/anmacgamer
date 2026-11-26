@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The window frame on macOS: the system's title bar, made transparent with the content drawn under it, so the
 // window keeps the traffic lights and macOS moves it by its top strip and zooms it on a double click there (the
 // System Settings choice). QWindowKit's frameless window is not used on macOS: it makes the window unmovable and
@@ -87,6 +87,19 @@ bool styleMacWindow(QWindow* window)
     host.titleVisibility = NSWindowTitleHidden;
     host.movable = YES;
     return true;
+}
+
+void setMacWindowOnTop(QWindow* window, bool on)
+{
+    NSWindow* host = nativeWindow(window);
+    if (host == nil) {
+        return;
+    }
+    constexpr NSWindowCollectionBehavior kEverywhere =
+        NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
+    host.level = on ? NSFloatingWindowLevel : NSNormalWindowLevel;
+    host.hidesOnDeactivate = NO;
+    host.collectionBehavior = on ? (host.collectionBehavior | kEverywhere) : (host.collectionBehavior & ~kEverywhere);
 }
 
 void setMacWindowDark(QWindow* window, bool dark)

@@ -37,7 +37,7 @@ constexpr int kBusyAttempts = 5;
 constexpr std::size_t kMostLineBytes = std::size_t{32} << 20;
 constexpr int kRefused = -32001;
 constexpr std::string_view kOffText =
-    "GameScrcpy is not accepting AI connections. Open GameScrcpy, turn on Settings > AI connection (MCP) > Allow AI "
+    "anmacgamer is not accepting AI connections. Open anmacgamer, turn on Settings > AI connection (MCP) > Allow AI "
     "to connect through MCP, then start this server again.";
 
 struct Shared {
@@ -274,7 +274,7 @@ int relay(int pipe)
     if (shared->inputEnded) {
         return kSuccess;
     }
-    std::cerr << "gs mcp: GameScrcpy closed the connection\n";
+    std::cerr << "gs mcp: anmacgamer closed the connection\n";
     return kProblems;
 }
 

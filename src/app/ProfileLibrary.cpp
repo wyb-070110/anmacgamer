@@ -1353,7 +1353,7 @@ QString ProfileLibrary::problemText(const input::LoadResult& loaded) const
     case input::DiagnosticCode::MalformedJson:
         return tr("The file is not valid JSON.");
     case input::DiagnosticCode::WrongFormat:
-        return tr("This is not a GameScrcpy key mapping profile.");
+        return tr("This is not a anmacgamer key mapping profile.");
     case input::DiagnosticCode::WrongVersion:
         return tr("The profile was made for another version of the format.");
     default:

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # gs_media off Windows (the macOS port): FFmpeg decodes with VideoToolbox when it can (Linux: on the
 # processor), frames are read back by mapping them, sound goes out through SDL3. No HLSL shaders.
 add_library(gs_media STATIC

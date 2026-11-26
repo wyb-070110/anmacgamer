@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // gs-exthost off Windows: the Win32 names exthost (and the native test DLLs) use, mapped onto POSIX in
 // posix/Compat.cpp, so Channel, MediaRing, ImageSection, TapSection, InProcess, Server and most of Hosted stay as
 // they are upstream.

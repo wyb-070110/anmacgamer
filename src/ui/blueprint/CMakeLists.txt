@@ -5,7 +5,7 @@ set_source_files_properties(BlueprintLook.qml PROPERTIES QT_QML_SINGLETON_TYPE T
 qt_add_library(gs_ui_blueprint STATIC)
 set_target_properties(gs_ui_blueprint PROPERTIES QT_QMLCACHEGEN_ARGUMENTS "--only-bytecode")
 qt_add_qml_module(gs_ui_blueprint
-    URI GameScrcpy.Blueprint
+    URI Anmacgamer.Blueprint
     VERSION 1.0
     IMPORT_PATH "${QT_QML_OUTPUT_DIRECTORY}"
     QML_FILES
@@ -36,7 +36,7 @@ qt_add_qml_module(gs_ui_blueprint
         WirePulse.qml
 )
 qt_add_shaders(gs_ui_blueprint "gs_ui_blueprint_shaders"
-    PREFIX "/qt/qml/GameScrcpy/Blueprint"
+    PREFIX "/qt/qml/Anmacgamer/Blueprint"
     FILES
         shaders/griddots.frag
 )

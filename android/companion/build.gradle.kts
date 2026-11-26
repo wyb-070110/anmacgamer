@@ -15,8 +15,8 @@ android {
         applicationId = "com.gamescrcpy.companion"
         minSdk = 28
         targetSdk = 36
-        versionCode = 3
-        versionName = "2.1.0"
+        versionCode = 10
+        versionName = "2.3.2"
     }
 
     buildTypes {

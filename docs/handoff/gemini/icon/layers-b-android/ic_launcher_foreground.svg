@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108">
+  <defs>
+    <linearGradient id="phoneEmeraldBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0F2E2A"/>
+      <stop offset="100%" stop-color="#081C19"/>
+    </linearGradient>
+    <linearGradient id="emeraldGlassGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.90"/>
+      <stop offset="55%" stop-color="#10B981" stop-opacity="0.94"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.96"/>
+    </linearGradient>
+    <clipPath id="androidScreenClip">
+      <rect x="38" y="39" width="41" height="30" rx="3.5" ry="3.5"/>
+    </clipPath>
+    <linearGradient id="androidSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <!-- Safe zone: inner 66x66 circle (radius 33 centered at 54,54) -->
+  <rect x="29" y="32" width="19" height="44" rx="3.8" ry="3.8" fill="url(#phoneEmeraldBack)"/>
+  <rect x="38" y="39" width="41" height="30" rx="3.5" ry="3.5" fill="url(#emeraldGlassGrad)" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="0.5"/>
+  <polygon points="69,39 79,39 79,69 61,69" fill="url(#androidSheen)" clip-path="url(#androidScreenClip)"/>
+  <path d="M 55 47 L 62 54 L 55 61" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

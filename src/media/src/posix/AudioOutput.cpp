@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Sound off Windows through SDL3: the default playback device pulls from the regulator in SDL's callback,
 // with the gain ramped as on Windows. SDL's default device follows the system's choice by itself. Without
 // SDL3 (the Linux test bed) the output stays silent.
@@ -96,6 +96,7 @@ void SDLCALL pull(void* opaque, SDL_AudioStream* stream, int additional, int)
 void AudioOutput::run(const std::stop_token& stop)
 {
     platform::setCurrentThreadName("gs-audio-out");
+    SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
     if (!SDL_InitSubSystem(SDL_INIT_AUDIO)) {
         log::error(kLog, "no sound: SDL audio is unavailable ({})", SDL_GetError());
         return;

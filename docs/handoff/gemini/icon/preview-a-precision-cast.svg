@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0D1526"/>
+      <stop offset="100%" stop-color="#162640"/>
+    </linearGradient>
+    <radialGradient id="ambientGlow" cx="52%" cy="51%" r="48%">
+      <stop offset="0%" stop-color="#0A84FF" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#0A84FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sourceScreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2B7BFF" stop-opacity="0.82"/>
+      <stop offset="100%" stop-color="#0A84FF" stop-opacity="0.58"/>
+    </linearGradient>
+    <linearGradient id="mainScreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5F9FF" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#DCEBFF" stop-opacity="0.18"/>
+    </linearGradient>
+    <radialGradient id="coreDotGrad" cx="38%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#6CD4FF"/>
+      <stop offset="55%" stop-color="#0A84FF"/>
+      <stop offset="100%" stop-color="#005FD6"/>
+    </radialGradient>
+  </defs>
+  <!-- Background (Full-bleed 1024x1024; macOS 26 applies squircle mask) -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+  <rect width="1024" height="1024" fill="url(#ambientGlow)"/>
+  <!-- Layer 1: Source Screen -->
+  <rect x="164" y="216" width="580" height="420" rx="52" ry="52" fill="url(#sourceScreenGrad)"/>
+  <!-- Layer 2: Main Mirror Display -->
+  <rect x="220" y="288" width="620" height="460" rx="58" ry="58" fill="url(#mainScreenGrad)" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="6"/>
+  <!-- Layer 3: Precision Reticle -->
+  <g fill="none" stroke="#FFFFFF" stroke-opacity="0.96" stroke-width="26" stroke-linecap="round">
+    <path d="M 564 394.6 A 128 128 0 0 1 653.4 484"/>
+    <path d="M 653.4 552 A 128 128 0 0 1 564 641.4"/>
+    <path d="M 496 641.4 A 128 128 0 0 1 406.6 552"/>
+    <path d="M 406.6 484 A 128 128 0 0 1 496 394.6"/>
+  </g>
+  <g fill="#FFFFFF" fill-opacity="0.96">
+    <rect x="517" y="346" width="26" height="76" rx="13" ry="13"/>
+    <rect x="517" y="614" width="26" height="76" rx="13" ry="13"/>
+    <rect x="358" y="505" width="76" height="26" rx="13" ry="13"/>
+    <rect x="626" y="505" width="76" height="26" rx="13" ry="13"/>
+  </g>
+  <!-- Layer 4: System Blue Core -->
+  <circle cx="530" cy="518" r="46" fill="url(#coreDotGrad)"/>
+</svg>

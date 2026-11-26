@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import GameScrcpy.Controls
-import GameScrcpy.App
+import Anmacgamer.Controls
+import Anmacgamer.App
 
 SettingsSheet {
     id: sheet
@@ -189,7 +189,7 @@ SettingsSheet {
                 objectName: "capturePhone"
                 visible: sheet.phones.length > 0
                 model: sheet.phones.map(phone => phone.ready ? phone.name
-                                                             : qsTr("%1 · AOA unavailable on macOS").arg(phone.name))
+                                                             : qsTr("%1 · USB unavailable").arg(phone.name))
                 currentIndex: sheet.phones.findIndex(phone => phone.serial === sheet.capture.aoaPhone)
                 displayText: phoneChoice.currentIndex >= 0 ? phoneChoice.currentText : qsTr("Choose a phone")
                 Accessible.name: qsTr("Phone on USB")
@@ -206,7 +206,7 @@ SettingsSheet {
                 small: true
                 tone: "ghost"
                 iconName: "circle-help"
-                text: qsTr("About AOA on macOS")
+                text: qsTr("How AOA touch over USB works")
                 onClicked: Commands.trigger("app.help", "aoa-driver")
             }
         }

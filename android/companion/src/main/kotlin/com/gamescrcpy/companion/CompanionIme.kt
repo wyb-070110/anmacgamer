@@ -22,7 +22,9 @@ class CompanionIme : InputMethodService(), ImeTarget {
     private val hostWatcher: () -> Unit = { main.post { placeHint() } }
     private val optionsListener = PhoneOptions.Listener { main.post { placeHint() } }
     private var strip: TextView? = null
-    private var onTop = false
+    // No view of its own (zero height) while the computer is connected, or while the hint sits at the top: the
+    // phone's screen stays whole and the user types on the computer. The strip comes back once the computer is gone.
+    private var bare = false
 
     override fun onCreate() {
         super.onCreate()
@@ -44,15 +46,15 @@ class CompanionIme : InputMethodService(), ImeTarget {
     }
 
     override fun onCreateInputView(): View {
-        onTop = wantsTop()
-        if (onTop) {
+        bare = wantsBare()
+        if (bare) {
             strip = null
             return Space(this)
         }
-        val ui = Ui(this, Look.palette(this, null))
-        val face = ColorDrawable(ui.palette.bgElevated)
-        val edge = ColorDrawable(ui.palette.strokeSubtle)
-        val view = ui.text(Look.LABEL, ui.palette.textPrimary).apply {
+        val ui = Ui(this, Look.palette(this))
+        val face = ColorDrawable(ui.palette.surfaceHigh)
+        val edge = ColorDrawable(ui.palette.outlineVariant)
+        val view = ui.text(Look.LABEL, ui.palette.onSurface).apply {
             gravity = Gravity.CENTER
             minHeight = ui.px(STRIP_HEIGHT_DP)
             setPaddingRelative(ui.px(Look.SPACE_MD), ui.px(Look.SPACE_XS), ui.px(Look.SPACE_MD), ui.px(Look.SPACE_XS))
@@ -60,7 +62,7 @@ class CompanionIme : InputMethodService(), ImeTarget {
                 setLayerGravity(1, Gravity.TOP or Gravity.FILL_HORIZONTAL)
                 setLayerHeight(1, ui.px(Look.STROKE))
             }
-            ui.lead(this, R.drawable.ic_keyboard, ui.palette.accent)
+            ui.lead(this, R.drawable.ic_keyboard, ui.palette.primary)
             setOnClickListener { switchToPhoneKeyboard() }
         }
         strip = view
@@ -105,10 +107,11 @@ class CompanionIme : InputMethodService(), ImeTarget {
         main.post { switchToPhoneKeyboard() }
     }
 
-    private fun wantsTop(): Boolean = PhoneOptions.of(this).imeBar == ImeBar.TOP && ImeBridge.topHost
+    private fun wantsBare(): Boolean =
+        CompanionState.connected || (PhoneOptions.of(this).imeBar == ImeBar.TOP && ImeBridge.topHost)
 
     private fun placeHint() {
-        if (wantsTop() != onTop) {
+        if (wantsBare() != bare) {
             setInputView(onCreateInputView())
         }
     }
@@ -124,6 +127,7 @@ class CompanionIme : InputMethodService(), ImeTarget {
 
     private fun connectionChanged() {
         main.removeCallbacks(check)
+        placeHint()
         refreshStrip()
         val delay = fallback.update(CompanionState.connected, SystemClock.uptimeMillis()) ?: return
         main.postDelayed(check, delay + 1) // source-rule-allow R9: going back to the phone's keyboard a few seconds after the computer is gone is the behaviour

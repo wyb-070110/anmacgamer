@@ -212,7 +212,7 @@ void MirrorWindow::attachOverlay(QQmlEngine& engine)
     if (m_overlay != nullptr) {
         return;
     }
-    QQmlComponent component(&engine, QStringLiteral("GameScrcpy.App"), QStringLiteral("MirrorOverlay"));
+    QQmlComponent component(&engine, QStringLiteral("Anmacgamer.App"), QStringLiteral("MirrorOverlay"));
     QObject* created = component.createWithInitialProperties({{QStringLiteral("serial"), m_serial}});
     auto* overlay = qobject_cast<QQuickItem*>(created);
     if (overlay == nullptr) {
@@ -227,6 +227,7 @@ void MirrorWindow::attachOverlay(QQmlEngine& engine)
     overlay->setSize(size());
     overlay->setProperty("fullScreen", m_fullScreen);
     overlay->setProperty("mini", m_mini);
+    overlay->setProperty("onTop", m_onTop);
     if (const int title = overlay->property("fixedTitleHeight").toInt(); title > 0) {
         m_titleHeight = title;
     }
@@ -1097,6 +1098,28 @@ void MirrorWindow::setFullScreen(bool on)
     }
 }
 
+void MirrorWindow::setOnTop(bool on)
+{
+    if (on == m_onTop) {
+        return;
+    }
+    m_onTop = on;
+    if (m_overlay != nullptr) {
+        m_overlay->setProperty("onTop", on);
+    }
+    applyOnTop();
+}
+
+void MirrorWindow::applyOnTop()
+{
+    const bool top = m_onTop || m_mini;
+    if (flags().testFlag(Qt::WindowStaysOnTopHint) != top) {
+        setFlag(Qt::WindowStaysOnTopHint, top);
+    }
+    // In its own full screen the window has a desktop to itself; floating would keep it over other full-screen apps.
+    setMacWindowOnTop(this, top && !m_fullScreen);
+}
+
 void MirrorWindow::setMini(bool on)
 {
     if (on == m_mini) {
@@ -1110,13 +1133,13 @@ void MirrorWindow::setMini(bool on)
                                                                     : QRect();
         m_normalGeometry = QRect();
         m_mini = true;
-        setFlag(Qt::WindowStaysOnTopHint, true);
+        applyOnTop();
         showNormal();
         setGeometry(miniGeometry());
     } else {
         m_miniPosition = position();
         m_mini = false;
-        setFlag(Qt::WindowStaysOnTopHint, false);
+        applyOnTop();
         showNormal();
         if (m_miniRestore.isValid()) {
             setGeometry(m_miniRestore);
@@ -1301,6 +1324,9 @@ bool MirrorWindow::event(QEvent* event)
         QMetaObject::invokeMethod(m_overlay.data(), "revealToolbar");
     } else if (type == QEvent::Move) {
         applyPointer();
+    } else if (type == QEvent::Show && (m_onTop || m_mini)) {
+        // The native window exists only once shown; Qt may also reset its level when it shows it.
+        QMetaObject::invokeMethod(this, [this] { applyOnTop(); }, Qt::QueuedConnection);
     }
     if (type == QEvent::MouseMove || type == QEvent::MouseButtonPress || type == QEvent::MouseButtonRelease ||
         type == QEvent::MouseButtonDblClick) {
@@ -1353,6 +1379,7 @@ void MirrorWindow::followWindowState()
     const bool on = states.testFlag(Qt::WindowFullScreen);
     if (on != m_fullScreen) {
         m_fullScreen = on;
+        applyOnTop();
         if (!on && !states.testFlag(Qt::WindowMinimized)) {
             if (plain(states) && m_normalGeometry.isValid()) {
                 setGeometry(m_normalGeometry);

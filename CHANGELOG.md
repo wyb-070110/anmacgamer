@@ -1,6 +1,28 @@
-# 更新日志
+# Changelog
 
-本文件记录每个版本的主要变化，格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
+Notable changes are documented here following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
+
+## [2.2.1-beta3] - 2026-11-25
+
+macOS 14+ universal beta of **anmacgamer**:
+
+- Trackpad: touches match Mac cadence and lift velocity so home screens flip one page and lists keep native momentum; Direct mode is now default.
+- Window and toolbar: customizable toolbar buttons on any side, always-on-top across Spaces, and an option to turn off the phone screen while mirroring.
+- Input and audio: on-screen Chinese pinyin preview via **anmacgamer Companion** IME, built-in Honkai: Star Rail PC profile, and fixed-volume phone audio capture.
+- Connections and hardware: wireless transport falls back to the adb tunnel when Wi-Fi direct fails; adb-free Companion mirroring (`TransportKind::Companion`); USB AOA touch and `/dev/cu.*` serial ports wired up.
+- Branding: renamed to **anmacgamer** with a Liquid Glass icon and custom DMG icon.
+
+## [2.2.1-beta2] - 2026-11-24
+
+First macOS 14+ universal beta of **anmacgamer**:
+
+- Video and audio: VideoToolbox (H.264/H.265) and dav1d (AV1) decoding, Metal rendering, SDL3 audio, bundled LGPL FFmpeg and `adb`.
+- Connections and input: USB, wireless debugging, Wi-Fi direct/adb tunnel, key/mouse mapping without Input Monitoring, Xbox/PS4/PS5 rumble controllers, and two-finger trackpad swipes.
+- macOS and automation: Liquid Glass UI, native menu bar and notifications, sandboxed scripts (`gs-scripthost`) and `.dylib` extensions (`gs-exthost`), Vision OCR, speech, and Keychain AI keys.
+
+---
+
+> Entries from `2.2.1` and earlier below come from upstream [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) (see [LICENSING.md](LICENSING.md)).
 
 ## [2.2.1] - 2026-11-17
 
@@ -102,7 +124,7 @@ Fixed: in the Control window without a picture (touch boxes from extensions, AOA
 
 ### ESP32 触控盒改为社区扩展
 
-- ESP32 触控盒搬出主程序，成为社区扩展 `community.esp32`，在单独的项目“[GameScrcpy-ESP32](https://github.com/NuoRan/GameScrcpy-ESP32)”里发布，固件、刷写和协议都在那里。电脑和板子之间新增低功耗蓝牙连接（固件 1.1，实验性，还没有在真板子上核对过）。
+- ESP32 触控盒搬出主程序，成为独立的社区扩展 `community.esp32`，固件、刷写和协议都包含在扩展项目中。电脑和板子之间新增低功耗蓝牙连接（固件 1.1，实验性，还没有在真板子上核对过）。
 - GameScrcpy 本身不再驱动任何板子，也不再附带 ESP32 的固件；触控盒都来自扩展。装上扩展后，板子以触控盒的身份出现在设备页，也可以和采集卡配对。
 - 帮助里的 ESP32 文章换成通用的“触控盒”。
 
@@ -148,7 +170,7 @@ Fixed: in the Control window without a picture (touch boxes from extensions, AOA
 
 ### English summary
 
-GameScrcpy 2.1 brings the third version of the extension platform. Extensions can add devices such as touch boxes to the Devices page, new ways to connect phones, picture and sound sources, places to send the picture and sound, recording exporters and picture readers; reading aloud and voice commands for logic, with Windows speech built in; interface languages with translated help; AI model services; recognition engines; and converters that import and export other formats. Logic can make https requests, use WebSockets, open the files and folders the user picks, answer programs on this computer, take frames of the mirrored picture and hear GameScrcpy's own events with `events.on`. Native extension interface 2 adds jobs with progress (one block in blueprints), events, settings and the devices the user allows. Packages can be signed: GameScrcpy remembers each extension's publisher key and calls it a verified publisher once the key is known from an earlier install; `gamescrcpy://` links download a package, check its SHA-256 and open the install dialog; restricted native DLLs run in an AppContainer without rights; extensions report their health, bring their own help and tours, and offer newer versions from their update lists, installed only when you choose Update. Each extension names the interface versions it was built against, and GameScrcpy says when one was made for an older GameScrcpy; each extension can also say which GameScrcpy version it was written for (`"gamescrcpy": "2.1"`), which its card, its details and the install dialog show, worked out from `requires` when the field is missing, and a compatible one written for an older version keeps working; the first start after an update lists the extensions you had turned on that no longer open, with Check for updates and Open Extensions, and the install dialog refuses packages that do not fit this GameScrcpy and says why. The ESP32 touch box moved out of GameScrcpy into the community extension `community.esp32`, published in its own project [GameScrcpy-ESP32](https://github.com/NuoRan/GameScrcpy-ESP32), which adds Bluetooth LE between the computer and the board (experimental, not yet checked on a real board). The companion app 2.1 is redesigned, and its switches sync both ways between the phone and the computer. No extension is built in any more: the CRT scanlines and the slate theme are samples in `sdk\samples`, next to the PC clock and new examples for extension authors. AI settings pick the model from a drop-down with per-model thinking options, every conversation is kept, and Help offers a Sponsor dialog. Fixed: the logic editor no longer freezes on larger profiles; an ESP32 box no longer drops its session after a few idle minutes (in the community extension); an extension waiting for consent no longer claims that it needs a missing extension; Windows device names such as `con .txt` are refused in packages and get a leading `_` when copied from the phone. Breaking: native extensions must be rebuilt for interface version 2 (`gs_ext_main`) and write `"native": "^2.0"`; those made for 2.0 show as made for an older GameScrcpy; the built-in ESP32 touch box is gone and its 2.0 settings are not carried over, so after installing `community.esp32` you choose the touch method again and set up the board's Wi-Fi again; the samples use `example.*` ids, so the slate theme falls back to the default theme until you install and choose it again, and the CRT scanlines start from their default values; the fixed `paths` of `files.paths` give nothing and `folders` replaces them; `general.language` holds a language tag as text, and 2.0 falls back to following Windows when it finds a language pack's tag there.
+GameScrcpy 2.1 brings the third version of the extension platform. Extensions can add devices such as touch boxes to the Devices page, new ways to connect phones, picture and sound sources, places to send the picture and sound, recording exporters and picture readers; reading aloud and voice commands for logic, with Windows speech built in; interface languages with translated help; AI model services; recognition engines; and converters that import and export other formats. Logic can make https requests, use WebSockets, open the files and folders the user picks, answer programs on this computer, take frames of the mirrored picture and hear GameScrcpy's own events with `events.on`. Native extension interface 2 adds jobs with progress (one block in blueprints), events, settings and the devices the user allows. Packages can be signed: GameScrcpy remembers each extension's publisher key and calls it a verified publisher once the key is known from an earlier install; `gamescrcpy://` links download a package, check its SHA-256 and open the install dialog; restricted native DLLs run in an AppContainer without rights; extensions report their health, bring their own help and tours, and offer newer versions from their update lists, installed only when you choose Update. Each extension names the interface versions it was built against, and GameScrcpy says when one was made for an older GameScrcpy; each extension can also say which GameScrcpy version it was written for (`"gamescrcpy": "2.1"`), which its card, its details and the install dialog show, worked out from `requires` when the field is missing, and a compatible one written for an older version keeps working; the first start after an update lists the extensions you had turned on that no longer open, with Check for updates and Open Extensions, and the install dialog refuses packages that do not fit this GameScrcpy and says why. The ESP32 touch box moved out of GameScrcpy into the separate community extension `community.esp32`, which adds Bluetooth LE between the computer and the board (experimental, not yet checked on a real board). The companion app 2.1 is redesigned, and its switches sync both ways between the phone and the computer. No extension is built in any more: the CRT scanlines and the slate theme are samples in `sdk\samples`, next to the PC clock and new examples for extension authors. AI settings pick the model from a drop-down with per-model thinking options, every conversation is kept, and Help offers a Sponsor dialog. Fixed: the logic editor no longer freezes on larger profiles; an ESP32 box no longer drops its session after a few idle minutes (in the community extension); an extension waiting for consent no longer claims that it needs a missing extension; Windows device names such as `con .txt` are refused in packages and get a leading `_` when copied from the phone. Breaking: native extensions must be rebuilt for interface version 2 (`gs_ext_main`) and write `"native": "^2.0"`; those made for 2.0 show as made for an older GameScrcpy; the built-in ESP32 touch box is gone and its 2.0 settings are not carried over, so after installing `community.esp32` you choose the touch method again and set up the board's Wi-Fi again; the samples use `example.*` ids, so the slate theme falls back to the default theme until you install and choose it again, and the CRT scanlines start from their default values; the fixed `paths` of `files.paths` give nothing and `folders` replaces them; `general.language` holds a language tag as text, and 2.0 falls back to following Windows when it finds a language pack's tag there.
 
 ## [2.0.0] - 2026-11-10
 
@@ -207,11 +229,4 @@ GameScrcpy 2.0 是一次完全重写：电脑端程序、手机端服务、通�
 
 GameScrcpy 2.0 is a complete rewrite of the PC app, the phone server, the protocol and the companion app. Highlights: a zero-copy hardware-decoded mirroring pipeline with H.264, H.265 and AV1; audio; USB, wireless debugging and WiFi direct; several phones in windows or a grid; recording to MP4; an in-place key mapping editor with a large component library; blueprints that are the same thing as TypeScript, with vision, OCR, tasks and a debugger; a built-in AI assistant and a local MCP server; the ESP32 touch box with in-app flashing; `.gsext` extensions with sandboxed native extensions; a new dark-first interface with built-in help and guided tours; an installer and a portable build. Experimental: AOA touch, Bluetooth ESP32 boards, capture cards and gamepad passthrough. Profiles and scripts from 1.x cannot be imported.
 
-## 1.x
-
-1.x 的更新记录见 [v1.3.4 标签里的 CHANGELOG](https://github.com/NuoRan/GameScrcpy/blob/v1.3.4/CHANGELOG.md)。
-
-[2.2.0]: https://github.com/NuoRan/GameScrcpy/releases/tag/v2.2.0
-[2.1.1]: https://github.com/NuoRan/GameScrcpy/releases/tag/v2.1.1
-[2.1.0]: https://github.com/NuoRan/GameScrcpy/releases/tag/v2.1.0
-[2.0.0]: https://github.com/NuoRan/GameScrcpy/releases/tag/v2.0.0
+[2.2.1-beta2]: https://github.com/wyb-070110/anmacgamer/releases/tag/v2.2.1-beta2

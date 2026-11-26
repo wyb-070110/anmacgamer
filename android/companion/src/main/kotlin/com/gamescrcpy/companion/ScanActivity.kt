@@ -45,32 +45,32 @@ class ScanActivity : Activity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registry.currentState = Lifecycle.State.CREATED
-        val ui = Ui(this, Look.palette(this, null))
+        val ui = Ui(this, Look.palette(this))
         val padding = ui.px(Look.SPACE_XL)
         val margin = ui.px(Look.SPACE_MD)
         preview = PreviewView(this).apply { scaleType = PreviewView.ScaleType.FILL_CENTER }
-        status = ui.text(Look.BODY, ui.palette.textPrimary, R.string.scan_title).apply {
+        status = ui.text(Look.BODY_LARGE, ui.palette.onSurface, R.string.scan_title).apply {
             gravity = Gravity.CENTER
         }
-        settings = ui.button(ButtonKind.SECONDARY, R.string.scan_open_settings).apply {
+        settings = ui.button(ButtonKind.TONAL, R.string.scan_open_settings).apply {
             visibility = View.GONE
             setOnClickListener {
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
             }
         }
-        val cancel = ui.button(ButtonKind.GHOST, R.string.action_cancel).apply {
+        val cancel = ui.button(ButtonKind.TEXT, R.string.action_cancel).apply {
             setOnClickListener { finish() }
         }
         val wide = { LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) }
         val panel = ui.column(Look.SPACE_MD).apply {
-            background = ui.rounded(Look.alpha(ui.palette.bgElevated, PANEL_ALPHA), Look.RADIUS_XL, ui.palette.strokeStrong)
+            background = ui.rounded(Look.alpha(ui.palette.surfaceHigh, PANEL_ALPHA), Look.RADIUS_CARD)
             setPadding(padding, padding, padding, ui.px(Look.SPACE_MD))
             addView(status, wide())
             addView(settings, wide())
             addView(cancel, wide())
         }
         val root = FrameLayout(this)
-        root.setBackgroundColor(ui.palette.bgBase)
+        root.setBackgroundColor(ui.palette.surface)
         root.addView(preview, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         val placed = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,
             Gravity.BOTTOM)
@@ -192,7 +192,9 @@ class ScanActivity : Activity(), LifecycleOwner {
             return
         }
         if (QrLinks.parse(text) == null) {
-            status.setText(R.string.scan_not_ours)
+            // Android's wireless debugging pairing code (WIFI:T:ADB;S:…;P:…;;) is scanned by the phone's own
+            // Developer options, not by the companion: say where.
+            status.setText(if (text.startsWith("WIFI:T:ADB;")) R.string.scan_adb_pairing else R.string.scan_not_ours)
             return
         }
         finished = true

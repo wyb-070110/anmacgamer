@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The menu bar item and notices on macOS. showIcon puts the app's icon in the menu bar (NSStatusItem); a click
 // opens its menu, or calls activated when there is no menu. show() posts a notification through the notification
 // center; that needs the app bundle (outside one it reports false) and the user's permission, asked once.

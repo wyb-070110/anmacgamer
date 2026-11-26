@@ -64,35 +64,35 @@
       "channel": "control",
       "direction": "toServer",
       "error": "Truncated",
-      "hex": "01010000000b00010100"
+      "hex": "01010000000f00010100"
     },
     {
       "name": "touch-field-truncated",
       "channel": "control",
       "direction": "toServer",
       "error": "Truncated",
-      "hex": "01010000000a00010100000001000200"
+      "hex": "01010000000e0001010000000100020003000000"
     },
     {
       "name": "touch-trailing-bytes",
       "channel": "control",
       "direction": "toServer",
       "error": "TrailingBytes",
-      "hex": "01010000000c000101000000010002000300"
+      "hex": "01010000001000010100000001000200030000000000"
     },
     {
       "name": "touch-invalid-action",
       "channel": "control",
       "direction": "toServer",
       "error": "InvalidEnum",
-      "hex": "01010000000b0001010400000100020003"
+      "hex": "01010000000f000101040000010002000300000000"
     },
     {
       "name": "touch-pointer-out-of-range",
       "channel": "control",
       "direction": "toServer",
       "error": "OutOfRange",
-      "hex": "01010000000b0001010020000100020003"
+      "hex": "01010000000f000101002000010002000300000000"
     },
     {
       "name": "touch-frame-empty",
@@ -113,14 +113,14 @@
       "channel": "control",
       "direction": "toServer",
       "error": "OutOfRange",
-      "hex": "01010000001300010200030001000200030203000400050006"
+      "hex": "0101000000170001020003000100020003020300040005000600000000"
     },
     {
       "name": "touch-frame-duplicate-and-trailing",
       "channel": "control",
       "direction": "toServer",
       "error": "TrailingBytes",
-      "hex": "0101000000140001020003000100020003020300040005000600"
+      "hex": "010100000018000102000300010002000302030004000500060000000000"
     },
     {
       "name": "key-invalid-action",
@@ -519,7 +519,7 @@
       "channel": "companion",
       "direction": "toServer",
       "error": "UnexpectedType",
-      "hex": "01010000000b0001010000000100020003"
+      "hex": "01010000000f000101000000010002000300000000"
     },
     {
       "name": "receiver-report-on-companion",

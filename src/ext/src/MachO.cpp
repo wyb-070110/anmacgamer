@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Mach-O libraries for the macOS build of a native extension: which processor a dylib is built for, what it
 // exports, and what it imports from which library. Runs on every system, so gs validate on Windows checks the
 // macOS libraries of a package too.

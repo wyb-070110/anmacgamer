@@ -15,6 +15,7 @@
 namespace gs::app {
 
 inline constexpr std::array<std::uint8_t, 4> kLanMagic{'G', 'S', 'C', 'L'};
+inline constexpr std::array<std::uint8_t, 4> kMirrorMagic{'G', 'S', 'C', 'M'};
 inline constexpr std::uint8_t kLanVersion = 1;
 inline constexpr std::size_t kLanKeySize = 32;
 inline constexpr std::size_t kLanIdSize = 16;
@@ -26,8 +27,12 @@ inline constexpr std::size_t kLanTagSize = 16;
 inline constexpr std::uint32_t kLanMinRecord = protocol::kFrameHeaderSize + kLanTagSize;
 inline constexpr std::uint32_t kLanMaxRecord =
     protocol::kFrameHeaderSize + protocol::kCompanionPayloadLimit + kLanTagSize;
+inline constexpr std::uint32_t kMirrorMinRecord = 5 + 1 + kLanTagSize;
+inline constexpr std::uint32_t kMirrorMaxRecord = 5 + 1024 * 1024 + kLanTagSize;
 inline constexpr std::uint16_t kLanPort = 27185;
 inline constexpr std::string_view kLanContext = "GSCP/1 companion lan";
+inline constexpr std::string_view kMirrorContext = "GSCP/1 companion mirror";
+inline constexpr std::string_view kMirrorTokenContext = "GSCP/1 companion mirror token";
 inline constexpr std::string_view kLanKeyProtected = "dpapi:";
 inline constexpr std::string_view kLanKeyEntropy = "GameScrcpy companion pairing key 1";
 
@@ -35,6 +40,7 @@ using LanKey = std::array<std::uint8_t, kLanKeySize>;
 using LanId = std::array<std::uint8_t, kLanIdSize>;
 using LanNonce = std::array<std::uint8_t, kLanNonceSize>;
 using LanPrefix = std::array<std::uint8_t, 4>;
+using MirrorToken = std::array<std::uint8_t, 16>;
 
 enum class LanStatus : std::uint8_t { Accepted = 0, Unknown = 1, VersionMismatch = 2 };
 enum class LanError : std::uint8_t { Truncated, BadMagic, VersionMismatch, LengthExceeded, InvalidEnum, OutOfRange, BadTag };
@@ -87,10 +93,15 @@ struct LanPairingText {
 [[nodiscard]] std::vector<std::uint8_t> encodeLanHello(const LanHello& hello);
 [[nodiscard]] Expected<std::size_t, LanError> lanHelloSize(std::span<const std::uint8_t> head);
 [[nodiscard]] Expected<LanHello, LanError> decodeLanHello(std::span<const std::uint8_t> bytes);
-[[nodiscard]] std::vector<std::uint8_t> encodeLanReply(const LanReply& reply);
+[[nodiscard]] bool isMirrorHello(std::span<const std::uint8_t> head) noexcept;
+[[nodiscard]] std::vector<std::uint8_t> encodeLanReply(const LanReply& reply, bool mirror = false);
 [[nodiscard]] Expected<LanReply, LanError> decodeLanReply(std::span<const std::uint8_t> bytes);
 [[nodiscard]] LanKey lanSessionKey(const LanKey& key, std::span<const std::uint8_t> hello,
                                    std::span<const std::uint8_t> reply);
+
+[[nodiscard]] LanKey mirrorSessionKey(const LanKey& key, std::span<const std::uint8_t> hello,
+                                      std::span<const std::uint8_t> reply);
+[[nodiscard]] MirrorToken mirrorToken(const LanKey& session);
 
 class LanSealer final
 {
@@ -108,9 +119,10 @@ private:
 class LanOpener final
 {
 public:
-    LanOpener(const LanKey& session, LanDirection direction, std::uint64_t counter = 0) noexcept;
+    LanOpener(const LanKey& session, LanDirection direction, std::uint64_t counter = 0, bool mirror = false) noexcept;
 
     [[nodiscard]] static Expected<std::uint32_t, LanError> recordLength(const LanPrefix& prefix) noexcept;
+    [[nodiscard]] static Expected<std::uint32_t, LanError> mirrorRecordLength(const LanPrefix& prefix) noexcept;
     [[nodiscard]] Expected<std::vector<std::uint8_t>, LanError> open(const LanPrefix& prefix,
                                                                      std::span<const std::uint8_t> body);
 
@@ -118,6 +130,7 @@ private:
     LanKey m_key;
     LanDirection m_direction;
     std::uint64_t m_counter;
+    bool m_mirror;
 };
 
 }

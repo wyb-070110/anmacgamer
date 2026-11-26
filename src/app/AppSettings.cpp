@@ -8,6 +8,8 @@
 #include <gs/platform/Accessibility.h>
 
 #include <QGuiApplication>
+#include <QDateTime>
+#include <QDir>
 #include <QFileInfo>
 #include <QJSEngine>
 #include <QJsonObject>
@@ -107,7 +109,24 @@ std::filesystem::path dataDirectory()
     if (QFileInfo::exists(programDirectory + QStringLiteral("/portable.flag"))) {
         return (programDirectory + QStringLiteral("/data")).toStdWString();
     }
-    return (qEnvironmentVariable("HOME") + QStringLiteral("/Library/Application Support/GameScrcpy")).toStdWString();
+    // The app was called GameScrcpy before it became anmacgamer: its folder moves over once.
+    const QString support = qEnvironmentVariable("HOME") + QStringLiteral("/Library/Application Support/");
+    const QString folder = support + QStringLiteral("anmacgamer");
+    const QString older = support + QStringLiteral("GameScrcpy");
+    // A folder made before the move (by a helper process or a tool, with no settings in it) is set aside.
+    const QString settings = QStringLiteral("/settings.json");
+    if (QFileInfo(older).isDir() && QFileInfo::exists(older + settings) && QFileInfo(folder).isDir() &&
+        !QFileInfo::exists(folder + settings)) {
+        const QString aside = folder + QStringLiteral(".before-move-") +
+                              QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss"));
+        if (!QDir().rename(folder, aside)) {
+            return older.toStdWString();
+        }
+    }
+    if (!QFileInfo::exists(folder) && QFileInfo(older).isDir() && !QDir().rename(older, folder)) {
+        return older.toStdWString();
+    }
+    return folder.toStdWString();
 }
 
 AppSettings::AppSettings(const std::filesystem::path& directory, QObject* parent)
@@ -254,6 +273,21 @@ QVariantMap AppSettings::values() const
         }
     }
     return values;
+}
+
+bool AppSettings::resetValue(const QString& path)
+{
+    const settings::Entry* entry = settings::findSetting(path.toStdString());
+    if (entry == nullptr) {
+        return false;
+    }
+    const auto fallback = settings::valueOf(settings::Settings{}, entry->path);
+    settings::Settings next = m_file.document();
+    if (!fallback || !settings::assign(next, entry->path, *fallback)) {
+        return false;
+    }
+    change(next);
+    return true;
 }
 
 bool AppSettings::setValue(const QString& path, const QVariant& value)

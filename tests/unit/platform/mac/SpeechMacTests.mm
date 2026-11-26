@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Speech synthesis, 16 kHz mono PCM rendering and voice command phrase matching on macOS.
 #include "gs/platform/Speech.h"
 

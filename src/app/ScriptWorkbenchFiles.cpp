@@ -275,7 +275,7 @@ QString localizedCheckMessage(const QString& code, const QString& message)
         const char* english;
     };
     static constexpr Known kKnown[] = {
-        {"GS-CHECK-001", QT_TRANSLATE_NOOP("ScriptCheck", "the TypeScript compiler is missing next to gs (typescript/tsc); reinstall GameScrcpy")},
+        {"GS-CHECK-001", QT_TRANSLATE_NOOP("ScriptCheck", "the TypeScript compiler is missing next to gs (typescript/tsc); reinstall anmacgamer")},
         {"GS-CHECK-001", QT_TRANSLATE_NOOP("ScriptCheck", "the TypeScript compiler did not start")},
         {"GS-CHECK-002", QT_TRANSLATE_NOOP("ScriptCheck", "the project has no tsconfig.json; run gs new in an empty folder to get one")},
         {"GS-CHECK-003", QT_TRANSLATE_NOOP("ScriptCheck", "cannot write the temporary type-check files")},

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The Win32 calls of posix/compat/windows.h on POSIX (macOS, and Linux for the port's tests). See that header for
 // what a HANDLE holds, and posix/Bridge.h for how handles cross between the app and gs-exthost.
 #include "Bridge.h"

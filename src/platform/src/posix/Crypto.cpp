@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // POSIX cryptography on OpenSSL libcrypto (Homebrew openssl@3 on macOS). protectForUser lives with the
 // keychain code of each system.
 #include "gs/platform/Crypto.h"

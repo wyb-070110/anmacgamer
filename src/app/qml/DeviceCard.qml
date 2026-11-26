@@ -2,10 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Card {
     id: card
@@ -430,7 +430,7 @@ Card {
                     small: true
                     tone: "ghost"
                     iconName: "circle-help"
-                    text: qsTr("About AOA on macOS")
+                    text: qsTr("How AOA touch over USB works")
                     onClicked: Commands.trigger("app.help", card.help)
                 }
             }

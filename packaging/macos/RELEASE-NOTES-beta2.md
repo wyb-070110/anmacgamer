@@ -1,4 +1,4 @@
-# GameScrcpy for macOS 2.2.1 beta 2
+# anmacgamer 2.2.1 beta 2
 
 **测试版**：第二个 macOS 测试版，现在支持 Intel Mac 和 macOS 14 以上。 / **Beta**: the second macOS test build, now for
 Intel Macs too and macOS 14 or later.

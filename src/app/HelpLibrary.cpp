@@ -556,7 +556,7 @@ QString HelpLibrary::textIn(const QString& language, const char* text) const
         if (loadTranslationFile(translator, data, pack->translations)) {
             found = translator.translate("HelpLibrary", text);
         }
-    } else if (QTranslator translator; translator.load(u"gamescrcpy_"_s + language, u":/i18n"_s)) {
+    } else if (QTranslator translator; translator.load(u"anmacgamer_"_s + language, u":/i18n"_s)) {
         found = translator.translate("HelpLibrary", text);
     }
     return found.isEmpty() ? english : found;
@@ -860,7 +860,7 @@ HelpLibrary::translatedReference(const std::map<QString, QString>& bundled) cons
         }
         const QString code = language.toString();
         QTranslator translator;
-        if (!m_translate && !translator.load(u"gamescrcpy_"_s + code, u":/i18n"_s)) {
+        if (!m_translate && !translator.load(u"anmacgamer_"_s + code, u":/i18n"_s)) {
             continue;
         }
         const auto shown = [&](std::string_view text) {

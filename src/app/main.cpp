@@ -61,6 +61,9 @@
 #include <gs/media/FfmpegLog.h>
 #include <gs/media/FrameSnapshot.h>
 #include <gs/platform/CrashHandler.h>
+#if !defined(_WIN32)
+#include <gs/platform/QuitSignal.h>
+#endif
 #include <gs/platform/RunningMarker.h>
 #include <gs/platform/Speech.h>
 #include <gs/platform/Thread.h>
@@ -81,6 +84,9 @@
 #include <QSGRendererInterface>
 #include <QScopeGuard>
 #include <QScreen>
+#if !defined(_WIN32)
+#include <QSocketNotifier>
+#endif
 #include <QStandardPaths>
 #include <QStringList>
 #include <QtQml/qqmlextensionplugin.h>
@@ -99,10 +105,10 @@
 #include <thread>
 #include <vector>
 
-Q_IMPORT_QML_PLUGIN(GameScrcpy_ThemePlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_IconsPlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_ControlsPlugin)
-Q_IMPORT_QML_PLUGIN(GameScrcpy_BlueprintPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_ThemePlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_IconsPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_ControlsPlugin)
+Q_IMPORT_QML_PLUGIN(Anmacgamer_BlueprintPlugin)
 
 using namespace Qt::StringLiterals;
 
@@ -271,7 +277,7 @@ void loadInputProfile(gs::app::DeviceManager& devices, const QString& path)
                                           : std::filesystem::path());
 }
 
-// Inside GameScrcpy.app, bundled data lives in Contents/Resources; in a flat build directory it sits next to the binary.
+// Inside anmacgamer.app, bundled data lives in Contents/Resources; in a flat build directory it sits next to the binary.
 std::filesystem::path bundleResource(QStringView relative)
 {
     const QString appDir = QCoreApplication::applicationDirPath();
@@ -377,8 +383,8 @@ int main(int argc, char* argv[])
     if (!gs::platform::keepTimerResolution()) {
         qWarning("timer resolution may be throttled while the window is hidden");
     }
-    QGuiApplication::setApplicationName(u"GameScrcpy"_s);
-    QGuiApplication::setOrganizationName(u"GameScrcpy"_s);
+    QGuiApplication::setApplicationName(u"anmacgamer"_s);
+    QGuiApplication::setOrganizationName(u"anmacgamer"_s);
     QGuiApplication::setApplicationVersion(gs::app::toQString(gs::buildInfo().version));
 
     QCommandLineParser parser;
@@ -440,6 +446,20 @@ int main(int argc, char* argv[])
         qWarning("crash reports are off: %s cannot hold them",
                  qUtf8Printable(QString::fromStdWString((data / "crashes").wstring())));
     }
+#if !defined(_WIN32)
+    gs::platform::QuitSignal quitSignal;
+    std::optional<QSocketNotifier> quitNotifier;
+    if (quitSignal.descriptor() >= 0) {
+        quitNotifier.emplace(quitSignal.descriptor(), QSocketNotifier::Read);
+        QObject::connect(&*quitNotifier, &QSocketNotifier::activated, &app, [&quitSignal, &quitNotifier] {
+            if (const std::optional<int> sig = quitSignal.take()) {
+                quitNotifier->setEnabled(false);
+                qInfo("received %s, quitting", gs::platform::quitSignalName(*sig).data());
+                QCoreApplication::quit();
+            }
+        });
+    }
+#endif
     std::optional<SmokeWatch> smokeWatch;
     if (parser.isSet(smokeTest)) {
         smokeWatch.emplace();
@@ -770,7 +790,7 @@ int main(int argc, char* argv[])
                              }
                          });
     }
-    engine.loadFromModule(u"GameScrcpy.App"_s, parser.isSet(gallery) ? u"Gallery"_s : u"Main"_s);
+    engine.loadFromModule(u"Anmacgamer.App"_s, parser.isSet(gallery) ? u"Gallery"_s : u"Main"_s);
     if (auto* hub = engine.rootObjects().isEmpty() ? nullptr
                                                    : qobject_cast<QQuickWindow*>(engine.rootObjects().constFirst())) {
         auto first = std::make_shared<QMetaObject::Connection>();
@@ -790,7 +810,7 @@ int main(int argc, char* argv[])
         commands.retranslate();
         devices.retranslate();
         wireless.retranslate();
-        if (auto* catalog = engine.singletonInstance<gs::app::SettingsCatalog*>("GameScrcpy.App", "SettingsCatalog")) {
+        if (auto* catalog = engine.singletonInstance<gs::app::SettingsCatalog*>("Anmacgamer.App", "SettingsCatalog")) {
             catalog->retranslate();
         }
     });
@@ -816,7 +836,7 @@ int main(int argc, char* argv[])
 
     if (parser.isSet(smokeTest)) {
         for (const QString& name : {u"LogicWindow"_s, u"VisionWorkbenchWindow"_s, u"GridOverlay"_s}) {
-            const QQmlComponent component(&engine, u"GameScrcpy.App"_s, name);
+            const QQmlComponent component(&engine, u"Anmacgamer.App"_s, name);
             if (component.isError()) {
                 qWarning("%s not created: %s", qUtf8Printable(name), qUtf8Printable(component.errorString()));
             }

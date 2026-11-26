@@ -685,7 +685,7 @@ QString ExtensionUpdates::verify(const fs::path& package, const std::string& id,
 {
     const ext::PackageCheck check = ext::checkPackage(package, {.official = false});
     if (!check.manifest) {
-        return tr("The download is not an extension package GameScrcpy can read.");
+        return tr("The download is not an extension package anmacgamer can read.");
     }
     if (check.manifest->id != id || check.manifest->version.text() != offer.version) {
         return tr("The package holds %1 %2, not the update the list names.")
@@ -723,7 +723,7 @@ QString ExtensionUpdates::verify(const fs::path& package, const std::string& id,
             .arg(keyIdOf(*signature.key), keyIdOf(*installed));
     }
     if (!ext::checkCompatibility(*check.manifest, extensionHostApi()).empty()) {
-        return tr("This update does not run on this version of GameScrcpy.");
+        return tr("This update does not run on this version of anmacgamer.");
     }
     return {};
 }

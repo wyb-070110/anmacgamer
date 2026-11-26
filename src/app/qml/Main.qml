@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Dialogs
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 Window {
     id: root
@@ -13,7 +13,7 @@ Window {
     minimumWidth: 880
     minimumHeight: 560
     visible: false
-    title: qsTr("GameScrcpy")
+    title: qsTr("anmacgamer")
     color: Theme.glass ? "transparent" : Theme.colors.bgBase
 
     property bool wasMaximized: false
@@ -927,7 +927,7 @@ Window {
     Dialog {
         id: about
 
-        title: qsTr("About GameScrcpy")
+        title: qsTr("About anmacgamer")
         acceptText: qsTr("Close")
         rejectText: ""
         onClosed: root.maybeShowExtensionsNotice()
@@ -1037,7 +1037,7 @@ Window {
         objectName: "crashNotice"
         y: parent ? parent.height - height - Theme.space.xxl - (toast.visible ? toast.height + Theme.space.sm : 0) : 0
         tone: "warn"
-        text: qsTr("GameScrcpy closed unexpectedly last time.")
+        text: qsTr("anmacgamer closed unexpectedly last time.")
         actionText: qsTr("Export diagnostics…")
         onActionTriggered: root.exportDiagnostics()
         onClosed: CrashReport.acknowledge()

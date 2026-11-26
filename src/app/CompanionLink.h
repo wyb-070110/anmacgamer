@@ -147,6 +147,7 @@ private:
     [[nodiscard]] std::optional<CompanionNotice> install();
     [[nodiscard]] adb::AdbResult<adb::ShellResult> runLong(std::string_view command);
     void grantOverlay();
+    void grantCapture();
     void openPermissionPage();
     [[nodiscard]] Expected<std::unique_ptr<CompanionChannel>, CompanionNotice> launch();
     [[nodiscard]] Expected<std::unique_ptr<CompanionChannel>, CompanionNotice> handshake(

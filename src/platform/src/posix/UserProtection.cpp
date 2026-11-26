@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Data protected for the current user off Windows: AES-256-GCM under a per-user key, the entropy as
 // associated data. The key lives in the login keychain on macOS and in a file only the user can read
 // elsewhere (Linux serves as a test bed for the port).

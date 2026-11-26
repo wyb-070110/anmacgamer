@@ -280,4 +280,32 @@ class TouchPlannerTest {
         assertEquals(1079f, planner.event(0).xs[0]);
         assertEquals(2399f, planner.event(0).ys[0]);
     }
+
+    @Test
+    void bunchedFramesKeepTheComputersPace() {
+        // Made 8 ms apart on the computer, the last three arrive together: their times stay 8 ms apart.
+        final long[] made = {5000, 5008, 5016, 5024};
+        final long[] arrived = {NOW, NOW + 8, NOW + 30, NOW + 30};
+        final long[] times = new long[made.length];
+        for (int i = 0; i < made.length; ++i) {
+            final TouchFrame frame = frame(1, i == 0 ? down(0, at(0.2), at(0.5)) : move(0, at(0.2 + 0.1 * i), at(0.5)));
+            frame.hostTimeMs = made[i];
+            assertEquals(1, planner.plan(frame, SESSION_1, arrived[i]));
+            times[i] = planner.event(0).eventTime;
+        }
+        assertEquals(8, times[1] - times[0]);
+        assertEquals(8, times[2] - times[1]);
+        assertEquals(8, times[3] - times[2]);
+        assertTrue(times[3] <= NOW + 30 - 5);
+    }
+
+    @Test
+    void framesWithoutAComputerTimeUseTheirArrival() {
+        final TouchFrame first = frame(1, down(0, at(0.2), at(0.5)));
+        planner.plan(first, SESSION_1, NOW);
+        assertEquals(NOW - 5, planner.event(0).eventTime);
+        final TouchFrame second = frame(1, move(0, at(0.4), at(0.5)));
+        planner.plan(second, SESSION_1, NOW + 20);
+        assertEquals(NOW + 15, planner.event(0).eventTime);
+    }
 }

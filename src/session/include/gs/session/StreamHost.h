@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <span>
 #include <stop_token>
 #include <string>
@@ -115,6 +116,8 @@ public:
                                                                                     std::stop_token stop) = 0;
     [[nodiscard]] virtual Expected<void, SessionFailure> awaitChange(std::chrono::steady_clock::time_point deadline,
                                                                      std::stop_token stop) = 0;
+    [[nodiscard]] virtual std::optional<Token> sessionToken() const { return std::nullopt; }
+    [[nodiscard]] virtual TransportKind kind() const noexcept { return TransportKind::Extension; }
 };
 
 class StreamServerHost final : public ServerHost

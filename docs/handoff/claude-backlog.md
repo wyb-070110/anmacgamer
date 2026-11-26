@@ -10,9 +10,9 @@ Anything that needs the phone or the user: write it under "For the user" and mov
 
 ## Items
 
-- [ ] **CI green.** Watch `gh run list -R wyb-070110/GameScrcpy-macos -L 3` for 2d72ad4 and later pushes; if a job
+- [x] **CI green.** (done 2026-11-25: run 45536621675 green after the macOS 15 voice fixes) Watch `gh run list -R wyb-070110/GameScrcpy-macos -L 3` for 2d72ad4 and later pushes; if a job
       fails, read `gh run view <id> --log-failed`, fix, push. Stop when the latest run is green.
-- [ ] **Merge Antigravity's A2/A5** when `~/GameScrcpy-macos-antigravity/docs/handoff/antigravity.md` says 可合并 for
+- [x] **Merge Antigravity's A2/A5** (done 2026-11-25: merged 08378b0 with the user's OK, ctest 172/172) when `~/GameScrcpy-macos-antigravity/docs/handoff/antigravity.md` says 可合并 for
       them: review the diff (behaviour changes explained, no edits outside its tasks), merge, build, ctest, commit.
       Do not push the merge until CI on the previous push is green.
 - [x] **UI polish, other screens.** (done 2026-11-25: solid base for non-main windows, ⌘ shortcuts, screenshots)
@@ -29,8 +29,8 @@ Anything that needs the phone or the user: write it under "For the user" and mov
 
 ## For the user
 
-- **Beta 2 is ready** (build/package/GameScrcpy-2.2.1-beta2-macos-universal.dmg: universal, macOS 14+, LGPL
-  FFmpeg). Waiting on the user: does anmacgammer get the source too or only the release, and what happens to
-  beta 1 (GPL FFmpeg) on GameScrcpy-macos.
+- **Beta 2 is published** as a pre-release on anmacgammer (private), with the source on its main branch; beta 1's
+  release on GameScrcpy-macos was deleted (tag kept). GitHub Actions is turned off for anmacgammer (the user
+  agreed): CI runs on GameScrcpy-macos (public).
 
 - Trackpad swipe feel (needs the phone): the four modes are in Settings → Touch → "Trackpad swipe mode".

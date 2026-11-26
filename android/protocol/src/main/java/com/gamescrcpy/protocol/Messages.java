@@ -248,6 +248,8 @@ public final class Messages {
 
         public int videoSession;
         public final StructList<TouchPoint> points = new StructList<>(TouchPoint::new);
+        /** When the computer made this frame, in ms of its steady clock (wrapping); 0 = unknown. */
+        public long hostTimeMs;
 
         @Override public MessageType type() { return MessageType.TOUCH_FRAME; }
 
@@ -255,6 +257,7 @@ public final class Messages {
         public void visit(FieldVisitor v) {
             videoSession = v.u16("videoSession", videoSession);
             v.list8("points", points, 1, MAX_POINTS);
+            hostTimeMs = v.u32("hostTimeMs", hostTimeMs);
         }
 
         @Override

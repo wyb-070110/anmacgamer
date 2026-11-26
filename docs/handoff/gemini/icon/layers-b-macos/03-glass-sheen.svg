@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <clipPath id="screenClip">
+      <rect x="314" y="304" width="556" height="416" rx="46" ry="46"/>
+    </clipPath>
+    <linearGradient id="sheenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <polygon points="738,304 870,304 870,720 622,720" fill="url(#sheenGrad)" clip-path="url(#screenClip)"/>
+</svg>

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import Qt.labs.platform as Platform
-import GameScrcpy.App
+import Anmacgamer.App
 
 // The macOS menu bar: the app's commands (the same list as the command palette and the shortcuts) in the menus a
 // Mac app has, so names, translations, shortcuts and whether an item can be used come from one place. Device items
@@ -33,7 +33,7 @@ Platform.MenuBar {
     }
 
     Platform.Menu {
-        title: qsTr("GameScrcpy")
+        title: qsTr("anmacgamer")
 
         CommandItem {
             command: "app.about"
@@ -104,7 +104,7 @@ Platform.MenuBar {
         }
         Platform.MenuSeparator {}
         Platform.MenuItem {
-            text: qsTr("GameScrcpy")
+            text: qsTr("anmacgamer")
             onTriggered: {
                 bar.hub.show()
                 bar.hub.raise()

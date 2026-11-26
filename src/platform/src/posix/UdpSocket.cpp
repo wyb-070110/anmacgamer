@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // POSIX UdpSocket (macOS and Linux). Video marking sets DSCP CS5 (and the video service type on macOS);
 // interrupt also sends the socket an empty datagram, since shutdown does not wake an unconnected UDP receive
 // on macOS.

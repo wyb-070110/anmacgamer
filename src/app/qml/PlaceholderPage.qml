@@ -1,7 +1,7 @@
 import QtQuick
-import GameScrcpy.Theme
-import GameScrcpy.Icons
-import GameScrcpy.Controls
+import Anmacgamer.Theme
+import Anmacgamer.Icons
+import Anmacgamer.Controls
 
 Item {
     id: page

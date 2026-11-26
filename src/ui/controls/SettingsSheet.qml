@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Dialog {
     id: sheet

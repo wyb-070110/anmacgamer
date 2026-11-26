@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 #pragma once
 
 // "2026-11-24T06:50:33Z" to a time point: the one form of std::chrono::parse("%FT%TZ") the program reads, which

@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates as T
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 T.Control {
     id: control

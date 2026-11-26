@@ -361,7 +361,7 @@ void ExtensionLinks::open(const QString& link)
     const std::optional<ExtensionLink> parsed = parseExtensionLink(link);
     if (!parsed) {
         qWarning("links: refused a link that is not one GameScrcpy opens");
-        emit failed(tr("GameScrcpy cannot open this link."));
+        emit failed(tr("anmacgamer cannot open this link."));
         return;
     }
     if (parsed->kind == ExtensionLink::Kind::Show) {

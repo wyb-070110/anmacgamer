@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # gs-scripthost off Windows: Pipe.cpp and RemoteLogicHost.cpp as they are, their Win32 calls mapped by
 # src/posix/compat/windows.h; launching and the child's entry point under src/posix.
 add_library(gs_scripthost_wire STATIC

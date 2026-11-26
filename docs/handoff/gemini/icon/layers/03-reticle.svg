@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Precision Reticle centered at (530, 518), radius 128, stroke 26 -->
+  <g fill="none" stroke="#FFFFFF" stroke-opacity="0.96" stroke-width="26" stroke-linecap="round">
+    <!-- Four quadrant arcs leaving crisp gaps for cardinal ticks -->
+    <path d="M 564 394.6 A 128 128 0 0 1 653.4 484"/>
+    <path d="M 653.4 552 A 128 128 0 0 1 564 641.4"/>
+    <path d="M 496 641.4 A 128 128 0 0 1 406.6 552"/>
+    <path d="M 406.6 484 A 128 128 0 0 1 496 394.6"/>
+  </g>
+  <!-- Four bold cardinal ticks as filled rounded rects for crisp scaling -->
+  <g fill="#FFFFFF" fill-opacity="0.96">
+    <!-- Top tick -->
+    <rect x="517" y="346" width="26" height="76" rx="13" ry="13"/>
+    <!-- Bottom tick -->
+    <rect x="517" y="614" width="26" height="76" rx="13" ry="13"/>
+    <!-- Left tick -->
+    <rect x="358" y="505" width="76" height="26" rx="13" ry="13"/>
+    <!-- Right tick -->
+    <rect x="626" y="505" width="76" height="26" rx="13" ry="13"/>
+  </g>
+</svg>

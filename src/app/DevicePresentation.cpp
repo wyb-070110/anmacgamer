@@ -87,7 +87,7 @@ DevicePresentation DevicePresentation::ofAoa(SessionPhase phase, const std::opti
         return of(phase, failure, false, adb::DeviceState::Unknown);
     }
     if (!driverReady) {
-        return {tr("Not available on macOS"), Tone::Warn, -1, false, 3};
+        return {tr("USB unavailable"), Tone::Warn, -1, false, 3};
     }
     return of(phase, failure, true, adb::DeviceState::Device);
 }

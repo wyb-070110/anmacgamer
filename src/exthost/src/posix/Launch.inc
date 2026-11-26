@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // gs-exthost off Windows, included by Hosted.cpp in its unnamed namespace in place of the Windows launch.
 //
 // gs-exthost inherits only the channel's descriptors, its end of the bridge and the standard ones, as Windows hands

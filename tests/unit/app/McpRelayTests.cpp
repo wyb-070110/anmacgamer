@@ -181,7 +181,7 @@ TEST_CASE("gs mcp ends with an error when GameScrcpy closes the connection")
     side->abort();
     REQUIRE(ended(relay));
     CHECK(relay.exitCode() == 1);
-    CHECK(relay.readAllStandardError().contains("GameScrcpy closed the connection"));
+    CHECK(relay.readAllStandardError().contains("anmacgamer closed the connection"));
 }
 
 TEST_CASE("an AI client reaches GameScrcpy's tools through gs mcp once the user allows it")
@@ -202,7 +202,7 @@ TEST_CASE("an AI client reaches GameScrcpy's tools through gs mcp once the user 
     relay.write(lineOf(hello(1, QStringLiteral("Relay client"))));
     const QJsonObject started = nextReply(relay, buffer);
     CHECK(started.value(QStringLiteral("result")).toObject().value(QStringLiteral("serverInfo")).toObject()
-              .value(QStringLiteral("name")).toString() == u"GameScrcpy");
+              .value(QStringLiteral("name")).toString() == u"anmacgamer");
     CHECK(server.approval() == u"Relay client");
 
     relay.write(lineOf(rpc(2, QStringLiteral("tools/list"))));

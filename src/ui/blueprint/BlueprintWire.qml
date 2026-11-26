@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Shapes
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 import "Geometry.js" as Geometry
 

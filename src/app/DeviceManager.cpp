@@ -196,6 +196,11 @@ QString aoaLinkName(bool streaming)
     return streaming ? DeviceManager::tr("No picture · USB · AOA") : DeviceManager::tr("USB · AOA");
 }
 
+QString companionLinkName()
+{
+    return DeviceManager::tr("Wireless · companion picture + USB · AOA touch");
+}
+
 QString aoaTouchLinkName(const QString& serial)
 {
     return isWireless(serial) ? DeviceManager::tr("Wireless · picture + USB · AOA touch")
@@ -213,7 +218,7 @@ QString shotFailureText(ShotFailure failure)
     case ShotFailure::Refused:
         return DeviceManager::tr("The phone refused the screen recording");
     case ShotFailure::Unsupported:
-        return DeviceManager::tr("This phone cannot take screenshots for GameScrcpy");
+        return DeviceManager::tr("This phone cannot take screenshots for anmacgamer");
     case ShotFailure::Busy:
         return DeviceManager::tr("The phone is still taking the last screenshot");
     case ShotFailure::TimedOut:
@@ -675,7 +680,7 @@ QVariant DeviceManager::data(const QModelIndex& index, int role) const
             return tr("Not detected");
         }
         if (row.aoaOnly) {
-            return row.usb && row.usb->driver == platform::UsbDriver::Ready ? tr("Online") : tr("Not available on macOS");
+            return row.usb && row.usb->driver == platform::UsbDriver::Ready ? tr("Online") : tr("USB unavailable");
         }
         if (row.provided) {
             return row.provided->state == u"busy"      ? tr("In use")
@@ -762,7 +767,9 @@ QVariant DeviceManager::data(const QModelIndex& index, int role) const
                                                                                   : QString();
             meta = tr("%1 / %2").arg(linkName(row), format.isEmpty() ? row.serial : format);
         } else if (row.aoaOnly) {
-            meta = tr("%1 / %2").arg(aoaLinkName(streaming(row) && noPictureOf(row)),
+            meta = tr("%1 / %2").arg(companionPictured(row) && streaming(row)
+                                         ? companionLinkName()
+                                         : aoaLinkName(streaming(row) && noPictureOf(row)),
                                      row.usb ? QString::fromStdString(row.usb->serial) : row.serial);
         } else if (row.provided) {
             meta = tr("%1 / %2").arg(row.provided->extensionName, QString::fromStdString(row.provided->id));
@@ -1818,7 +1825,11 @@ void DeviceManager::connectDevice(const QString& serial)
         startCapture(row);
         return;
     }
-    if (row.aoaOnly) {
+    if (row.aoaOnly && !companionMirrorReady(row)) {
+        if (row.controller != nullptr && !row.controller->active()) {
+            row.controller->deleteLater();
+            row.controller = nullptr;
+        }
         connectAoa(row);
         return;
     }
@@ -1964,7 +1975,7 @@ void DeviceManager::connectDevice(const QString& serial)
             if (MirrorWindow* mirror = mirrorOf(serial)) {
                 mirror->showToast(unsupported ? tr("This phone's Android version cannot open or close the "
                                                    "notification shade from the computer")
-                                              : tr("The phone did not let GameScrcpy open or close the notification "
+                                              : tr("The phone did not let anmacgamer open or close the notification "
                                                    "shade"),
                                   QStringLiteral("triangle-alert"));
             }
@@ -2014,8 +2025,28 @@ void DeviceManager::connectDevice(const QString& serial)
     row.link.reset();
     qInfo("connecting to %s (%s)", qUtf8Printable(row.name()), qUtf8Printable(serial));
     row.controller->setUsbPhone(row.usb);
-    row.controller->setHostFactory(row.transported ? transportHost(*row.transported) : SessionController::HostFactory{});
-    row.controller->start(row.transport, m_settings.effective(row.deviceId.toStdString()));
+    if (row.transported) {
+        row.controller->setHostFactory(transportHost(*row.transported));
+    } else if (row.aoaOnly && row.companionMirror != nullptr) {
+        row.controller->setHostFactory(
+            [mirror = row.companionMirror] { return session::companionMirrorHost(mirror); });
+    } else {
+        row.controller->setHostFactory({});
+    }
+    settings::Settings starting = m_settings.effective(row.deviceId.toStdString());
+    if (row.aoaOnly) {
+        // The companion encodes H.264 only, and touches go over AOA: the mirror link carries none (SPEC 11.10).
+        starting.video.codec = settings::Codec::H264;
+        if (starting.touch.extension.empty()) {
+            starting.touch.method = settings::TouchMethod::Aoa;
+        }
+    }
+    row.controller->start(row.transport, starting);
+    if (starting.display.screenOffWhileMirroring && row.demo == nullptr) {
+        // Sent once the picture is streaming (SessionController::applyScreen).
+        row.screenOff = true;
+        row.controller->setScreenOff(true);
+    }
     row.session = {session::SessionPhase::Deploying, std::nullopt};
     rowChanged(index);
 }
@@ -2080,6 +2111,9 @@ void DeviceManager::disconnectDevice(const QString& serial)
             sessionChanged(serial, {session::SessionPhase::Stopped, std::nullopt});
         } else if (row.aoa != nullptr) {
             row.aoa->stop();
+        } else if (row.controller != nullptr) {
+            // The picture comes from the companion's mirror link: a real session, touch on AOA.
+            row.controller->stop();
         }
     } else if (isBoxRow(row)) {
         if (row.touchBox != nullptr) {
@@ -2929,6 +2963,7 @@ void DeviceManager::openMirror(Row& row)
     row.mirror->setSharpness(display.sharpness / 100.0);
     row.mirror->setTitleBarFixed(display.titleBar == settings::TitleBarMode::Fixed);
     row.mirror->setToolbarPinned(display.toolbar == settings::ToolbarMode::Pinned);
+    row.mirror->setOnTop(display.mirrorOnTop);
     const settings::Touch touch = m_settings.effective(row.deviceId.toStdString()).touch;
     row.mirror->setTrackpad(touch.trackpadSpeed / 100.0, touch.trackpadInertia, touch.trackpadInertiaStrength / 100.0,
                             touch.trackpadLongestSwipe / 100.0);
@@ -4013,7 +4048,7 @@ QString DeviceManager::showVisionWorkbench(const QString& serial, const QString&
     };
     auto* bench = new VisionWorkbench(std::move(setup));
     QQmlEngine::setObjectOwnership(bench, QQmlEngine::CppOwnership);
-    QQmlComponent component(engine, QStringLiteral("GameScrcpy.App"), QStringLiteral("VisionWorkbenchWindow"));
+    QQmlComponent component(engine, QStringLiteral("Anmacgamer.App"), QStringLiteral("VisionWorkbenchWindow"));
     QObject* created = component.beginCreate(engine->rootContext());
     auto* window = qobject_cast<QQuickWindow*>(created);
     if (window == nullptr) {
@@ -4157,7 +4192,7 @@ void DeviceManager::warnInputRefused(Row& row)
     const QStringList guide = guideOf(row).split(u'/');
     std::function<void()> showGuide = [this, vendor = guide.value(0), step = guide.value(1)] {
         if (QQmlEngine* engine = m_engine.data(); engine != nullptr) {
-            if (auto* setup = engine->singletonInstance<SetupGuide*>("GameScrcpy.App", "SetupGuide")) {
+            if (auto* setup = engine->singletonInstance<SetupGuide*>("Anmacgamer.App", "SetupGuide")) {
                 setup->open(1, vendor, step);
             }
         }
@@ -4767,7 +4802,7 @@ void DeviceManager::setTrayMenu()
     if (m_tray == nullptr) {
         return;
     }
-    std::vector<platform::TrayMenuItem> items{{tr("Open GameScrcpy").toStdWString(), [this] { emit mainWindowWanted(); }}};
+    std::vector<platform::TrayMenuItem> items{{tr("Open anmacgamer").toStdWString(), [this] { emit mainWindowWanted(); }}};
     bool extensions = false;
     for (const QVariant& each : ExtensionPanels::instance() != nullptr ? ExtensionPanels::instance()->menus()
                                                                        : QVariantList()) {
@@ -4817,8 +4852,8 @@ bool DeviceManager::hideToTrayOnClose()
         return false;
     }
     if (!std::exchange(m_trayNoticeShown, true)) {
-        showNotice(QStringLiteral("GameScrcpy"),
-                   tr("GameScrcpy is still running in the menu bar; scheduled tasks run as usual"), NoticeTarget{});
+        showNotice(QStringLiteral("anmacgamer"),
+                   tr("anmacgamer is still running in the menu bar; scheduled tasks run as usual"), NoticeTarget{});
     }
     qInfo("main window hidden to the tray: a task has a schedule");
     return true;
@@ -6314,11 +6349,11 @@ bool DeviceManager::wantsAoa(const QString& deviceId) const
 std::optional<Advice> DeviceManager::aoaAdviceOf(const Row& row) const
 {
     const bool missing = row.usb && row.usb->driver == platform::UsbDriver::Missing;
-    const Advice needsDriver{tr("AOA touch over USB is not available on macOS yet"),
-                             tr("Connect with USB debugging or wireless debugging instead.")};
+    const Advice needsDriver{tr("This phone cannot be opened over USB for AOA"),
+                             tr("Reconnect the USB cable, unlock the phone and try again")};
     if (!row.aoaOnly) {
         if (missing && wantsAoa(row.deviceId) && !streaming(row)) {
-            return Advice{tr("AOA touch over USB is not available on macOS yet"),
+            return Advice{tr("This phone cannot be opened over USB for AOA"),
                           tr("Touches go the normal way over adb instead.")};
         }
         return std::nullopt;
@@ -6542,7 +6577,7 @@ void DeviceManager::warnTouchUnavailable(const QString& serial)
     QString text;
     switch (row.controller->aoaFailure()) {
     case platform::UsbFailure::NoDriver:
-        text = tr("AOA touch over USB is not available on macOS yet; touches go the normal way.");
+        text = tr("This phone cannot be opened over USB for AOA; touches go the normal way.");
         break;
     case platform::UsbFailure::Busy:
         text = tr("Another program is using this phone's USB, so AOA cannot start; touches go the normal way.");
@@ -6561,7 +6596,7 @@ void DeviceManager::warnTouchUnavailable(const QString& serial)
     if (row.controller->aoaFailure() == platform::UsbFailure::NoDriver) {
         row.toastAction = [this] { emit appCommandRequested(QStringLiteral("app.help"), aoaHelpSlug()); };
         row.toastSecondAction = {};
-        row.mirror->showToast(text, QStringLiteral("info"), tr("About AOA on macOS"));
+        row.mirror->showToast(text, QStringLiteral("info"), tr("How AOA touch over USB works"));
         return;
     }
     row.mirror->showToast(text, QStringLiteral("info"));
@@ -6579,6 +6614,11 @@ void DeviceManager::usbChanged()
             continue;
         }
         row.usb.reset();
+        // A row adb no longer lists (USB debugging just turned off, its session ending) does not hold the phone: on
+        // the cable it is now a phone without adb, for AOA.
+        if (!row.listed) {
+            continue;
+        }
         adb.push_back({.serial = row.serial, .deviceId = row.deviceId});
         adbRows.push_back(i);
     }
@@ -6600,9 +6640,7 @@ void DeviceManager::usbChanged()
             row.listed = true;
             continue;
         }
-        if (!wantsAoa(serial) && cardIndexOf(serial) < 0) {
-            continue;
-        }
+        // Every phone on the cable without adb gets a card: AOA control, and mirroring once its companion links up.
         const int at = static_cast<int>(m_rows.size());
         beginInsertRows({}, at, at);
         Row row;
@@ -6630,7 +6668,7 @@ void DeviceManager::usbChanged()
         }
         const bool present = alone.contains(row.serial);
         row.listed = present;
-        if ((!present || (!wantsAoa(row.deviceId) && cardIndexOf(row.deviceId) < 0)) && !active(row.session.phase)) {
+        if (!present && !active(row.session.phase)) {
             removeRow(i);
         }
     }
@@ -6863,7 +6901,7 @@ void DeviceManager::releaseInput(const QString& serial)
 
 void DeviceManager::syncCompanion(Row& row)
 {
-    if (row.controller == nullptr && (noPictureOf(row) || row.aoaOnly)) {
+    if (row.aoaOnly || (row.controller == nullptr && noPictureOf(row))) {
         syncCompanionLan(row);
         pushCompanionSettings(row);
         return;
@@ -6941,11 +6979,18 @@ void DeviceManager::stopCompanion(Row& row)
 
 void DeviceManager::syncCompanionLan(Row& row)
 {
-    const bool wanted = row.mirror != nullptr && noPictureOf(row) &&
-                        (row.aoa != nullptr || row.touchBox != nullptr) && !row.deviceId.isEmpty() &&
-                        row.session.phase == session::SessionPhase::Streaming;
+    const bool noPictureActive = noPictureOf(row) && (row.aoa != nullptr || row.touchBox != nullptr) &&
+                                 !row.deviceId.isEmpty() &&
+                                 ((row.mirror != nullptr && row.session.phase == session::SessionPhase::Streaming) ||
+                                  (row.companion != nullptr && active(row.session.phase)));
+    const bool wanted =
+        noPictureActive || (companionPictured(row) && !row.deviceId.isEmpty() && active(row.session.phase));
     if (!wanted) {
         stopCompanion(row);
+        if (row.companionMirror != nullptr) {
+            row.companionMirror->detach();
+            row.companionMirror.reset();
+        }
         row.lanToken.clear();
         row.lanPairing.reset();
         if (row.mirror != nullptr) {
@@ -6962,8 +7007,14 @@ void DeviceManager::syncLanService()
 {
     std::vector<LanExpectation> expected;
     for (const Row& row : m_rows) {
-        if (!noPictureOf(row) || row.mirror == nullptr || (row.aoa == nullptr && row.touchBox == nullptr) ||
-            row.deviceId.isEmpty() || row.session.phase != session::SessionPhase::Streaming) {
+        const bool noPictureActive = noPictureOf(row) && (row.aoa != nullptr || row.touchBox != nullptr) &&
+                                     ((row.mirror != nullptr && row.session.phase == session::SessionPhase::Streaming) ||
+                                      (row.companion != nullptr && active(row.session.phase)));
+        const bool pictured = companionPictured(row) && active(row.session.phase);
+        if (!noPictureActive && !pictured) {
+            continue;
+        }
+        if (row.deviceId.isEmpty()) {
             continue;
         }
         const bool connected = row.companion != nullptr;
@@ -6976,7 +7027,14 @@ void DeviceManager::syncLanService()
         }
         expectation.paired =
             pairingOf({.phone = device.companionPhone, .key = device.companionKey, .pc = device.companionPc});
-        if (expectation.paired) {
+        const bool justPaired = row.lanPairing.has_value();
+        if (justPaired) {
+            expectation.paired = row.lanPairing;
+        }
+        // A phone without adb gets its picture over the companion's mirror link, which comes after the companion's
+        // own connection (and again after a drop): keep listening for it.
+        expectation.mirror = row.aoaOnly && connected && expectation.paired.has_value();
+        if (expectation.paired && !justPaired) {
             if (std::optional<std::string> sealed = reprotectedLanKey(device.companionKey)) {
                 QMetaObject::invokeMethod(
                     this,
@@ -6999,7 +7057,9 @@ void DeviceManager::syncLanService()
         }
     }
     const bool listen = std::ranges::any_of(
-        expected, [](const LanExpectation& expectation) { return !expectation.token.empty() || expectation.announce; });
+        expected, [](const LanExpectation& expectation) {
+            return !expectation.token.empty() || expectation.announce || expectation.mirror;
+        });
     if (!listen) {
         m_companionLan.reset();
     } else {
@@ -7007,6 +7067,11 @@ void DeviceManager::syncLanService()
             m_companionLan = std::make_unique<CompanionLan>(m_companionApk, [this](LanArrival arrival) {
                 auto shared = std::make_shared<LanArrival>(std::move(arrival));
                 QMetaObject::invokeMethod(this, [this, shared] { lanArrived(std::move(*shared)); }, Qt::QueuedConnection);
+            });
+            m_companionLan->setMirrorArrived([this](MirrorArrival arrival) {
+                auto shared = std::make_shared<MirrorArrival>(std::move(arrival));
+                QMetaObject::invokeMethod(
+                    this, [this, shared] { mirrorArrived(std::move(*shared)); }, Qt::QueuedConnection);
             });
         }
         m_companionLan->expect(std::move(expected));
@@ -7042,7 +7107,7 @@ void DeviceManager::lanArrived(LanArrival arrival)
         return;
     }
     Row& row = m_rows[static_cast<std::size_t>(index)];
-    if (!noPictureOf(row) || row.mirror == nullptr) {
+    if ((!noPictureOf(row) || row.mirror == nullptr) && !companionPictured(row)) {
         return;
     }
     stopCompanion(row);
@@ -7055,6 +7120,47 @@ void DeviceManager::lanArrived(LanArrival arrival)
     qInfo("companion on %s: %s over the local network", qUtf8Printable(row.name()),
           arrival.paired ? "paired" : "connected again");
     syncLanService();
+}
+
+void DeviceManager::mirrorArrived(MirrorArrival arrival)
+{
+    const int index = indexOf(QString::fromStdString(arrival.serial));
+    if (index < 0 || arrival.pipe == nullptr) {
+        return;
+    }
+    Row& row = m_rows[static_cast<std::size_t>(index)];
+    if (!row.aoaOnly) {
+        return;
+    }
+    if (row.companionMirror == nullptr) {
+        row.companionMirror = std::make_shared<session::CompanionMirror>();
+    }
+    row.companionMirror->attach(std::move(arrival.pipe), arrival.token);
+    qInfo("companion on %s: its mirror link is open", qUtf8Printable(row.name()));
+    if (row.aoa != nullptr && row.controller == nullptr && row.pictureCard.isEmpty() && active(row.session.phase)) {
+        switchToCompanionPicture(row);
+    }
+}
+
+// The no-picture control window gives way to a real mirroring session through the companion: the AOA session
+// leaves the USB to the session's AOA touch, and the companion's LAN link stays, since its mirror link lives on it.
+void DeviceManager::switchToCompanionPicture(Row& row)
+{
+    const QString serial = row.serial;
+    qInfo("%s: the picture comes from the companion now; touch stays on AOA", qUtf8Printable(row.name()));
+    disconnect(row.aoa, nullptr, this, nullptr);
+    row.aoa->stop();
+    row.aoa->deleteLater();
+    row.aoa = nullptr;
+    if (row.mirror != nullptr) {
+        releaseInput(serial);
+        row.mirror->deleteLater();
+        row.mirror = nullptr;
+        emit mirrorsChanged();
+    }
+    row.picture.reset();
+    row.session = {session::SessionPhase::Stopped, std::nullopt};
+    connectDevice(serial);
 }
 
 void DeviceManager::companionInputBox(Row& row, const protocol::InputBoxChanged& box)
@@ -7220,10 +7326,10 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
                     stopCompanion(m_rows[static_cast<std::size_t>(at)]);
                 }
             };
-            mirror->showToast(companion.ime ? tr("Install GameScrcpy Companion on the phone to type there with this "
+            mirror->showToast(companion.ime ? tr("Install anmacgamer Companion on the phone to type there with this "
                                                  "computer's keyboard")
-                              : companion.cursor ? tr("Install GameScrcpy Companion on the phone to show the cursor there")
-                                                 : tr("Install GameScrcpy Companion on the phone to show the key hints "
+                              : companion.cursor ? tr("Install anmacgamer Companion on the phone to show the cursor there")
+                                                 : tr("Install anmacgamer Companion on the phone to show the key hints "
                                                       "there"),
                               QStringLiteral("smartphone"), tr("Install"), tr("Not now"));
         }
@@ -7255,21 +7361,21 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
                 }
             };
             row.toastSecondAction = {};
-            mirror->showToast(tr("On the phone, turn on GameScrcpy Companion in the list of keyboards, then choose "
+            mirror->showToast(tr("On the phone, turn on anmacgamer Companion in the list of keyboards, then choose "
                                  "Try again"),
                               QStringLiteral("keyboard"), tr("Try again"));
         }
         return;
     case CompanionEvent::Installing:
         if (mirror != nullptr) {
-            mirror->showToast(tr("Installing GameScrcpy Companion on the phone; allow it there if the phone asks"),
+            mirror->showToast(tr("Installing anmacgamer Companion on the phone; allow it there if the phone asks"),
                               QStringLiteral("smartphone"));
         }
         return;
     case CompanionEvent::PermissionNeeded:
         row.companionOverlay = false;
         if (mirror != nullptr) {
-            mirror->showToast(tr("On the phone, allow GameScrcpy Companion to display over other apps"),
+            mirror->showToast(tr("On the phone, allow anmacgamer Companion to display over other apps"),
                               QStringLiteral("smartphone"));
         }
         return;
@@ -7282,12 +7388,13 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
         bumpBackgrounds();
         followCompanionTurn(row, notice);
         if (noPictureOf(row)) {
-            const std::optional<LanPairing> paired = std::exchange(row.lanPairing, std::nullopt);
+            // Kept until the pairing is saved: the mirror link of an AOA phone comes right behind this connection.
+            const std::optional<LanPairing> paired = row.lanPairing;
             row.lanToken.clear();
             if (paired && !row.deviceId.isEmpty()) {
                 QMetaObject::invokeMethod(
                     this,
-                    [this, id = row.deviceId.toStdString(), text = pairingText(*paired)] {
+                    [this, serial, saved = *paired, id = row.deviceId.toStdString(), text = pairingText(*paired)] {
                         if (text.key.empty()) {
                             qWarning("companion pairing of %s is not kept: macOS Keychain could not protect its key",
                                      id.c_str());
@@ -7298,11 +7405,16 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
                         device.companionKey = text.key;
                         device.companionPc = text.pc;
                         m_settings.setDevice(id, device);
+                        if (const int at = indexOf(serial);
+                            at >= 0 && m_rows[static_cast<std::size_t>(at)].lanPairing == saved) {
+                            m_rows[static_cast<std::size_t>(at)].lanPairing.reset();
+                        }
+                        syncLanService();
                     },
                     Qt::QueuedConnection);
             }
             if (mirror != nullptr) {
-                mirror->showToast(tr("GameScrcpy Companion is connected over Wi-Fi"), QStringLiteral("wifi"));
+                mirror->showToast(tr("anmacgamer Companion is connected over Wi-Fi"), QStringLiteral("wifi"));
             }
             syncLanService();
         }
@@ -7327,8 +7439,18 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
     if (noPictureOf(row)) {
         row.lanPairing.reset();
         if (mirror != nullptr && notice.event != CompanionEvent::Ended) {
-            mirror->showToast(tr("GameScrcpy Companion disconnected; it connects again by itself on the same Wi-Fi"),
+            mirror->showToast(tr("anmacgamer Companion disconnected; it connects again by itself on the same Wi-Fi"),
                               QStringLiteral("wifi"));
+        }
+        syncCompanionLan(row);
+        return;
+    }
+    if (companionPictured(row)) {
+        row.lanPairing.reset();
+        if (notice.event == CompanionEvent::StoppedOnPhone) {
+            qInfo("companion on %s: stopped on the phone, so mirroring stops", qUtf8Printable(row.name()));
+            disconnectDevice(serial);
+            return;
         }
         syncCompanionLan(row);
         return;
@@ -7345,8 +7467,8 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
         row.companionHeld = true;
         if (mirror != nullptr) {
             mirror->showToast(m_companionApk == nullptr
-                                  ? tr("GameScrcpy Companion is missing from this installation; reinstall GameScrcpy")
-                                  : tr("GameScrcpy Companion could not be installed on the phone: %1")
+                                  ? tr("anmacgamer Companion is missing from this installation; reinstall anmacgamer")
+                                  : tr("anmacgamer Companion could not be installed on the phone: %1")
                                         .arg(QString::fromStdString(notice.detail)),
                               QStringLiteral("triangle-alert"));
         }
@@ -7354,14 +7476,14 @@ void DeviceManager::companionNotice(const QString& serial, quint64 ticket, const
     case CompanionEvent::Failed:
         row.companionHeld = true;
         if (mirror != nullptr) {
-            mirror->showToast(tr("GameScrcpy Companion could not be started on the phone"),
+            mirror->showToast(tr("anmacgamer Companion could not be started on the phone"),
                               QStringLiteral("triangle-alert"));
         }
         break;
     case CompanionEvent::StoppedOnPhone:
         row.companionHeld = true;
         if (mirror != nullptr) {
-            mirror->showToast(tr("GameScrcpy Companion was stopped from the phone"), QStringLiteral("smartphone"));
+            mirror->showToast(tr("anmacgamer Companion was stopped from the phone"), QStringLiteral("smartphone"));
         }
         break;
     default:
@@ -7521,7 +7643,8 @@ QString DeviceManager::linkName(const Row& row)
         return tr("Capture card");
     }
     if (row.aoaOnly) {
-        return aoaLinkName(streaming(row) && noPictureOf(row));
+        return companionPictured(row) && streaming(row) ? companionLinkName()
+                                                        : aoaLinkName(streaming(row) && noPictureOf(row));
     }
     if (row.provided) {
         return row.provided->extensionName;
@@ -7579,6 +7702,7 @@ void DeviceManager::applyLiveSettings()
             row.mirror->setSharpness(effective.display.sharpness / 100.0);
             row.mirror->setTitleBarFixed(effective.display.titleBar == settings::TitleBarMode::Fixed);
             row.mirror->setToolbarPinned(effective.display.toolbar == settings::ToolbarMode::Pinned);
+            row.mirror->setOnTop(effective.display.mirrorOnTop);
             row.mirror->setTrackpad(effective.touch.trackpadSpeed / 100.0, effective.touch.trackpadInertia,
                                     effective.touch.trackpadInertiaStrength / 100.0,
                                     effective.touch.trackpadLongestSwipe / 100.0);
@@ -9533,7 +9657,7 @@ settings::PictureSource DeviceManager::usePicture(Row& phone)
     returnCapture(phone);
     const settings::Settings effective = m_settings.effective(phone.deviceId.toStdString());
     const bool wantsCapture = effective.picture.source == settings::PictureSource::Capture;
-    const bool adb = phone.demo != nullptr || !phone.aoaOnly;
+    const bool adb = phone.demo != nullptr || !phone.aoaOnly || companionMirrorReady(phone);
     PhoneLinks links = phoneLinksOf(phone.deviceId, effective.touch);
     links.adb = links.adb || adb;
     PictureInUse chosen = effectivePicture(effective.picture.source, links);
@@ -10117,6 +10241,16 @@ bool DeviceManager::isBoxRow(const Row& row) noexcept
     return row.provided.has_value();
 }
 
+bool DeviceManager::companionPictured(const Row& row) noexcept
+{
+    return row.aoaOnly && row.controller != nullptr && row.companionMirror != nullptr;
+}
+
+bool DeviceManager::companionMirrorReady(const Row& row) noexcept
+{
+    return row.aoaOnly && row.companionMirror != nullptr && row.companionMirror->attached();
+}
+
 bool DeviceManager::noPictureOf(const Row& row) noexcept
 {
     if (row.picture) {
@@ -10599,7 +10733,7 @@ std::optional<Advice> DeviceManager::transportedAdviceOf(const Row& row)
     const QString reason = QString::fromStdString(row.session.failure->detail);
     if (row.session.phase == session::SessionPhase::Reconnecting) {
         return Advice{tr("Reconnecting: %1").arg(reason),
-                      tr("GameScrcpy connects again by itself as soon as %1 reaches the phone again")
+                      tr("anmacgamer connects again by itself as soon as %1 reaches the phone again")
                           .arg(phone.transportTitle)};
     }
     if (row.session.phase != session::SessionPhase::Failed) {
@@ -10675,7 +10809,7 @@ bool DeviceManager::shootBackground(const QString& serial)
     Row& row = m_rows[static_cast<std::size_t>(index)];
     if (row.companion == nullptr || row.shotTicket != row.companionTicket) {
         if (row.mirror != nullptr) {
-            row.mirror->showToast(tr("Connect GameScrcpy Companion first: scan the code in this window with the phone"),
+            row.mirror->showToast(tr("Connect anmacgamer Companion first: scan the code in this window with the phone"),
                                   QStringLiteral("smartphone"));
         }
         return false;

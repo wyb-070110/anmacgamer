@@ -1,5 +1,5 @@
 import QtQuick
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Rectangle {
     id: panel

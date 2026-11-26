@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Text recognition on macOS with the Vision framework (VNRecognizeTextRequest). Small pictures are enlarged
 // first, as on Windows; boxes come back in the picture's own pixels, lines top to bottom.
 #include "gs/platform/TextReader.h"

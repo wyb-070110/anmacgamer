@@ -549,6 +549,7 @@ private:
         bool aoaOnly = false;
         std::optional<platform::UsbPhone> usb;
         AoaSession* aoa = nullptr;
+        std::shared_ptr<session::CompanionMirror> companionMirror;
         std::shared_ptr<RecordingTap> recordingTap;
         std::unique_ptr<CaptureRow> capture;
         std::optional<settings::PictureSource> picture;
@@ -661,6 +662,8 @@ private:
     void syncCompanionLan(Row& row);
     void syncLanService();
     void lanArrived(LanArrival arrival);
+    void mirrorArrived(MirrorArrival arrival);
+    void switchToCompanionPicture(Row& row);
     void companionInputBox(Row& row, const protocol::InputBoxChanged& box);
     void followCompanionTurn(Row& row, const CompanionNotice& notice);
     void dropInputBox(Row& row);
@@ -778,6 +781,8 @@ private:
     void matcherSuggested(int matcherTicket, const QString& captureSerial, const QString& deviceId, double score);
     [[nodiscard]] static bool isBoxRow(const Row& row) noexcept;
     [[nodiscard]] static bool noPictureOf(const Row& row) noexcept;
+    [[nodiscard]] static bool companionPictured(const Row& row) noexcept;
+    [[nodiscard]] static bool companionMirrorReady(const Row& row) noexcept;
     void syncProvided();
     void syncSources();
     void addSourceRow(const QString& serial, const MediaSourceDevice& source);

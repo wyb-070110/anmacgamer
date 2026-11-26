@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # gs_exthost off Windows (the macOS port). Channel, MediaRing, ImageSection, TapSection, InProcess, Server, Store,
 # Wire and Hosted are the Windows files: their Win32 calls are mapped by src/posix/compat/windows.h onto POSIX in
 # src/posix/Compat.cpp, and handles cross between the app and gs-exthost over a Unix socket. Only launching

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
-import GameScrcpy.Theme
-import GameScrcpy.Icons
+import Anmacgamer.Theme
+import Anmacgamer.Icons
 
 Rectangle {
     id: hint

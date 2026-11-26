@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F0F6FF"/>
+      <stop offset="100%" stop-color="#CFE4FF"/>
+    </linearGradient>
+    <linearGradient id="phoneBackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1D3557"/>
+      <stop offset="100%" stop-color="#0F2038"/>
+    </linearGradient>
+    <linearGradient id="glassScreenGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.88"/>
+      <stop offset="55%" stop-color="#0A84FF" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#0066E6" stop-opacity="0.95"/>
+    </linearGradient>
+    <clipPath id="screenClip">
+      <rect x="314" y="304" width="556" height="416" rx="46" ry="46"/>
+    </clipPath>
+    <linearGradient id="sheenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+  <rect x="186" y="196" width="304" height="632" rx="52" ry="52" fill="url(#phoneBackGrad)"/>
+  <rect x="314" y="304" width="556" height="416" rx="46" ry="46" fill="url(#glassScreenGrad)" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="5"/>
+  <polygon points="738,304 870,304 870,720 622,720" fill="url(#sheenGrad)" clip-path="url(#screenClip)"/>
+  <path d="M 548 416 L 644 512 L 548 608" fill="none" stroke="#FFFFFF" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Opening a capture card off Windows is not ported yet; the source says so when started.
 #include "gs/capture/MediaFoundationSource.h"
 

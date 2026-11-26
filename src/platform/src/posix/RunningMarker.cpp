@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // POSIX running marker: an exclusive flock on a file in the temporary directory, held while the process
 // runs. The lock goes with the process however it ends.
 #include "gs/platform/RunningMarker.h"

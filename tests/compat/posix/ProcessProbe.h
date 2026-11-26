@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Test builds off Windows: what the adb and session tests read about processes (named threads, open
 // descriptors, private memory, children, the owner of a listening port), from /proc on Linux and the Mach
 // and libproc interfaces on macOS.

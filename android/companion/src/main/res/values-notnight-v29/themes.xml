@@ -3,8 +3,9 @@
     <style name="Theme.Companion" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:colorAccent">@color/ic_launcher_accent</item>
-        <item name="android:statusBarColor">@color/window_background</item>
-        <item name="android:navigationBarColor">@color/window_bars</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>

@@ -1,6 +1,6 @@
 #version 440
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // The video picture from three planes: luma, Cb and Cr (software pictures).
 layout(location = 0) in vec2 v_uv;
 layout(location = 0) out vec4 fragColor;

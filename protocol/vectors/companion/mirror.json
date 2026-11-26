@@ -1,0 +1,248 @@
+{
+  "format": "gamescrcpy.companion-mirror-vectors",
+  "spec": "11.10",
+  "vectors": [
+    {
+      "key": "30373e454c535a61686f767d848b9299a0a7aeb5bcc3cad1d8dfe6edf4fb0209",
+      "phone": "5f1e0c9a3b7d42e8a6c1f09d8e7b6a51",
+      "pc": "c0ffee00112233445566778899aabbcc",
+      "context": "GSCP/1 companion mirror",
+      "tokenContext": "GSCP/1 companion mirror token",
+      "hello": "4753434d01005f1e0c9a3b7d42e8a6c1f09d8e7b6a510d141b222930373e454c535a61686f76",
+      "reply": "4753434d0100c0ffee00112233445566778899aabbcc1d242b323940474e555c636a71787f86",
+      "sessionKey": "569b9f1f278ecc438feb6b0223f6edd85eeec56d8262659b913d99426e258081",
+      "token": "387ca63d2429b6ba8417e748b60a28c2",
+      "records": [
+        {
+          "direction": "toCompanion",
+          "counter": 0,
+          "what": "open control",
+          "mux": "ff000000020000",
+          "hex": "0000001756a3d043d7ba8d9a4ad925af9d92fc8462a37757b4dc29"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 0,
+          "what": "accept control",
+          "mux": "ff000000020100",
+          "hex": "00000017fce6ea09eda50d58364b33ef54adf2b9b7aa62dec96dd8"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 1,
+          "what": "ServerHello",
+          "mux": "000000001c800100000016475343500001333a41484f565d646b727980878e959c",
+          "hex": "000000311e215ffd34471d59d64dd882959258d5590880cc9fae087b3aa6d3eeb604345598df211edbd70f62bcc33b2362e1bd5fca"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 1,
+          "what": "ClientHello",
+          "mux": "000000002e000200000028000105322e322e30ac0a6b0c9a06358ebc59d4cef83bf3639c2d959943f0732edbd65840d50c12d2",
+          "hex": "00000043d56b46d1e3069f11ea82cc34bd54b6fe90c7c484c5cf65c1a6fac352a518c4ce78d2e2462a2fac2c5b7ed33a1ff4b162284109f040375263e39c823096d95cafc1d511"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 2,
+          "what": "Welcome",
+          "mux": "000000006580030000005f0f636f6d70616e696f6e20322e322e300773616d73756e6708534d2d46393731420231340022000100000000043809d80001a40001d4c0000000000000000001011663322e6578796e6f732e683236342e656e636f64657201000000000000",
+          "hex": "0000007afa922a96a0a92136cfb2620326bceeae8c4d9f091c24fddb35942bbd3830e3f81612b19b5aa5369d89a2d53207751c645bf76fd0fe1eec2dcf96fe5ccf126d788217f712d30ad1b20ba2a3d040f40f1f66ae2d7a2dfd1c274bf1329f362bb534604fb569f7f15c3d8e9f9a004370518f42c7f27d075ba718e1bb"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 2,
+          "what": "open video",
+          "mux": "ff000000020001",
+          "hex": "00000017e4c7985e57cd4a34bde9801fc87490b404b7fd6234211d"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 3,
+          "what": "accept video",
+          "mux": "ff000000020101",
+          "hex": "0000001787bdef2d47dc4be9fd50a240ae5fcee2765f92cc42c3b5"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 4,
+          "what": "ServerHello",
+          "mux": "010000001c800100000016475343500001535a61686f767d848b9299a0a7aeb5bc",
+          "hex": "00000031c289fc28cb5e3baf4d53d7fb318f1f9a588c51da7facbf206214ac91cf626126162e54bff8e537fa0666d2005e1fa09a0e"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 3,
+          "what": "ChannelOpen",
+          "mux": "010000002700050000002101a8e51c216191aa0b4eb8a23e5d3a7363f01f66b548cd4c74f7f1e6c94c85f5e5",
+          "hex": "0000003c509f9ffd918f00e42475c82c5bb7e13250e14b1910d3590b7e7483a2a36dabc87006d2917ff52490e42f2d609f26d47663c7956539609df6d8089d7a"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 5,
+          "what": "ChannelAccepted",
+          "mux": "010000000780060000000101",
+          "hex": "0000001c35ff98058a7d0ab11c744ea02cb22275431bc7f949b8ffeddd1520c4"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 6,
+          "what": "VideoSession (first part)",
+          "mux": "0100000009000000010000000000",
+          "hex": "0000001e42aa22cc8eb637bcf3ba642198bc37f3d993b2396b1216af596ded616237"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 7,
+          "what": "VideoSession (rest) and MediaConfig",
+          "mux": "0100000042000000000000000000000e01043809d800000000043809d800010000010000000000000000000000000000001500000001674d401fe8802800b50000000168ee3c80",
+          "hex": "0000005707d61169decb652f967fb8d55f93f0b5ff4749874a398e1183a4150eb1ee767be8fc243d27af77f9d0ebf4adb35fab5163f849403ccbd56f7ebc8075be6542cb8f6029bc51d067db9417faa2b07de6208948b2d8199bba"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 4,
+          "what": "ConfigureAudio",
+          "mux": "000000000b021100000005010001f400",
+          "hex": "0000002035fed4ace1d32b61c69c755ce26c5d6685b948f00be15662a089227b404dfd27"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 5,
+          "what": "open bulk",
+          "mux": "ff000000020003",
+          "hex": "000000178be69c1fbd39b17e49735e876ff168ad7a81124b38cceb"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 8,
+          "what": "close bulk (refused)",
+          "mux": "ff000000020203",
+          "hex": "00000017b7f4fbf9d8cc0c216cbc03676a8e73e2d8483638d3c3b0"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 6,
+          "what": "close bulk",
+          "mux": "ff000000020203",
+          "hex": "000000178fe0849fb3b4b3e18401772fac0327ab8b42240731c3c1"
+        },
+        {
+          "direction": "toCompanion",
+          "counter": 7,
+          "what": "close video",
+          "mux": "ff000000020201",
+          "hex": "00000017c12bebf8f4c4f3096b15501c325c8196e3d9f6d63fe38f"
+        },
+        {
+          "direction": "toComputer",
+          "counter": 9,
+          "what": "close video",
+          "mux": "ff000000020201",
+          "hex": "00000017133fd900620928e326a4fd83d54e93c468592e4c6e5370"
+        }
+      ],
+      "refused": [
+        {
+          "name": "not-paired",
+          "hello": "4753434d010000000000000000000000000000000000050c131a21282f363d444b525960676e",
+          "reply": "4753434d01010000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "name": "with-token",
+          "hello": "4753434d01166f4b47696f36536c7071656f71617172724b327572775f1e0c9a3b7d42e8a6c1f09d8e7b6a51050c131a21282f363d444b525960676e",
+          "reply": "4753434d01010000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "malformedMux": [
+        {
+          "name": "short-header",
+          "direction": "toComputer",
+          "hex": "01000000",
+          "error": "Truncated"
+        },
+        {
+          "name": "data-truncated",
+          "direction": "toComputer",
+          "hex": "01000000037879",
+          "error": "Truncated"
+        },
+        {
+          "name": "data-trailing",
+          "direction": "toComputer",
+          "hex": "01000000017879",
+          "error": "TrailingBytes"
+        },
+        {
+          "name": "data-empty",
+          "direction": "toComputer",
+          "hex": "0100000000",
+          "error": "OutOfRange"
+        },
+        {
+          "name": "data-too-long",
+          "direction": "toComputer",
+          "hex": "0100100001",
+          "error": "LengthExceeded"
+        },
+        {
+          "name": "unknown-channel",
+          "direction": "toComputer",
+          "hex": "040000000178",
+          "error": "InvalidEnum"
+        },
+        {
+          "name": "op-wrong-length",
+          "direction": "toComputer",
+          "hex": "ff00000003010000",
+          "error": "OutOfRange"
+        },
+        {
+          "name": "op-unknown",
+          "direction": "toComputer",
+          "hex": "ff000000020300",
+          "error": "InvalidEnum"
+        },
+        {
+          "name": "op-unknown-channel",
+          "direction": "toComputer",
+          "hex": "ff000000020104",
+          "error": "InvalidEnum"
+        },
+        {
+          "name": "open-from-companion",
+          "direction": "toComputer",
+          "hex": "ff000000020001",
+          "error": "WrongDirection"
+        },
+        {
+          "name": "accept-from-computer",
+          "direction": "toCompanion",
+          "hex": "ff000000020101",
+          "error": "WrongDirection"
+        }
+      ],
+      "malformedRecords": [
+        {
+          "name": "too-short",
+          "direction": "toComputer",
+          "counter": 0,
+          "hex": "00000015000000000000000000000000000000000000000000",
+          "error": "OutOfRange"
+        },
+        {
+          "name": "too-long",
+          "direction": "toComputer",
+          "counter": 0,
+          "hex": "00100016",
+          "error": "OutOfRange"
+        },
+        {
+          "name": "lan-key-context",
+          "direction": "toCompanion",
+          "counter": 0,
+          "hex": "000000177d5bcf9bfa83732f451859f9bc30a69ab338892b96adba",
+          "error": "BadTag"
+        }
+      ]
+    }
+  ]
+}

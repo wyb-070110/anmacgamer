@@ -320,12 +320,16 @@ struct TouchFrame {
 
     std::uint16_t videoSession = 0;
     InplaceVector<TouchPoint, kMaxPoints> points;
+    // When the computer made this frame, in milliseconds of its own steady clock (wrapping), so the phone can
+    // keep the touch's own pace when frames arrive bunched together; 0 = unknown (the phone uses arrival time).
+    std::uint32_t hostTimeMs = 0;
 
     template <typename V, typename Self>
     static void visit(V& v, Self& m)
     {
         v.u16("videoSession", m.videoSession);
         v.list8("points", m.points, 1, kMaxPoints);
+        v.u32("hostTimeMs", m.hostTimeMs);
     }
 
     static bool isValid(const TouchFrame& m) noexcept

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // gs-exthost off Windows: the test DLL as a macOS library in gs-exthost, through the parts of the port the mock host
 // tests do not reach: shared memory sent to the child (a frame tap) and taken from it (a picture source), a crash
 // with its report and restart, and a restricted DLL in the macOS sandbox.

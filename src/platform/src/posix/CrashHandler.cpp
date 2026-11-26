@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+// Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 // Crash reports off Windows: on a fatal signal, a folder crash-YYYYMMDD-HHMMSS-mmm under the given directory with
 // crash.txt (version, time, signal, address and the module it is in, thread) and a copy of the log, as on Windows
 // (which also writes a minidump; there is none here). Then the signal takes its usual course.

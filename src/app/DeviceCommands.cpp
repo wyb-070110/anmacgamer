@@ -491,7 +491,7 @@ void addHubCommands(CommandTable& table, DeviceCommandHost& host, const UiReques
           QKeyCombination(Qt::ControlModifier, Qt::Key_F));
     addUi(table, request, "wireless.pair", GS_TRANSLATE_NOOP("Commands", "Pair a phone over WiFi"),
           GS_TRANSLATE_NOOP("Commands", "wireless debugging pairing code qr"), "wifi");
-    addUi(table, request, "app.about", GS_TRANSLATE_NOOP("Commands", "About GameScrcpy"),
+    addUi(table, request, "app.about", GS_TRANSLATE_NOOP("Commands", "About anmacgamer"),
           GS_TRANSLATE_NOOP("Commands", "help version license"), "circle-help");
     addUi(table, request, "app.help", GS_TRANSLATE_NOOP("Commands", "Help"),
           GS_TRANSLATE_NOOP("Commands", "manual guide articles questions troubleshooting faq script api reference"),

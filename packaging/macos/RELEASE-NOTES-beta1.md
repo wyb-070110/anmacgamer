@@ -1,4 +1,4 @@
-# GameScrcpy for macOS 2.2.1 beta 1
+# anmacgamer 2.2.1 beta 1
 
 **测试版**：第一个 macOS 测试版，欢迎试用并反馈问题。 / **Beta**: the first macOS test build — please report what you find.
 

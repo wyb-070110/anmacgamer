@@ -1281,7 +1281,7 @@ QString aiNetworkProblem(int error, const QString& host, const QString& detail)
 
 QString aiUnreadable()
 {
-    return QCoreApplication::translate("AiService", "The service sent an answer that GameScrcpy cannot read.");
+    return QCoreApplication::translate("AiService", "The service sent an answer that anmacgamer cannot read.");
 }
 
 QString aiContentText(const QJsonArray& content)
@@ -1939,7 +1939,7 @@ void AiStream::tooLong()
 {
     m_tooLong = true;
     m_stop = QStringLiteral("too_long");
-    m_problem = QCoreApplication::translate("AiService", "The answer is too long, so GameScrcpy stopped reading it.");
+    m_problem = QCoreApplication::translate("AiService", "The answer is too long, so anmacgamer stopped reading it.");
 }
 
 }

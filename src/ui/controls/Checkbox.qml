@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Icons
+import Anmacgamer.Theme
+import Anmacgamer.Icons
 
 T.CheckBox {
     id: control

@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import GameScrcpy.Theme
+import Anmacgamer.Theme
 
 Item {
     id: row
@@ -115,26 +115,6 @@ Item {
                 visible: row.description !== "" && !row.explainedInline
                 title: row.title
                 info: row.description
-            }
-
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                visible: row.overridden
-                width: badge.implicitWidth + 2 * Theme.space.xs + Theme.space.xxs
-                height: Theme.size.pill
-                radius: Theme.radius.xs
-                color: Theme.colors.accentSubtle
-
-                Text {
-                    id: badge
-
-                    anchors.centerIn: parent
-                    textFormat: Text.PlainText
-                    text: qsTr("Overridden")
-                    color: Theme.colors.accentText
-                    font.pixelSize: Theme.type.micro.size
-                    font.weight: Theme.type.micro.weight
-                }
             }
         }
 

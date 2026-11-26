@@ -1,12 +1,9 @@
-# Guided tours
+The first time you open a screen in anmacgamer, a short guided tour highlights each control and explains how to use it.
 
-The first time you open a part of GameScrcpy, a tour walks you through its main features one by one: everything dims except the place it is talking about, and a card next to it says what it is and how to use it, with the shortcut when there is one. So a big screen never has to be understood all at once.
-
-- The card has **Back**, **Next** and **Skip** at the bottom, and the dots show how far you are. Press **Next** when you have read a step; where a step asks you to do something (such as dragging a component onto the picture), doing it moves on too.
-- Esc skips as well. A tour you finished or skipped does not come back by itself.
-- Each part has its own tour, remembered on its own: finishing or skipping one does not touch the others.
-- A step about something that is not there—no phone connected, an empty list, a toolbar so narrow that the button went into More—is left out.
-- With Reduce motion on in Settings, the lit place and the card no longer slide; they only fade.
+- Click **Next** (or perform the prompted action) to advance, **Back** to review, or **Skip** / <kbd>Esc</kbd> to dismiss.
+- Each screen remembers its own tour independently; finished or skipped tours do not replay automatically.
+- Steps for hidden or unavailable items (such as an empty list or disconnected phone) are skipped automatically.
+- Turning on **Reduce motion** in Settings fades tour highlights instead of sliding them.
 
 ## Replay a tour
 
@@ -20,13 +17,13 @@ The first time you open a part of GameScrcpy, a tour walks you through its main 
 - [Settings](action:tour:settings)
 - [The AI assistant](action:tour:assistant)
 
-The devices, profiles, tasks, extensions and settings tours start right away. A mirror window, the key mapping editor and the logic view need a phone first, and the AI assistant needs its card open, so their tours play the next time you open one of them.
+Main-window tours start immediately. Mirror, key editor, logic, and AI assistant tours play the next time you open those views.
 
-Or bring them all back at once: [Replay every tour](action:tour:all).
+Or reset everything at once: [Replay every tour](action:tour:all).
 
 > [!TIP]
-> While a tour is showing, clicks outside the lit place go nowhere on purpose. Press **Skip**, or Esc, to get rid of it.
+> Clicks outside the highlighted area are blocked during a tour. Press **Skip** or <kbd>Esc</kbd> to exit anytime.
 
 ## Tours from extensions {#extension-tours}
 
-Extensions can bring tours too, about what they add to the interface. Some play once by themselves after you turn the extension on; to watch one again, open the extension's **Details** on the **Extensions** page and choose "Tour: …". While the extension is off, its tours cannot play.
+Extensions can include their own tours. To replay one, open the extension's **Details** on the **Extensions** page and click **Tour: …** (the extension must be enabled).

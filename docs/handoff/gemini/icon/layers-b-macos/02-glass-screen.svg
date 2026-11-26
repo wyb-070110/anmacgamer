@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="glassScreenGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.88"/>
+      <stop offset="55%" stop-color="#0A84FF" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#0066E6" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+  <rect x="314" y="304" width="556" height="416" rx="46" ry="46" fill="url(#glassScreenGrad)" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="5"/>
+</svg>

@@ -2,10 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates as T
-import GameScrcpy.Theme
-import GameScrcpy.Controls
-import GameScrcpy.Icons
-import GameScrcpy.App
+import Anmacgamer.Theme
+import Anmacgamer.Controls
+import Anmacgamer.Icons
+import Anmacgamer.App
 
 T.Popup {
     id: guide
@@ -31,13 +31,13 @@ T.Popup {
     readonly property string connectTitle: {
         switch (guide.leadState) {
         case "unauthorized":
-            return qsTr("Allow this computer on the phone")
+            return qsTr("Allow this computer on your phone")
         case "ready":
             return qsTr("%1 is ready").arg(guide.leadName)
         case "busy":
             return qsTr("Connecting to %1").arg(guide.leadName)
         case "streaming":
-            return qsTr("%1 is on screen").arg(guide.leadName)
+            return qsTr("%1 is mirroring").arg(guide.leadName)
         case "failed":
             return qsTr("Could not connect to %1").arg(guide.leadName)
         default:
@@ -48,20 +48,20 @@ T.Popup {
     readonly property string connectDetail: {
         switch (guide.leadState) {
         case "offline":
-            return qsTr("%1 is plugged in but not answering. Unplug the cable and plug it in again.")
+            return qsTr("%1 is not responding. Unplug and replug the cable.")
                        .arg(guide.leadName)
         case "unauthorized":
-            return qsTr("Unlock the phone. When it asks “Allow USB debugging?”, tick “Always allow from this computer” and tap Allow.")
+            return qsTr("Unlock your phone, tick “Always allow from this computer”, and tap Allow.")
         case "ready":
-            return qsTr("Start mirroring to see and control the phone on this computer.")
+            return qsTr("Click Start mirroring to view and control your phone.")
         case "busy":
-            return qsTr("The first connection takes a few seconds.")
+            return qsTr("First connection takes a few seconds.")
         case "streaming":
-            return qsTr("Its window is open. You can close this guide.")
+            return qsTr("Mirror window is open. You can close this guide.")
         case "failed":
             return qsTr("%1. %2").arg(guide.lead.problem ?? "").arg(guide.lead.action ?? "")
         default:
-            return qsTr("Plug the phone into this computer with a USB cable. It shows up here by itself.")
+            return qsTr("Plug your phone in with a USB cable. It will appear automatically.")
         }
     }
 
@@ -103,6 +103,11 @@ T.Popup {
     }
 
     function advance() {
+        // A phone that is already connected and allowed needs no USB debugging steps.
+        if (guide.page === 0 && guide.found) {
+            guide.page = 2
+            return
+        }
         if (guide.page < 2) {
             guide.page += 1
             return
@@ -529,7 +534,7 @@ T.Popup {
                     Text {
                         width: parent.width
                         textFormat: Text.PlainText
-                        text: qsTr("Welcome to GameScrcpy")
+                        text: qsTr("Welcome to anmacgamer")
                         color: Theme.colors.textPrimary
                         font.pixelSize: Theme.type.display.size
                         font.weight: Theme.type.display.weight
@@ -539,7 +544,7 @@ T.Popup {
                     Text {
                         width: parent.width
                         textFormat: Text.PlainText
-                        text: qsTr("Mirror your Android phone on this computer and play its games with a keyboard and mouse.")
+                        text: qsTr("Mirror your Android phone on your Mac and play with a keyboard and mouse.")
                         color: Theme.colors.textSecondary
                         font.pixelSize: Theme.type.body.size
                         wrapMode: Text.Wrap
@@ -554,21 +559,14 @@ T.Popup {
                             width: parent.width
                             iconName: "monitor-play"
                             title: qsTr("Low-latency mirroring")
-                            detail: qsTr("Over USB or WiFi, with the phone's picture and sound.")
+                            detail: qsTr("Picture and sound over USB or Wi-Fi.")
                         }
 
                         Feature {
                             width: parent.width
                             iconName: "keyboard"
-                            title: qsTr("Keyboard and mouse for games")
-                            detail: qsTr("A key mapping profile for each game, switched as you open it.")
-                        }
-
-                        Feature {
-                            width: parent.width
-                            iconName: "puzzle"
-                            title: qsTr("Make it yours")
-                            detail: qsTr("Extensions add picture filters and themes.")
+                            title: qsTr("Keyboard & mouse controls")
+                            detail: qsTr("Per-game key profiles that switch automatically.")
                         }
                     }
                 }
@@ -577,7 +575,7 @@ T.Popup {
                     anchors.bottom: parent.bottom
                     width: parent.width
                     textFormat: Text.PlainText
-                    text: qsTr("Open source under the Apache License 2.0. Please follow local laws and each game's terms of use.")
+                    text: qsTr("Free and open source (GPL-3.0). Follow local laws and each game's terms of use.")
                     color: Theme.colors.textTertiary
                     font.pixelSize: Theme.type.caption.size
                     wrapMode: Text.Wrap
@@ -605,7 +603,7 @@ T.Popup {
                     Text {
                         width: parent.width
                         textFormat: Text.PlainText
-                        text: qsTr("A one-time setup on the phone. Choose its brand for the exact steps.")
+                        text: qsTr("One-time phone setup. Pick your brand for exact steps.")
                         color: Theme.colors.textSecondary
                         font.pixelSize: Theme.type.body.size
                         wrapMode: Text.Wrap
@@ -676,7 +674,7 @@ T.Popup {
                     Text {
                         width: parent.width - Theme.size.iconSmall - parent.spacing
                         textFormat: Text.PlainText
-                        text: qsTr("Can't find it? Search the phone's Settings for “Developer”.")
+                        text: qsTr("Can't find it? Search Settings for “Developer”.")
                         color: Theme.colors.textTertiary
                         font.pixelSize: Theme.type.caption.size
                         wrapMode: Text.Wrap
@@ -750,7 +748,7 @@ T.Popup {
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             textFormat: Text.PlainText
-                            text: qsTr("Waiting for a phone…")
+                            text: qsTr("Waiting for phone…")
                             color: Theme.colors.textSecondary
                             font.pixelSize: Theme.type.caption.size
                         }
@@ -765,9 +763,9 @@ T.Popup {
                         spacing: Theme.space.xs
 
                         Repeater {
-                            model: [qsTr("Use a cable that carries data; some cables only charge."),
-                                    qsTr("If the phone asks what the USB connection is for, choose File transfer."),
-                                    qsTr("Not set up on the phone yet? Go back for the steps.")]
+                            model: [qsTr("Use a data-capable USB cable (not charge-only)."),
+                                    qsTr("If prompted on the phone, choose File transfer."),
+                                    qsTr("Not set up yet? Go back to see the steps.")]
 
                             delegate: Row {
                                 id: tip
@@ -806,7 +804,7 @@ T.Popup {
                             visible: guide.leadState === "unauthorized"
                                      || (guide.leadState === "failed" && (guide.lead.guide ?? "") !== "")
                             iconName: "circle-help"
-                            text: qsTr("See the steps")
+                            text: qsTr("See steps")
                             onClicked: guide.showSteps()
                         }
 
@@ -814,7 +812,7 @@ T.Popup {
                             visible: !guide.found
                             tone: "ghost"
                             iconName: "wifi"
-                            text: qsTr("Connect over WiFi instead")
+                            text: qsTr("Connect over Wi-Fi")
                             onClicked: guide.connectWirelessly()
                         }
                     }

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2026 Yubo Wu and the GameScrcpy for macOS contributors
+# Copyright (C) 2026 Yubo Wu and the anmacgamer contributors
 # gs_capture off Windows (the macOS port): the format, crop and pairing logic as on Windows; capture
 # cards themselves (Media Foundation on Windows, AVFoundation on macOS) are not ported yet.
 add_library(gs_capture STATIC
