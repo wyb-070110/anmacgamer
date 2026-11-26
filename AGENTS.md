@@ -28,13 +28,13 @@ ctest --preset mac-app -R <regex>
 - Presets: `mac-app` (local debug/dev app + tests), `mac-release` (universal `arm64` + `x86_64`, macOS 14+), `posix-core`, `posix-core-release`. Outputs land in `build/<preset>/bin`.
 - QML lint must stay at zero warnings.
 - Android: `cd android && ./gradlew build` (compiles, runs JUnit and lint; lint warnings are errors).
-- The mirror window runs without a phone: `./build/mac-app/bin/GameScrcpy.app/Contents/MacOS/GameScrcpy --demo-device tests/data/video/emulator_h265.media` (set `GS_DATA_DIR` to isolate settings).
+- The mirror window runs without a phone: `./build/mac-app/bin/anmacgamer.app/Contents/MacOS/anmacgamer --demo-device tests/data/video/emulator_h265.media` (set `GS_DATA_DIR` to isolate settings).
 - Tests that need a phone run only when `GS_ADB_TEST_SERIAL` is set.
 
 ## Rules that the code base enforces
 
-- `python3 tools/check_source_rules.py` must pass: no parsing of `dumpsys` / `wm` output, no fixed-delay synchronization (sleeps, delayed single-shot timers, `postDelayed`; a deliberate delay carries `source-rule-allow R9: <reason>` on the same line), every QML `Text` declares `textFormat`, controls in `src/ui/controls` take colors, sizes and durations only from the theme, and every user-facing string is English in code and translated in `src/app/i18n/gamescrcpy_zh_CN.ts`.
-- After changing interface text, run the translation update target (`GameScrcpy_lupdate`) and translate the new entries.
+- `python3 tools/check_source_rules.py` must pass: no parsing of `dumpsys` / `wm` output, no fixed-delay synchronization (sleeps, delayed single-shot timers, `postDelayed`; a deliberate delay carries `source-rule-allow R9: <reason>` on the same line), every QML `Text` declares `textFormat`, controls in `src/ui/controls` take colors, sizes and durations only from the theme, and every user-facing string is English in code and translated in `src/app/i18n/anmacgamer_zh_CN.ts`.
+- After changing interface text, run the translation update target (`anmacgamer_lupdate`) and translate the new entries.
 - Protocol changes go through `protocol/SPEC.md` and `protocol/tools/gen_vectors.py`; never edit the generated vectors by hand. Both the C++ and the Java tests must pass.
 - After changing the script API table in `src/script/src/Api.cpp`, regenerate `sdk/` with `./build/mac-app/bin/gs api write sdk`.
 
