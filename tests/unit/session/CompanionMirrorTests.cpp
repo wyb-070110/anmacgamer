@@ -519,9 +519,11 @@ TEST_CASE("SPEC 11.10: when screen sharing stops on the phone, a clean ServerGoo
     goodbye.reason = protocol::ErrorCode::None;
     goodbye.message = "screen sharing stopped on the phone";
     REQUIRE(rig.server.sendControl(goodbye));
-    rig.phone->closeFromPhone(0);
-
+    // The goodbye alone ends the session. (The fake server's control bytes reach the mirror link through a pump,
+    // so closing channel 0 right away could overtake them; the companion keeps that order itself, which
+    // MirrorServerTest checks.)
     REQUIRE(rig.listener.waitForEnd());
+    rig.phone->closeFromPhone(0);
     const auto phases = rig.listener.phases();
     CHECK(phases.back() == SessionPhase::Stopped);
     CHECK(std::ranges::count(phases, SessionPhase::Reconnecting) == 0);

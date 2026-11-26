@@ -35,6 +35,8 @@ namespace {
 constexpr std::string_view kLog = "session";
 constexpr std::int64_t kProbeSpacingUs = 100'000;
 constexpr std::int64_t kTouchWaitLimitUs = 5'000;
+// How long a lost link waits for the control reader to read what already arrived (a ServerGoodbye) before resuming.
+constexpr std::chrono::milliseconds kGoodbyeDrain{500};
 
 using SteadyClock = std::chrono::steady_clock;
 
@@ -314,6 +316,14 @@ private:
     std::optional<SessionFailure> resume(const std::stop_token& stop, SessionFailure lost)
     {
         GS_ASSERT_ON_THREAD(m_onSessionThread);
+        // A phone that ends the session sends ServerGoodbye and then closes the control channel; a Ping sent in
+        // that moment fails and reports the loss before the reader got to the goodbye. Let the reader take what
+        // already arrived (it ends at the channel's end) so a goodbye still ends the session instead of a resume.
+        {
+            std::unique_lock lock(m_eventMutex);
+            m_wake.wait_until(lock, SteadyClock::now() + kGoodbyeDrain,
+                              [this] { return m_controlReaderDone || m_serverStopped; });
+        }
         closeChannels();
         if (serverStopped()) {
             return std::nullopt;
