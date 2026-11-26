@@ -1,108 +1,99 @@
-Short answers to the questions players ask most. Select a question to see its answer; the groups above narrow the list.
+Quick fixes for common issues.
 
 ## Connecting {icon=smartphone} {tone=azure}
 
 ### The phone does not show up on the Devices page {#no-phone}
 
-- Use a cable that carries data; some cables only charge.
-- Make sure USB debugging is on. The steps for each brand are in "Connecting a phone" and in the getting-started guide.
-- If the phone asks what the USB connection is for, choose "File transfer".
-- Unlock the phone and look for the question "Allow USB debugging?".
+1. Use a data-capable USB cable (not charge-only).
+2. Turn on **USB debugging** in Developer options.
+3. Set the phone's USB mode to **File transfer**.
+4. Unlock the phone and tap **Allow** on the "Allow USB debugging?" prompt.
 
 > [!TIP]
-> The getting-started guide walks you through it for your phone's brand.
-> [Open the guide](action:guide)
+> Need brand-specific steps? [Open the guide](action:guide).
 
 ### The phone says "Waiting for authorization" {#waiting-authorization}
 
-Unlock the phone. When it asks "Allow USB debugging?", tick "Always allow from this computer" and tap **Allow**.
+Unlock the phone, tick **Always allow from this computer**, and tap **Allow**.
 
 ### The phone is "Offline" {#offline}
 
-Unplug the cable and plug it in again. If it stays offline, turn USB debugging off and on again in Developer options.
+Unplug and replug the USB cable. If it stays offline, toggle **USB debugging** off and back on.
 
 ### The Devices page says adb is not available {#adb-missing}
 
-anmacgamer talks to phones through adb. Install Android SDK Platform-Tools (for example with Homebrew: `brew install --cask android-platform-tools`), or make sure no other program blocks adb. Then select **Retry** on the **Devices** page.
+Install Android SDK Platform-Tools (e.g. `brew install --cask android-platform-tools`), make sure no other app is blocking adb, then click **Retry** on **Devices**.
 
 ### USB debugging is greyed out on a Samsung phone {#samsung-grey}
 
-Turn off **Settings > Security and privacy > Auto Blocker** first.
+Turn off **Settings > Security and privacy > Auto Blocker** on the phone first.
 
 ## Picture and sound {icon=monitor-play} {tone=orange}
 
 ### There is no sound {#no-sound}
 
-- Sound needs Android 11 or later.
-- On Android 11, unlock the phone before you connect.
-- Check that **Settings > Audio > Sound** is on, and that the phone is not muted on the mirror window's toolbar.
+- Sound requires Android 11 or later (unlock Android 11 phones before connecting).
+- Check **Settings > Audio > Sound** is on and the mirror toolbar is not muted.
+- Note: while mirroring, volume is controlled from your Mac; the phone's volume buttons do not change it.
 
 ### WiFi direct does not connect {#wifi-direct}
 
-This Mac and the phone must be on the same network, and anmacgamer must be allowed under **System Settings > Privacy & Security > Local Network**. Some routers keep their devices apart (AP isolation), and a firewall can block UDP. If it still fails, choose **adb tunnel** on the phone's card on the **Devices** page.
+Keep Mac and phone on the same network, allow **anmacgamer** in **System Settings > Privacy & Security > Local Network**, and ensure router AP isolation and UDP firewalls are not blocking it. Otherwise, switch to **adb tunnel** on the phone's card.
 
 ### The picture stutters or lags {#lag}
 
-- A USB cable is the steadiest connection.
-- In **Settings > Mirroring & quality**, lower **Maximum resolution** or **Bit rate limit**.
-- **Low-latency mode** in the same place gives the least delay, with occasional tearing.
-- The status capsule and the diagnostics overlay show the frame rate and the delay.
-- If the **Devices** page says Metal hardware acceleration is not available, run anmacgamer directly on a Mac with Metal support. In some virtual machines the processor draws the picture, which may stutter.
-
-When the network gets slow, anmacgamer lowers the resolution or the frame rate by itself, and brings them back when the network recovers.
+- Connect over USB for the steadiest frame rate.
+- Lower **Maximum resolution** or **Bit rate limit** in **Settings > Mirroring & quality**, or enable **Low-latency mode**.
+- Check the diagnostics overlay for FPS/latency and confirm Metal hardware acceleration is active (VMs without Metal fall back to CPU rendering).
 
 ### Chinese and other characters do not reach the phone {#typing}
 
-Characters that are not on the keyboard reach the phone through its clipboard. Check whether the phone restricts clipboard access.
+Non-ASCII characters use the phone's clipboard unless you type through [anmacgamer Companion](help:companion). Check if the phone blocks background clipboard access, or enable Companion's input method.
 
 ## Keys and control {icon=keyboard} {tone=lime}
 
 ### The picture works, but the mouse and keyboard do nothing {#no-input}
 
-Some phones only accept simulated input after one more developer option is on. Turn it on, then connect again:
+Enable the extra developer switch for your brand, then reconnect:
 
-| Phone | The switch to turn on |
+| Brand | Switch to turn on |
 |---|---|
-| Xiaomi · Redmi · POCO | "USB debugging (Security settings)". It needs a signed-in Mi account; restart the phone after you turn it on. |
-| OPPO · OnePlus · realme | "Disable permission monitoring". From ColorOS 16 it only shows while the phone's language is English, as "Disable system optimization"; switch the language back afterwards. |
-| vivo · iQOO | "USB simulate click". |
+| Xiaomi · Redmi · POCO | **USB debugging (Security settings)** (requires a signed-in Mi account; reboot after enabling). |
+| OPPO · OnePlus · realme | **Disable permission monitoring** (on ColorOS 16+, switch phone language to English temporarily to see **Disable system optimization**). |
+| vivo · iQOO | **USB simulate click**. |
 
 ### The keys of my profile do nothing {#keys-nothing}
 
-- Turn key mapping on with the keyboard button on the mirror window's toolbar.
+- Make sure **Key mapping** is toggled on in the mirror toolbar.
 - Pick a profile in **Key mapping options**.
-- Click into the mirror window, so it is in front.
+- Click inside the mirror window so it is focused.
 
 ### The mouse pointer is gone {#pointer-gone}
 
-The camera is locked. Press the camera lock key again: the key above Tab, left of the 1 key, unless the profile sets another one.
+Camera lock is active. Press the camera lock key again (the key above Tab, left of 1, or <kbd>Tab</kbd> in built-in Honkai: Star Rail profiles).
 
 ### A keyboard shortcut does nothing {#shortcut-nothing}
 
-Look in **Settings > Keyboard shortcuts**; another command may use the same keys. In a mirror window, a key that the current profile uses goes to the game first.
+Check **Settings > Keyboard shortcuts** for conflicts. Active profile keys take priority over app shortcuts in the mirror window.
 
 ## Other {icon=settings-2} {tone=gray}
 
 ### anmacgamer closed unexpectedly {#crashed}
 
-At the next start, anmacgamer offers to export diagnostics; you can also do it at any time in **Settings > About > Export diagnostics…**. The zip file holds the logs, the settings, the device list and the newest crash report; serial numbers, addresses, user names, Wi‑Fi names and clipboard text are taken out. Attach the file to your problem report.
+Click **Export diagnostics…** on the next launch (or in **Settings > About**) to save a zip with logs and crash reports (personal data like serials, IPs, and clipboard text are stripped).
 
 ### An extension causes trouble {#extension-trouble}
 
-On the **Extensions** page, **Find a problem extension** loads your extensions a few at a time and asks whether the problem still happens, until it finds the one behind it. To start once without any extension, run `open -a anmacgamer --args --safe-mode`.
-
-When an extension stops three times within a minute, anmacgamer turns it off by itself and its card says why; the card also counts the stops of the last 7 days, and the extension's **Details** list each one with its crash report. More in [Extensions · When something goes wrong](help:extensions#trouble).
+Use **Find a problem extension** on **Extensions**, or launch `open -a anmacgamer --args --safe-mode` to disable all extensions for one session. See [Extensions · Troubleshooting](help:extensions#trouble).
 
 ### Where are my settings and profiles? {#data-folder}
 
-In `~/Library/Application Support/anmacgamer`: your profiles are in `profiles`, the logs in `logs`.
-
-To use a separate data folder, set the `GS_DATA_DIR` environment variable before starting anmacgamer.
+In `~/Library/Application Support/anmacgamer` (`profiles/` and `logs/`). Set `GS_DATA_DIR` before launch to use a custom folder.
 
 ### Which phones work? {#which-phones}
 
-Phones with Android 9 or later. HarmonyOS 5 and later is not Android and cannot be mirrored.
+Android 9 or later. HarmonyOS 5 and later is not Android and cannot be mirrored.
 
 ### Where can I find all commands? {#all-commands}
 
-Press <kbd>⌘ Command</kbd>+<kbd>K</kbd> for the command palette. Type a few letters to find a command, then press <kbd>Return</kbd> to run it; the palette also shows each command's keys. <kbd>F1</kbd> opens this help.
+Press <kbd>⌘ Command</kbd>+<kbd>K</kbd> for the command palette, or <kbd>F1</kbd> for Help.

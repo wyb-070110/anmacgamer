@@ -576,46 +576,43 @@ Item {
             {
                 centered: true,
                 title: qsTr("Tasks"),
-                text: qsTr("A task is logic that runs by itself: check in every day, farm a level while you are "
-                           + "away, remind you of something. It can run on the computer alone or work a phone that "
-                           + "is mirroring.")
+                text: qsTr("Tasks run automation scripts independently—for daily check-ins, farming, or "
+                           + "reminders—without interrupting your key mappings.")
             },
             {
                 target: function() { return tour.findItem(page, page.tasks.length > 0 ? "newTask" : "newFirstTask") },
                 title: qsTr("New task"),
-                text: qsTr("Start from a blank task and write your own logic, or copy an example and change it.")
+                text: qsTr("Create a blank task or start from an example.")
             },
             {
                 target: function() { return tour.findItem(page, "taskCard") },
                 optional: true,
-                title: qsTr("A task card"),
-                text: qsTr("The card shows the task's name, when it runs and whether it is running now.")
+                title: qsTr("Task card"),
+                text: qsTr("Shows the task name, schedule, and live run status.")
             },
             {
                 target: function() { return tour.findItem(page, "startStop") },
                 optional: true,
-                title: qsTr("Run and stop"),
-                text: qsTr("Run a task by hand or stop it at any time.")
+                title: qsTr("Start & stop"),
+                text: qsTr("Start or stop a task manually anytime.")
             },
             {
                 target: function() { return tour.findItem(page, "taskPanel") },
                 optional: true,
                 title: qsTr("Task settings"),
-                text: qsTr("Choose when the task runs, such as every day or on some days of the week, which phone "
-                           + "it works, and open its logic to edit it.")
+                text: qsTr("Set the schedule, target phones, parameters, and edit the task's logic here.")
             },
             {
                 target: function() { return tour.findItem(page, "historyRow") },
                 optional: true,
                 title: qsTr("Recent runs"),
-                text: qsTr("Every run is kept here: when it started, on which phone, how long it took and how it "
-                           + "ended.")
+                text: qsTr("History of past runs with start time, phone, duration, and outcome.")
             },
             {
                 centered: true,
-                title: qsTr("That's tasks"),
-                text: qsTr("With the setting for it on, closing the window leaves anmacgamer in the menu bar "
-                           + "so that tasks with a schedule still run on time. Help can replay this tour.")
+                title: qsTr("Tasks tour complete"),
+                text: qsTr("Enable menu bar mode in Settings so scheduled tasks keep running when the main window is "
+                           + "closed.")
             }
         ]
     }

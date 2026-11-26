@@ -629,7 +629,7 @@ Item {
                 objectName: "counter"
                 width: parent.width
                 textFormat: Text.PlainText
-                text: qsTr("Step %1 of %2").arg(tour.step + 1).arg(tour.stepCount)
+                text: qsTr("%1 / %2").arg(tour.step + 1).arg(tour.stepCount)
                 color: Theme.colors.textTertiary
                 font.pixelSize: Theme.type.caption.size
                 font.weight: Font.DemiBold

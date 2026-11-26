@@ -50,7 +50,7 @@ Item {
         { id: "record", text: qsTr("Record") }, { id: "panels", text: qsTr("Extension panels") },
         { id: "extensions", text: qsTr("Extension buttons") }, { id: "diagnostics", text: qsTr("Diagnostics") },
         { id: "fullScreen", text: qsTr("Full screen") }, { id: "onTop", text: qsTr("Keep on top") },
-        { id: "pin", text: qsTr("Pin the toolbar") }
+        { id: "pin", text: qsTr("Pin toolbar") }
     ]
 
     // The orientation choices sit in the More menu when the rotate button is not on the toolbar.
@@ -1708,7 +1708,7 @@ Item {
                     visible: toolbar.tight || !overlay.toolbarShows("pin")
                     height: visible ? implicitHeight : 0
                     iconName: "pin"
-                    text: overlay.toolbarPinned ? qsTr("Unpin the toolbar") : qsTr("Pin the toolbar")
+                    text: overlay.toolbarPinned ? qsTr("Unpin the toolbar") : qsTr("Pin toolbar")
                     onTriggered: AppSettings.setValue("display.toolbar", overlay.toolbarPinned ? "dwell" : "pinned")
                 }
                 MenuLabel { text: qsTr("Orientation"); visible: overlay.rotateInMore && rotateButton.enabled && !overlay.noPicture }
@@ -2013,7 +2013,7 @@ Item {
 
             visible: !toolbar.tight && overlay.toolbarShows("pin")
             iconName: "pin"
-            text: overlay.toolbarPinned ? qsTr("Unpin the toolbar") : qsTr("Pin the toolbar")
+            text: overlay.toolbarPinned ? qsTr("Unpin the toolbar") : qsTr("Pin toolbar")
             selected: overlay.toolbarPinned
             onClicked: AppSettings.setValue("display.toolbar", overlay.toolbarPinned ? "dwell" : "pinned")
         }
@@ -2549,106 +2549,97 @@ Item {
         steps: [
             {
                 centered: true,
-                title: qsTr("The mirror window"),
-                text: qsTr("This is the phone's screen. Clicking, dragging and scrolling here taps, swipes and "
-                           + "scrolls on the phone, and what you type goes into the phone. The toolbar shows when "
-                           + "the mouse moves to the top of the window.")
+                title: qsTr("Mirror window"),
+                text: qsTr("Click, drag, scroll, and type here to control your phone. Move the pointer to the top to "
+                           + "reveal the toolbar.")
             },
             {
                 target: keymapButton,
                 title: qsTr("Key mapping"),
-                text: qsTr("With key mapping on, the keyboard and mouse tap the screen the way the profile says, "
-                           + "which is how you play games. Turn it off to type into the phone. Try it: click it "
-                           + "twice."),
+                text: qsTr("Toggle game key mapping on or off (turn off to type normally). Try clicking it twice."),
                 keys: keymapCommand.shortcut
             },
             {
                 target: keymapMenuButton,
                 title: qsTr("Key mapping options"),
-                text: qsTr("Switch profiles, show or hide the key hints, and open the editor where you place the "
-                           + "keys on the picture.")
+                text: qsTr("Switch profiles, adjust key hints, or open the key mapping editor.")
             },
             {
                 target: homeButton,
-                title: qsTr("Back, Home and Recent apps"),
-                text: qsTr("The same as the three navigation keys at the bottom of the phone."),
+                title: qsTr("Navigation"),
+                text: qsTr("Trigger Back, Home, and Recent apps."),
                 keys: [backCommand.shortcut, homeCommand.shortcut, appSwitchCommand.shortcut].filter(key => key !== "")
             },
             {
                 target: rotateButton,
                 optional: true,
-                title: qsTr("Rotate"),
-                text: qsTr("Turn the picture, or let the phone rotate by itself; the window changes shape with it.")
+                title: qsTr("Orientation"),
+                text: qsTr("Follow device rotation or lock Portrait / Landscape.")
             },
             {
                 target: screenButton,
                 optional: true,
-                title: qsTr("Turn the phone's screen off"),
-                text: qsTr("The phone's own screen goes dark while you keep mirroring and working it here. It saves "
-                           + "power and keeps the screen private."),
+                title: qsTr("Screen off"),
+                text: qsTr("Turn off the phone's physical screen while mirroring continues."),
                 keys: screenCommand.shortcut
             },
             {
                 target: volumeButton,
                 optional: true,
                 title: qsTr("Volume"),
-                text: qsTr("The phone's sound plays on this computer. Change how loud it is here or mute it; the "
-                           + "phone's own volume stays as it is.")
+                text: qsTr("Control phone audio on your Mac; the phone's physical volume keys do not change it while "
+                           + "mirroring.")
             },
             {
                 target: tasksButton,
                 optional: true,
                 title: qsTr("Tasks"),
-                text: qsTr("Run a task on this phone, such as a script that plays for you, and see or stop the "
-                           + "ones that are running.")
+                text: qsTr("Start or stop automation tasks running on this phone.")
             },
             {
                 target: recordButton,
                 optional: true,
                 title: qsTr("Record"),
-                text: qsTr("Record the picture and sound to a video. A recording also lets you test logic later "
-                           + "without the phone."),
+                text: qsTr("Record video, audio, and inputs (also useful for replaying scripts offline)."),
                 keys: recordCommand.shortcut
             },
             {
                 target: extensionPanelsButton,
                 optional: true,
                 title: qsTr("Extension panels"),
-                text: qsTr("Extensions that come with a panel open it beside the picture from here.")
+                text: qsTr("Open side panels added by enabled extensions.")
             },
             {
                 target: diagnosticsButton,
                 optional: true,
                 title: qsTr("Diagnostics"),
-                text: qsTr("Shows the frame rate, the delay and how the picture is decoded. When things stutter, "
-                           + "look here first."),
+                text: qsTr("Show live FPS, latency, and decoder stats—check here first if video stutters."),
                 keys: diagnosticsCommand.shortcut
             },
             {
                 target: fullScreenButton,
                 optional: true,
                 title: qsTr("Full screen"),
-                text: qsTr("The picture fills the whole screen; do it again to come back."),
+                text: qsTr("Fill the screen with the phone display; press again to exit."),
                 keys: fullScreenCommand.shortcut !== "" ? fullScreenCommand.shortcut : "F11"
             },
             {
                 target: moreButton,
                 title: qsTr("More"),
-                text: qsTr("The notification shade, quick settings, recordings, editing logic, the vision "
-                           + "workbench, files, the small window, syncing phones and this phone's settings are in "
-                           + "here. When the window is narrow, the buttons that do not fit are in here too.")
+                text: qsTr("Access recordings, logic editor, vision workbench, mini window, toolbar customization, and"
+                           + " device settings.")
             },
             {
                 target: pinButton,
                 optional: true,
-                title: qsTr("Pin the toolbar"),
-                text: qsTr("Pinned, the toolbar stays above the picture instead of hiding until the mouse comes up.")
+                title: qsTr("Pin toolbar"),
+                text: qsTr("Keep the toolbar visible above the screen instead of auto-hiding.")
             },
             {
                 centered: true,
                 title: qsTr("Ready to play"),
-                text: qsTr("To have keys tap the buttons of a game, open Edit key mapping under Key mapping options "
-                           + "and drag keys onto the picture. Help can replay this tour.")
+                text: qsTr("Open Key mapping options > Edit key mapping to place keys on game buttons. Replay this "
+                           + "tour in Help.")
             }
         ]
         advance: {

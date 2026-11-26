@@ -1179,61 +1179,54 @@ Item {
         steps: [
             {
                 centered: true,
-                title: qsTr("The logic view"),
-                text: qsTr("Logic lets keys do more: a combo on one press, a tap when a picture shows up, a "
-                           + "different move depending on what is happening. The blueprint draws the logic as "
-                           + "blocks; it is the code, and you can edit either one.")
+                title: qsTr("Logic view"),
+                text: qsTr("Build combos, conditional actions, and vision scripts visually as a blueprint or directly "
+                           + "in TypeScript.")
             },
             {
                 target: blueprintSidebar,
                 title: qsTr("My blueprint"),
-                text: qsTr("Components, variables, functions, the function library and the pages are here. Click a "
-                           + "component to open its own file, where its key events go.")
+                text: qsTr("Browse components, variables, functions, and libraries. Click a component to edit its key "
+                           + "events.")
             },
             {
                 target: blueprintCanvas,
                 title: qsTr("Place a block"),
-                text: qsTr("Right-click an empty spot, or drag an item from the left, to place a block. Rest the "
-                           + "mouse on a block in the list to see what it does. Try it: place one.")
+                text: qsTr("Right-click the canvas or drag from the left sidebar to add a block. Try placing one now.")
             },
             {
                 target: blueprintCanvas,
-                title: qsTr("Connect the blocks"),
-                text: qsTr("Drag from the white arrow on the right of a block to the left of the next one; the "
-                           + "blocks run from left to right. The colored dots carry values and connect the same "
-                           + "way.")
+                title: qsTr("Connect blocks"),
+                text: qsTr("Drag from a white execution arrow to the next block's input; colored pins pass data "
+                           + "values.")
             },
             {
                 target: pagesStrip,
                 title: qsTr("Pages"),
-                text: qsTr("The main page, the component files and every function have a page of their own; switch "
-                           + "between them here.")
+                text: qsTr("Switch between the main page, component files, and function tabs here.")
             },
             {
                 target: viewSwitch,
-                title: qsTr("Blueprint and code"),
-                text: qsTr("Switch to the code to see the TypeScript behind the blueprint. Change the code and the "
-                           + "blueprint follows.")
+                title: qsTr("Blueprint & Code"),
+                text: qsTr("Switch between visual Blueprint and Code—changes in either view stay in sync.")
             },
             {
                 target: scriptSidebar,
                 optional: true,
-                title: qsTr("Run and debug"),
-                text: qsTr("Run starts the logic on the phone, Run on a recording tests it against a recorded video, "
-                           + "and the live list shows what each component is doing. Set breakpoints on blocks to "
-                           + "watch the values step by step.")
+                title: qsTr("Run & debug"),
+                text: qsTr("Run live on the phone, test against a recording, inspect live states, or step through "
+                           + "breakpoints.")
             },
             {
                 target: consolePanel,
                 optional: true,
-                title: qsTr("Console, problems and references"),
-                text: qsTr("Logs go to the console. Mistakes are listed under Problems; click one to go to it.")
+                title: qsTr("Console & problems"),
+                text: qsTr("View log output in Console and click any error under Problems to jump to it.")
             },
             {
                 centered: true,
                 title: qsTr("Start building"),
-                text: qsTr("Not sure what a block does? Rest the mouse on it, or ask the AI assistant at the bottom "
-                           + "right. Help can replay this tour.")
+                text: qsTr("Hover over blocks for tips or ask the AI assistant. Replay this tour in Help.")
             }
         ]
         advance: {

@@ -573,14 +573,14 @@
     <name>AiCorner</name>
     <message>
         <source>AI assistant</source>
-        <translation>AI 小助手</translation>
+        <translation>AI 助手</translation>
     </message>
     <message>
-        <source>New conversation</source>
-        <translation>新对话</translation>
+        <source>New chat</source>
+        <translation>新建对话</translation>
     </message>
     <message>
-        <source>Recent conversations</source>
+        <source>Recent chats</source>
         <translation>最近对话</translation>
     </message>
     <message>
@@ -614,42 +614,38 @@
         <translation>删除全部对话</translation>
     </message>
     <message>
-        <source>The AI assistant</source>
-        <translation>AI 小助手</translation>
+        <source>Understands your current window and profile. Ask it to set up keys, write scripts, or troubleshoot—edits wait in a draft until you apply them.</source>
+        <translation>能感知当前窗口与方案，可帮你配键位、写脚本或排查连接问题；所有修改先存为草稿，确认后才生效。</translation>
     </message>
     <message>
-        <source>It knows which window you are in and which profile you are looking at. Ask it to set up keys, write blueprints and scripts, explain blocks or find out why a phone does not connect. Whatever it changes goes into a draft first and only counts once you agree.</source>
-        <translation>它知道你现在在哪个窗口、在看哪个方案。可以让它帮你摆键位、写蓝图和脚本、解释方块，或者查手机为什么连不上。它要改的东西都先放进草稿，你同意了才算数。</translation>
-    </message>
-    <message>
-        <source>Start a new conversation for a new topic; the earlier ones are kept.</source>
-        <translation>换个话题就开一段新对话，之前的对话会留着。</translation>
+        <source>Start a fresh conversation; earlier chats stay saved.</source>
+        <translation>开启新话题，历史对话会自动保留。</translation>
     </message>
     <message numerus="yes">
-        <source>Every conversation is kept on this computer. The newest %n are listed here; Show all opens the rest in a separate window. Pick one up again or delete them.</source>
+        <source>Reopen the latest %n saved chats here, or click Show all to manage everything in a window.</source>
         <translation>
-            <numerusform>所有对话都保存在这台电脑上。这里列出最新的 %n 段，“查看全部”会在单独的窗口里列出其余的。可以接着聊，也可以删掉。</numerusform>
+            <numerusform>列出最近 %n 条本地对话，点「显示全部」可在独立窗口查看或清理。</numerusform>
         </translation>
     </message>
     <message>
-        <source>A separate window</source>
-        <translation>单独窗口</translation>
+        <source>Pop-out window</source>
+        <translation>独立窗口</translation>
     </message>
     <message>
-        <source>Chat in a window of its own, with the recent conversations on the left; it remembers its size and place.</source>
-        <translation>在单独的窗口里聊，左边列着最近的对话，窗口的大小和位置会记住。</translation>
+        <source>Open the assistant in its own resizable window with the chat list on the left.</source>
+        <translation>在独立窗口中聊天，左侧保留历史列表并记住窗口大小与位置。</translation>
     </message>
     <message>
-        <source>The card folds away and the bubble stays in the corner. The shortcut brings it back in any window.</source>
-        <translation>卡片收起来，气泡留在角落里。在任何窗口按快捷键都能把它叫回来。</translation>
+        <source>Minimize to the corner bubble; press the shortcut anytime to reopen.</source>
+        <translation>收起为角落悬浮球，随时按快捷键重新呼出。</translation>
+    </message>
+    <message>
+        <source>Type a question and press Enter. Configure your AI service under Settings &gt; AI if needed.</source>
+        <translation>在下方输入问题并按 Enter；若尚未配置模型，请先前往设置 &gt; AI。</translation>
     </message>
     <message>
         <source>Ask</source>
         <translation>提问</translation>
-    </message>
-    <message>
-        <source>Type a question below and press Enter. While it answers you can follow its thinking and the tools it uses. If no service is set up yet, set one up under AI in Settings first.</source>
-        <translation>在下面输入问题，按回车发送。回答时能看到它的思考过程和用了哪些工具。还没配置服务的话，先到设置的“AI”里配好。</translation>
     </message>
 </context>
 <context>
@@ -5946,6 +5942,62 @@
         <source>Devices</source>
         <translation>设备</translation>
     </message>
+    <message>
+        <source>Grid view</source>
+        <translation>宫格视图</translation>
+    </message>
+    <message>
+        <source>Connected phones, capture cards, and extension hardware appear here automatically as cards.</source>
+        <translation>已连接的手机、采集卡和扩展硬件会自动以卡片形式显示在这里。</translation>
+    </message>
+    <message>
+        <source>Plug in via USB with USB debugging on, then tap Allow on your phone&apos;s authorization prompt.</source>
+        <translation>用数据线连接并开启 USB 调试，首次连接时在手机上点「允许」。</translation>
+    </message>
+    <message>
+        <source>Pair over Wi-Fi using a pairing code or QR code under Wireless debugging.</source>
+        <translation>没有数据线时，可通过「无线调试」的配对码或二维码配对。</translation>
+    </message>
+    <message>
+        <source>Connection mode</source>
+        <translation>传输方式</translation>
+    </message>
+    <message>
+        <source>Choose adb tunnel (works anywhere), WiFi direct (lower Wi-Fi latency), or Auto.</source>
+        <translation>可选 adb 隧道（通用）、WiFi 直连（局域网低延迟）或自动。</translation>
+    </message>
+    <message>
+        <source>Open the phone&apos;s mirror window. Click and type directly, or use a key profile. Try it now.</source>
+        <translation>打开投屏窗口，可直接点击打字，或配合键位方案操控。</translation>
+    </message>
+    <message>
+        <source>Device settings</source>
+        <translation>单机设置</translation>
+    </message>
+    <message>
+        <source>Override resolution, FPS, bitrate, or audio for this phone; other options follow global defaults.</source>
+        <translation>单独调整这台手机的分辨率、帧率、码率或声音，未改项沿用全局设置。</translation>
+    </message>
+    <message>
+        <source>More options</source>
+        <translation>更多操作</translation>
+    </message>
+    <message>
+        <source>Open apps, browse files, keep the screen on, or disconnect wireless debugging here.</source>
+        <translation>在这里打开手机应用、管理文件、设置屏幕常亮或断开无线调试。</translation>
+    </message>
+    <message>
+        <source>View and control multiple mirrored phones side by side in one window.</source>
+        <translation>同时连接多台手机时，用宫格视图在一个窗口里并排查看和操控。</translation>
+    </message>
+    <message>
+        <source>Devices tour complete</source>
+        <translation>设备页导览完成</translation>
+    </message>
+    <message>
+        <source>Use the left sidebar for Profiles, Tasks, and Extensions. Replay any tour anytime in Help.</source>
+        <translation>左侧可切换到方案、任务和扩展页；所有导览都能在「帮助」里重播。</translation>
+    </message>
     <message numerus="yes">
         <source>%n device(s)</source>
         <translation>
@@ -5965,10 +6017,6 @@
         <translation>
             <numerusform>%n 台投屏中</numerusform>
         </translation>
-    </message>
-    <message>
-        <source>Grid</source>
-        <translation>宫格</translation>
     </message>
     <message>
         <source>Wireless pairing</source>
@@ -5991,64 +6039,12 @@
         <translation>如何打开 USB 调试</translation>
     </message>
     <message>
-        <source>Every phone connected to this computer gets a card here, and so do capture cards and the devices extensions add, such as touch boxes. A card shows up as soon as the device connects; there is nothing to refresh.</source>
-        <translation>连在这台电脑上的每台手机在这里都有一张卡片，采集卡和扩展添加的设备（比如触控盒）也一样。设备一连上卡片就出现，不用手动刷新。</translation>
-    </message>
-    <message>
         <source>Connect a phone</source>
         <translation>连接手机</translation>
     </message>
     <message>
-        <source>Plug the phone in with a USB cable and turn on USB debugging in its developer options. The first time, the phone asks whether to allow USB debugging from this computer: tap Allow.</source>
-        <translation>用 USB 线把手机接上，在开发者选项里打开“USB 调试”。第一次连接时手机会问是否允许这台电脑调试，点“允许”。</translation>
-    </message>
-    <message>
-        <source>No cable at hand? Turn on Wireless debugging on the phone and pair with the code or QR code it shows. After that the phone reconnects by itself on the same Wi-Fi.</source>
-        <translation>手边没有线？在手机上打开“无线调试”，用它显示的配对码或二维码配对。之后在同一个 Wi-Fi 下手机会自己重新连上。</translation>
-    </message>
-    <message>
-        <source>How the picture travels</source>
-        <translation>画面怎么传</translation>
-    </message>
-    <message>
-        <source>The adb tunnel goes through USB or wireless debugging and works everywhere. WiFi direct sends the picture straight over Wi-Fi with less delay. Auto picks for you.</source>
-        <translation>adb 隧道走 USB 或无线调试，哪里都能用；WiFi 直连让画面直接走 Wi-Fi，延迟更低；选“自动”就替你挑。</translation>
-    </message>
-    <message>
         <source>Start mirroring</source>
         <translation>开始投屏</translation>
-    </message>
-    <message>
-        <source>Mirroring opens the phone&apos;s screen on this computer. Click and type there to work the phone, or pick a profile so that keys tap the screen for you. Try it now.</source>
-        <translation>“投屏”在这台电脑上打开手机画面。在画面上点、打字就是操作手机，选一个方案还能让按键替你点屏幕。现在就试试。</translation>
-    </message>
-    <message>
-        <source>Settings for this phone</source>
-        <translation>这台手机的设置</translation>
-    </message>
-    <message>
-        <source>Resolution, frame rate, bitrate and the other mirroring settings can be set for each phone. Whatever you leave alone follows the settings for all phones.</source>
-        <translation>分辨率、帧率、码率等投屏设置可以给每台手机单独设，没改的跟着所有手机的设置走。</translation>
-    </message>
-    <message>
-        <source>More for this phone</source>
-        <translation>这台手机的更多操作</translation>
-    </message>
-    <message>
-        <source>Apps, files, keeping the screen on and ending a wireless connection are in this menu.</source>
-        <translation>应用、文件、保持亮屏、断开无线连接都在这个菜单里。</translation>
-    </message>
-    <message>
-        <source>With several phones connected, Grid puts them side by side in one window so you can watch and work them together.</source>
-        <translation>连着几台手机时，“宫格”把它们并排放进一个窗口，可以一起看、一起操作。</translation>
-    </message>
-    <message>
-        <source>That&apos;s the devices page</source>
-        <translation>设备页就是这些</translation>
-    </message>
-    <message>
-        <source>The other pages are on the left: profiles hold your key mappings, tasks run things on a schedule, extensions add features. Each page has its own tour, and Help can replay them.</source>
-        <translation>其他页面在左边：方案存着你的键位，任务按时间表自动运行，扩展增加功能。每个页面都有自己的引导，帮助里可以重新看。</translation>
     </message>
 </context>
 <context>
@@ -6506,7 +6502,7 @@
     </message>
     <message>
         <source>Find a problem extension</source>
-        <translation>查找出问题的扩展</translation>
+        <translation>查找问题扩展</translation>
     </message>
     <message>
         <source>Export bundle…</source>
@@ -6533,16 +6529,56 @@
         <translation>关闭</translation>
     </message>
     <message>
+        <source>Extensions add touch boxes, components, themes, panels, AI providers, and logic blocks.</source>
+        <translation>扩展可添加触控盒、组件、主题、侧边面板、AI 服务与逻辑节点。</translation>
+    </message>
+    <message>
+        <source>Extension card</source>
+        <translation>扩展卡片</translation>
+    </message>
+    <message>
+        <source>Shows what the extension adds and the permissions it uses.</source>
+        <translation>展示扩展提供的功能以及它申请的权限。</translation>
+    </message>
+    <message>
+        <source>Enable extension</source>
+        <translation>启用扩展</translation>
+    </message>
+    <message>
+        <source>Extensions load only when switched on, which grants their requested permissions.</source>
+        <translation>打开开关才会加载扩展并授予其所需权限。</translation>
+    </message>
+    <message>
+        <source>Configure options provided by this extension.</source>
+        <translation>配置该扩展提供的选项。</translation>
+    </message>
+    <message>
+        <source>View added features, permissions, crash history, and updates.</source>
+        <translation>查看新增功能、权限明细、健康记录与更新信息。</translation>
+    </message>
+    <message>
+        <source>Install a .gsext or .gsbundle package after reviewing its permissions.</source>
+        <translation>选择 .gsext 或 .gsbundle 文件，核对权限后安装。</translation>
+    </message>
+    <message>
+        <source>Binary-search your enabled extensions to isolate the one causing an issue.</source>
+        <translation>通过二分法逐批停用扩展，快速定位引发故障的扩展。</translation>
+    </message>
+    <message>
+        <source>Pack all enabled extensions and settings into one .gsbundle file.</source>
+        <translation>把当前启用的扩展和设置打包为一个 .gsbundle 文件。</translation>
+    </message>
+    <message>
+        <source>Extensions tour complete</source>
+        <translation>扩展页导览完成</translation>
+    </message>
+    <message>
+        <source>Extensions only run with permissions you approved. Replay this tour in Help.</source>
+        <translation>扩展仅在你授权的范围内运行，可在「帮助」中重播此导览。</translation>
+    </message>
+    <message>
         <source>Made for anmacgamer %1</source>
         <translation>为 anmacgamer %1 编写</translation>
-    </message>
-    <message>
-        <source>The card tells what the extension adds and what it may do.</source>
-        <translation>卡片上写着扩展加了什么、可以做什么。</translation>
-    </message>
-    <message>
-        <source>An extension only loads once its switch is on. Turning it on allows the permissions it asks for.</source>
-        <translation>开关打开后扩展才会加载；打开就表示同意它申请的权限。</translation>
     </message>
     <message>
         <source>Not used</source>
@@ -6677,48 +6713,8 @@
         <translation>崩溃报告 %1</translation>
     </message>
     <message>
-        <source>Extensions add to anmacgamer: new components, picture filters, themes, hardware such as a touch box, side panels, and new blocks for profiles and logic.</source>
-        <translation>扩展给 anmacgamer 增加功能：新的组件、画面滤镜、主题、触控盒这样的硬件、侧边面板，以及方案和逻辑里用的新方块。</translation>
-    </message>
-    <message>
-        <source>An extension card</source>
-        <translation>扩展卡片</translation>
-    </message>
-    <message>
-        <source>Turn it on</source>
-        <translation>打开它</translation>
-    </message>
-    <message>
-        <source>Extensions that have settings are set up here.</source>
-        <translation>有设置项的扩展在这里调。</translation>
-    </message>
-    <message>
-        <source>See everything it adds, the permissions it asked for and any problem it ran into.</source>
-        <translation>看它加了哪些东西、要了哪些权限，以及遇到过什么问题。</translation>
-    </message>
-    <message>
         <source>Install from file</source>
         <translation>从文件安装</translation>
-    </message>
-    <message>
-        <source>Add an extension from a .gsext package. Before it installs, it shows what the extension may do.</source>
-        <translation>从 .gsext 扩展包安装。装之前会先告诉你这个扩展可以做哪些事。</translation>
-    </message>
-    <message>
-        <source>When something goes wrong, this turns half of the extensions off at a time to find the one that causes it.</source>
-        <translation>出了问题时，它每次关掉一半扩展，帮你找出是哪一个引起的。</translation>
-    </message>
-    <message>
-        <source>Pack the extensions you use into one bundle file to set up another computer or share them.</source>
-        <translation>把你在用的扩展打成一个合集文件，用来装到另一台电脑上或分享给别人。</translation>
-    </message>
-    <message>
-        <source>That&apos;s extensions</source>
-        <translation>扩展页就是这些</translation>
-    </message>
-    <message>
-        <source>Extensions only do what you allowed. Help can replay this tour.</source>
-        <translation>扩展只做你允许的事。帮助里可以重新看这段引导。</translation>
     </message>
     <message>
         <source>Export…</source>
@@ -6750,7 +6746,7 @@
     </message>
     <message>
         <source>Export bundle</source>
-        <translation>导出整合包</translation>
+        <translation>导出合集</translation>
     </message>
     <message>
         <source>anmacgamer bundle (*.gsbundle)</source>
@@ -7573,10 +7569,6 @@
 <context>
     <name>GuideOverlay</name>
     <message>
-        <source>Allow this computer on the phone</source>
-        <translation>在手机上允许这台电脑</translation>
-    </message>
-    <message>
         <source>%1 is ready</source>
         <translation>%1 已就绪</translation>
     </message>
@@ -7585,48 +7577,20 @@
         <translation>正在连接 %1</translation>
     </message>
     <message>
-        <source>%1 is on screen</source>
-        <translation>%1 正在投屏</translation>
-    </message>
-    <message>
         <source>Could not connect to %1</source>
         <translation>无法连接 %1</translation>
     </message>
     <message>
         <source>Connect your phone</source>
-        <translation>连接你的手机</translation>
-    </message>
-    <message>
-        <source>%1 is plugged in but not answering. Unplug the cable and plug it in again.</source>
-        <translation>%1 已插上，但没有响应。拔下数据线，再重新插上。</translation>
-    </message>
-    <message>
-        <source>Unlock the phone. When it asks “Allow USB debugging?”, tick “Always allow from this computer” and tap Allow.</source>
-        <translation>解锁手机。在“允许 USB 调试吗？”中勾选“一律允许使用这台计算机进行调试”，再点“允许”。</translation>
-    </message>
-    <message>
-        <source>Start mirroring to see and control the phone on this computer.</source>
-        <translation>开始投屏，就能在这台电脑上看到并操作手机。</translation>
-    </message>
-    <message>
-        <source>The first connection takes a few seconds.</source>
-        <translation>第一次连接需要几秒钟。</translation>
-    </message>
-    <message>
-        <source>Its window is open. You can close this guide.</source>
-        <translation>投屏窗口已打开，可以关闭这个引导了。</translation>
+        <translation>连接手机</translation>
     </message>
     <message>
         <source>%1. %2</source>
         <translation>%1。%2</translation>
     </message>
     <message>
-        <source>Plug the phone into this computer with a USB cable. It shows up here by itself.</source>
-        <translation>用 USB 数据线把手机连到这台电脑，连上后会自动出现在这里。</translation>
-    </message>
-    <message>
         <source>Get started</source>
-        <translation>开始</translation>
+        <translation>开始设置</translation>
     </message>
     <message>
         <source>Next</source>
@@ -7645,16 +7609,44 @@
         <translation>完成</translation>
     </message>
     <message>
-        <source>Free and open source (GPL-3.0). Please follow local laws and each game&apos;s terms of use.</source>
-        <translation>免费开源（GPL-3.0）。请遵守当地法律和各游戏的用户协议。</translation>
-    </message>
-    <message>
         <source>Turn on USB debugging</source>
         <translation>打开 USB 调试</translation>
     </message>
     <message>
         <source>Waiting for the phone</source>
         <translation>等待手机连接</translation>
+    </message>
+    <message>
+        <source>Allow this computer on your phone</source>
+        <translation>在手机上允许调试</translation>
+    </message>
+    <message>
+        <source>%1 is mirroring</source>
+        <translation>%1 正在投屏</translation>
+    </message>
+    <message>
+        <source>%1 is not responding. Unplug and replug the cable.</source>
+        <translation>%1 未响应，请重新插拔数据线。</translation>
+    </message>
+    <message>
+        <source>Unlock your phone, tick “Always allow from this computer”, and tap Allow.</source>
+        <translation>解锁手机，勾选「一律允许使用这台计算机进行调试」并点「允许」。</translation>
+    </message>
+    <message>
+        <source>Click Start mirroring to view and control your phone.</source>
+        <translation>点击「开始投屏」即可在电脑上查看并操控手机。</translation>
+    </message>
+    <message>
+        <source>First connection takes a few seconds.</source>
+        <translation>首次连接需要几秒钟。</translation>
+    </message>
+    <message>
+        <source>Mirror window is open. You can close this guide.</source>
+        <translation>投屏窗口已打开，可以关闭此引导了。</translation>
+    </message>
+    <message>
+        <source>Plug your phone in with a USB cable. It will appear automatically.</source>
+        <translation>用 USB 数据线连接手机和电脑，设备会自动出现。</translation>
     </message>
     <message>
         <source>Skip</source>
@@ -7665,56 +7657,60 @@
         <translation>欢迎使用 anmacgamer</translation>
     </message>
     <message>
-        <source>Mirror your Android phone on this computer and play its games with a keyboard and mouse.</source>
-        <translation>把 Android 手机投屏到这台电脑，用键盘和鼠标玩手机游戏。</translation>
+        <source>Mirror your Android phone on your Mac and play with a keyboard and mouse.</source>
+        <translation>将 Android 手机投屏到 Mac，用键盘和鼠标玩手游。</translation>
+    </message>
+    <message>
+        <source>Picture and sound over USB or Wi-Fi.</source>
+        <translation>通过 USB 或 Wi-Fi 传输画面和声音。</translation>
+    </message>
+    <message>
+        <source>Keyboard &amp; mouse controls</source>
+        <translation>键鼠操控</translation>
+    </message>
+    <message>
+        <source>Per-game key profiles that switch automatically.</source>
+        <translation>按游戏匹配键位方案，打开游戏自动切换。</translation>
+    </message>
+    <message>
+        <source>Free and open source (GPL-3.0). Follow local laws and each game&apos;s terms of use.</source>
+        <translation>开源免费（GPL-3.0），请遵守当地法规及游戏服务条款。</translation>
+    </message>
+    <message>
+        <source>One-time phone setup. Pick your brand for exact steps.</source>
+        <translation>仅需设置一次，选择手机品牌查看对应步骤。</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find it? Search Settings for “Developer”.</source>
+        <translation>找不到？在手机「设置」里搜索「开发者」。</translation>
+    </message>
+    <message>
+        <source>Waiting for phone…</source>
+        <translation>等待连接手机…</translation>
+    </message>
+    <message>
+        <source>Use a data-capable USB cable (not charge-only).</source>
+        <translation>请使用支持数据传输的数据线（非仅充电线）。</translation>
+    </message>
+    <message>
+        <source>If prompted on the phone, choose File transfer.</source>
+        <translation>手机弹出 USB 用途提示时，选择「文件传输」。</translation>
+    </message>
+    <message>
+        <source>Not set up yet? Go back to see the steps.</source>
+        <translation>还没开调试？点「上一步」查看步骤。</translation>
+    </message>
+    <message>
+        <source>See steps</source>
+        <translation>查看步骤</translation>
+    </message>
+    <message>
+        <source>Connect over Wi-Fi</source>
+        <translation>改用 Wi-Fi 连接</translation>
     </message>
     <message>
         <source>Low-latency mirroring</source>
         <translation>低延迟投屏</translation>
-    </message>
-    <message>
-        <source>Over USB or WiFi, with the phone&apos;s picture and sound.</source>
-        <translation>USB 或 WiFi 连接，画面和声音一起传过来。</translation>
-    </message>
-    <message>
-        <source>Keyboard and mouse for games</source>
-        <translation>键鼠玩游戏</translation>
-    </message>
-    <message>
-        <source>A key mapping profile for each game, switched as you open it.</source>
-        <translation>每个游戏一套键位方案，打开游戏自动切换。</translation>
-    </message>
-    <message>
-        <source>A one-time setup on the phone. Choose its brand for the exact steps.</source>
-        <translation>只需在手机上设置一次。选择手机品牌，查看对应的步骤。</translation>
-    </message>
-    <message>
-        <source>Can&apos;t find it? Search the phone&apos;s Settings for “Developer”.</source>
-        <translation>找不到？在手机设置里搜索“开发者”。</translation>
-    </message>
-    <message>
-        <source>Waiting for a phone…</source>
-        <translation>正在等待手机…</translation>
-    </message>
-    <message>
-        <source>Use a cable that carries data; some cables only charge.</source>
-        <translation>请用能传数据的线，有些线只能充电。</translation>
-    </message>
-    <message>
-        <source>If the phone asks what the USB connection is for, choose File transfer.</source>
-        <translation>手机询问 USB 用途时，选择“传输文件”。</translation>
-    </message>
-    <message>
-        <source>Not set up on the phone yet? Go back for the steps.</source>
-        <translation>手机还没设置好？返回上一步查看步骤。</translation>
-    </message>
-    <message>
-        <source>See the steps</source>
-        <translation>查看步骤</translation>
-    </message>
-    <message>
-        <source>Connect over WiFi instead</source>
-        <translation>改用无线连接</translation>
     </message>
     <message>
         <source>Back</source>
@@ -9134,10 +9130,6 @@
         <translation>放弃改动并退出</translation>
     </message>
     <message>
-        <source>Save</source>
-        <translation>保存</translation>
-    </message>
-    <message>
         <source>Done</source>
         <translation>完成</translation>
     </message>
@@ -9586,8 +9578,76 @@
         <translation>现在手柄按的是屏幕上的键位</translation>
     </message>
     <message>
-        <source>Freeze the picture</source>
-        <translation>冻结画面</translation>
+        <source>Key mapping editor</source>
+        <translation>键位编辑器</translation>
+    </message>
+    <message>
+        <source>Drag components onto game buttons and bind keys. Every edit can be undone; click Save to keep changes.</source>
+        <translation>把组件拖到游戏按钮上并绑定按键，支持随时撤销，点「保存」写入方案。</translation>
+    </message>
+    <message>
+        <source>Component library</source>
+        <translation>组件库</translation>
+    </message>
+    <message>
+        <source>Hover over any component to see how it works, then drag one onto the screen.</source>
+        <translation>悬停组件可查看说明，试着拖一个到右侧画面上。</translation>
+    </message>
+    <message>
+        <source>Place &amp; bind</source>
+        <translation>放置并绑定按键</translation>
+    </message>
+    <message>
+        <source>Drop it over a button, then press a keyboard key or mouse button to bind it.</source>
+        <translation>放到游戏按钮位置后，直接按下键盘按键或鼠标键完成绑定。</translation>
+    </message>
+    <message>
+        <source>Adjust key, sensitivity, anchor corner, code name, or jump to Use it in logic.</source>
+        <translation>调整所选组件的按键、灵敏度、锚点、代码名称，或直接「在逻辑中使用」。</translation>
+    </message>
+    <message>
+        <source>Lists all placed components, their bound keys, and any key conflicts.</source>
+        <translation>查看画面上所有已放置的组件、对应按键及冲突标记。</translation>
+    </message>
+    <message>
+        <source>Picture &amp; Logic</source>
+        <translation>画面与逻辑</translation>
+    </message>
+    <message>
+        <source>Switch to Logic to build combos, conditions, and image-matching blueprints or TypeScript.</source>
+        <translation>切换到「逻辑」可编写连招、条件判断与识图找色脚本或蓝图。</translation>
+    </message>
+    <message>
+        <source>Try live</source>
+        <translation>实时试玩</translation>
+    </message>
+    <message>
+        <source>Test your keys on the live game without leaving the editor; click again to resume editing.</source>
+        <translation>无需退出编辑器即可直接在游戏上测试按键，再点一次回到编辑。</translation>
+    </message>
+    <message>
+        <source>Undo &amp; Redo</source>
+        <translation>撤销与重做</translation>
+    </message>
+    <message>
+        <source>Undo or redo any change.</source>
+        <translation>撤销或重做任意一步编辑。</translation>
+    </message>
+    <message>
+        <source>Pause the live screen so you can align keys over moving UI.</source>
+        <translation>画面不断变化时可先定格，方便精准对齐按钮。</translation>
+    </message>
+    <message>
+        <source>Save as, restore original, toggle gamepad passthrough, or discard changes here.</source>
+        <translation>提供另存为、恢复原版、手柄直通游戏及放弃修改等选项。</translation>
+    </message>
+    <message>
+        <source>Save writes changes now; Done saves and returns to the mirror window.</source>
+        <translation>保存立即写入方案，完成会保存并退出编辑器。</translation>
+    </message>
+    <message>
+        <source>Click Done to play, or switch to Logic for automation. Replay this tour in Help.</source>
+        <translation>点击「完成」即可开玩，需要连招或自动化可切到「逻辑」，可在「帮助」中重播导览。</translation>
     </message>
     <message>
         <source>Background picture</source>
@@ -9674,10 +9734,6 @@
         <translation>组件库</translation>
     </message>
     <message>
-        <source>Placed</source>
-        <translation>已放的</translation>
-    </message>
-    <message>
         <source>%1 added · %2 changed · %3 removed</source>
         <translation>新增 %1 · 改了 %2 · 删掉 %3</translation>
     </message>
@@ -9690,80 +9746,8 @@
         <translation>还没放组件。从组件库把组件拖到画面上。</translation>
     </message>
     <message>
-        <source>Editing the key mapping</source>
-        <translation>编辑键位</translation>
-    </message>
-    <message>
-        <source>Here you set up the keys for a game: drag components onto the phone picture and give each one a key. Every change can be undone, and Save writes them into the profile.</source>
-        <translation>在这里给游戏摆按键：把组件拖到手机画面上，再给每个组件配一个键。每一步都能撤销，点“保存”写进方案。</translation>
-    </message>
-    <message>
-        <source>The component library</source>
-        <translation>组件库</translation>
-    </message>
-    <message>
-        <source>Tap, hold, turbo, swipe, the WASD wheel, the camera, skills… each component presses the screen its own way; rest the mouse on one to see what it does. Try it: drag one onto the picture.</source>
-        <translation>点击、按住、连发、滑动、WASD 轮盘、视角、技能……每种组件按自己的方式点屏幕，鼠标停在上面能看到它是干什么的。试试：拖一个到画面上。</translation>
-    </message>
-    <message>
-        <source>Place it and give it a key</source>
-        <translation>摆好位置、配上按键</translation>
-    </message>
-    <message>
-        <source>Drag the component onto the game&apos;s button, then click it and press the key you want to use for it.</source>
-        <translation>把组件拖到游戏里对应的按钮上，然后点一下它，按下你想用的键。</translation>
-    </message>
-    <message>
-        <source>The selected component&apos;s settings: its key, its name and how it feels, such as how fast a turbo taps or how far a swipe goes. Use it in logic is here too.</source>
-        <translation>选中组件的设置：按键、名字和手感，比如连发有多快、滑动滑多远。“在蓝图里引用它”也在这里。</translation>
-    </message>
-    <message>
-        <source>Placed lists every component on the picture with its key, and marks keys that clash.</source>
-        <translation>“已放的”列出画面上的每个组件和它的按键，按键冲突会标出来。</translation>
-    </message>
-    <message>
-        <source>Picture and logic</source>
-        <translation>画面与逻辑</translation>
-    </message>
-    <message>
-        <source>Logic connects keys to a blueprint: a press can run a series of actions, check conditions or look for pictures on the screen. The components&apos; own events are there too.</source>
-        <translation>“逻辑”把按键接到蓝图上：按一下可以做一串动作、判断条件，或者在屏幕上找图。组件自己的事件也在那里。</translation>
-    </message>
-    <message>
-        <source>Try the keys</source>
-        <translation>试一试按键</translation>
-    </message>
-    <message>
-        <source>Try these keys on the phone without leaving the editor; click again to go back to editing.</source>
-        <translation>不用退出编辑，直接在手机上试这些键；再点一次回来接着改。</translation>
-    </message>
-    <message>
-        <source>Undo and redo</source>
-        <translation>撤销与重做</translation>
-    </message>
-    <message>
-        <source>Every change can be taken back, and brought back again.</source>
-        <translation>每一步改动都能撤回，也能再恢复。</translation>
-    </message>
-    <message>
-        <source>When the game keeps moving, freeze the picture to line the components up with its buttons.</source>
-        <translation>游戏画面一直在动时，先定格画面，再把组件对准它的按钮。</translation>
-    </message>
-    <message>
-        <source>Save as, restoring the original profile, handing a gamepad to the game and discarding the changes are in here.</source>
-        <translation>另存为、恢复原版方案、把手柄交给游戏、放弃修改都在这里。</translation>
-    </message>
-    <message>
-        <source>Save writes the changes into the profile; Done saves and goes back to mirroring.</source>
-        <translation>“保存”把改动写进方案；“完成”保存并回到投屏。</translation>
-    </message>
-    <message>
         <source>Ready to play</source>
-        <translation>可以开玩了</translation>
-    </message>
-    <message>
-        <source>With the keys in place, click Done and play. For combos and smarter keys, switch to Logic. Help can replay this tour.</source>
-        <translation>键位摆好后点“完成”就能开玩。想做连招或更聪明的按键，切到“逻辑”。帮助里可以重新看这段引导。</translation>
+        <translation>开始游戏</translation>
     </message>
     <message>
         <source>Search components</source>
@@ -9806,8 +9790,20 @@
         <translation>用外部编辑器打开</translation>
     </message>
     <message>
+        <source>Save &amp; Done</source>
+        <translation>保存与完成</translation>
+    </message>
+    <message>
+        <source>Freeze picture</source>
+        <translation>定格画面</translation>
+    </message>
+    <message>
+        <source>Placed keys</source>
+        <translation>已放置列表</translation>
+    </message>
+    <message>
         <source>Properties</source>
-        <translation>属性</translation>
+        <translation>属性面板</translation>
     </message>
     <message>
         <source>Arrange</source>
@@ -10118,76 +10114,76 @@
         <translation>用到原来那个组件的方块都会改用你在这里选的组件。</translation>
     </message>
     <message>
-        <source>The logic view</source>
+        <source>Logic view</source>
         <translation>逻辑视图</translation>
     </message>
     <message>
-        <source>Logic lets keys do more: a combo on one press, a tap when a picture shows up, a different move depending on what is happening. The blueprint draws the logic as blocks; it is the code, and you can edit either one.</source>
-        <translation>逻辑让按键做更多事：按一下打出一套连招、看到某张图就点、按情况换做法。蓝图把逻辑画成方块，它就是代码本身，改哪一边都行。</translation>
+        <source>Build combos, conditional actions, and vision scripts visually as a blueprint or directly in TypeScript.</source>
+        <translation>用可视化蓝图或 TypeScript 编写连招、条件分支与识图脚本，两者实时互通。</translation>
+    </message>
+    <message>
+        <source>Browse components, variables, functions, and libraries. Click a component to edit its key events.</source>
+        <translation>在这里查看组件、变量、函数和函数库；点击组件可打开其专属事件文件。</translation>
+    </message>
+    <message>
+        <source>Right-click the canvas or drag from the left sidebar to add a block. Try placing one now.</source>
+        <translation>在空白处右键或从左侧拖入项目来添加节点，试着放一个看看。</translation>
+    </message>
+    <message>
+        <source>Connect blocks</source>
+        <translation>连接节点</translation>
+    </message>
+    <message>
+        <source>Drag from a white execution arrow to the next block&apos;s input; colored pins pass data values.</source>
+        <translation>从白色执行箭头拖向下一个节点即可串联流程，彩色圆点用于传递数据。</translation>
+    </message>
+    <message>
+        <source>Switch between the main page, component files, and function tabs here.</source>
+        <translation>在主页面、各组件文件和函数标签页之间切换。</translation>
+    </message>
+    <message>
+        <source>Blueprint &amp; Code</source>
+        <translation>蓝图与代码</translation>
+    </message>
+    <message>
+        <source>Switch between visual Blueprint and Code—changes in either view stay in sync.</source>
+        <translation>切换可视化蓝图与 Code（TypeScript 代码），任一端修改都会自动同步。</translation>
+    </message>
+    <message>
+        <source>Run &amp; debug</source>
+        <translation>运行与调试</translation>
+    </message>
+    <message>
+        <source>Run live on the phone, test against a recording, inspect live states, or step through breakpoints.</source>
+        <translation>在手机上运行、用录像回放测试、查看组件实时状态，或打断点单步调试。</translation>
+    </message>
+    <message>
+        <source>Console &amp; problems</source>
+        <translation>控制台与问题</translation>
+    </message>
+    <message>
+        <source>View log output in Console and click any error under Problems to jump to it.</source>
+        <translation>在控制台查看日志输出，点击问题列表中的报错可直接跳转。</translation>
+    </message>
+    <message>
+        <source>Hover over blocks for tips or ask the AI assistant. Replay this tour in Help.</source>
+        <translation>悬停节点可看说明，也可随时问右下角的 AI 助手；可在「帮助」中重播导览。</translation>
     </message>
     <message>
         <source>My blueprint</source>
         <translation>我的蓝图</translation>
     </message>
     <message>
-        <source>Components, variables, functions, the function library and the pages are here. Click a component to open its own file, where its key events go.</source>
-        <translation>组件、变量、函数、函数库和各页都在这里。点一个组件打开它自己的文件，它的按键事件写在那里。</translation>
-    </message>
-    <message>
         <source>Place a block</source>
-        <translation>放一个方块</translation>
-    </message>
-    <message>
-        <source>Right-click an empty spot, or drag an item from the left, to place a block. Rest the mouse on a block in the list to see what it does. Try it: place one.</source>
-        <translation>在空白处右键，或者从左边拖一项出来，就能放一个方块。鼠标停在列表里的方块上能看到它是干什么的。试试：放一个。</translation>
-    </message>
-    <message>
-        <source>Connect the blocks</source>
-        <translation>把方块连起来</translation>
-    </message>
-    <message>
-        <source>Drag from the white arrow on the right of a block to the left of the next one; the blocks run from left to right. The colored dots carry values and connect the same way.</source>
-        <translation>从一个方块右边的白色箭头拖到下一个方块左边，方块就从左往右依次运行。彩色的小点传递数值，也是这样连。</translation>
+        <translation>放置节点</translation>
     </message>
     <message>
         <source>Pages</source>
-        <translation>页</translation>
-    </message>
-    <message>
-        <source>The main page, the component files and every function have a page of their own; switch between them here.</source>
-        <translation>主页、各组件的文件和每个函数都有自己的一页，在这里切换。</translation>
-    </message>
-    <message>
-        <source>Blueprint and code</source>
-        <translation>蓝图与代码</translation>
-    </message>
-    <message>
-        <source>Switch to the code to see the TypeScript behind the blueprint. Change the code and the blueprint follows.</source>
-        <translation>切到代码可以看蓝图背后的 TypeScript。改了代码，蓝图也跟着变。</translation>
-    </message>
-    <message>
-        <source>Run and debug</source>
-        <translation>运行与调试</translation>
-    </message>
-    <message>
-        <source>Run starts the logic on the phone, Run on a recording tests it against a recorded video, and the live list shows what each component is doing. Set breakpoints on blocks to watch the values step by step.</source>
-        <translation>“运行”在手机上跑这套逻辑，“在录像上运行”拿录好的视频来测试，实时列表显示每个组件在做什么。在方块上下断点，可以一步步看数值。</translation>
-    </message>
-    <message>
-        <source>Console, problems and references</source>
-        <translation>控制台、问题与引用</translation>
-    </message>
-    <message>
-        <source>Logs go to the console. Mistakes are listed under Problems; click one to go to it.</source>
-        <translation>日志打印在控制台。写错的地方列在“问题”里，点一下就跳过去。</translation>
+        <translation>页面切换</translation>
     </message>
     <message>
         <source>Start building</source>
-        <translation>开始搭吧</translation>
-    </message>
-    <message>
-        <source>Not sure what a block does? Rest the mouse on it, or ask the AI assistant at the bottom right. Help can replay this tour.</source>
-        <translation>不知道某个方块怎么用？鼠标停在上面看说明，或者问右下角的 AI 小助手。帮助里可以重新看这段引导。</translation>
+        <translation>开始编写</translation>
     </message>
 </context>
 <context>
@@ -11000,7 +10996,7 @@
     </message>
     <message>
         <source>Key mapping options</source>
-        <translation>键位选项</translation>
+        <translation>键位映射选项</translation>
     </message>
     <message>
         <source>Show key hints</source>
@@ -11040,7 +11036,7 @@
     </message>
     <message>
         <source>Orientation</source>
-        <translation>屏幕方向</translation>
+        <translation>旋转方向</translation>
     </message>
     <message>
         <source>How the phone is held</source>
@@ -11129,6 +11125,10 @@
     <message>
         <source>Keep on top</source>
         <translation>置顶</translation>
+    </message>
+    <message>
+        <source>Pin toolbar</source>
+        <translation>固定工具栏</translation>
     </message>
     <message>
         <source>Close the panel</source>
@@ -11277,12 +11277,76 @@
         <translation>松开即安装 APK，其他文件复制到“下载”文件夹</translation>
     </message>
     <message>
-        <source>The mirror window</source>
+        <source>Mirror window</source>
         <translation>投屏窗口</translation>
     </message>
     <message>
-        <source>This is the phone&apos;s screen. Clicking, dragging and scrolling here taps, swipes and scrolls on the phone, and what you type goes into the phone. The toolbar shows when the mouse moves to the top of the window.</source>
-        <translation>这里就是手机屏幕。在这里点、拖、滚轮，就是在手机上点、滑、滚；打的字直接输入到手机里。鼠标移到窗口上方，工具栏就会出来。</translation>
+        <source>Click, drag, scroll, and type here to control your phone. Move the pointer to the top to reveal the toolbar.</source>
+        <translation>点击、拖拽、滚动和打字都会直接传给手机；鼠标移到顶部可显示工具栏。</translation>
+    </message>
+    <message>
+        <source>Toggle game key mapping on or off (turn off to type normally). Try clicking it twice.</source>
+        <translation>开启后用键鼠按方案玩游戏，关闭即可正常点击打字。试着点两次看看。</translation>
+    </message>
+    <message>
+        <source>Switch profiles, adjust key hints, or open the key mapping editor.</source>
+        <translation>切换方案、调整键位提示透明度或打开键位编辑器。</translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation>系统导航</translation>
+    </message>
+    <message>
+        <source>Trigger Back, Home, and Recent apps.</source>
+        <translation>对应手机底部的返回、主页和最近任务键。</translation>
+    </message>
+    <message>
+        <source>Follow device rotation or lock Portrait / Landscape.</source>
+        <translation>跟随手机旋转，或锁定为竖屏/横屏。</translation>
+    </message>
+    <message>
+        <source>Screen off</source>
+        <translation>熄屏投屏</translation>
+    </message>
+    <message>
+        <source>Turn off the phone&apos;s physical screen while mirroring continues.</source>
+        <translation>关闭手机实体屏幕以省电和保护隐私，电脑端继续正常投屏。</translation>
+    </message>
+    <message>
+        <source>Control phone audio on your Mac; the phone&apos;s physical volume keys do not change it while mirroring.</source>
+        <translation>在 Mac 上调节或静音投屏声音；投屏期间手机自身音量键不会改变音量。</translation>
+    </message>
+    <message>
+        <source>Start or stop automation tasks running on this phone.</source>
+        <translation>在这台手机上启停自动化任务并查看进度。</translation>
+    </message>
+    <message>
+        <source>Record video, audio, and inputs (also useful for replaying scripts offline).</source>
+        <translation>录制画面、声音与操作，也可用于后续离线回放测试脚本。</translation>
+    </message>
+    <message>
+        <source>Open side panels added by enabled extensions.</source>
+        <translation>打开已启用扩展提供的侧边面板。</translation>
+    </message>
+    <message>
+        <source>Show live FPS, latency, and decoder stats—check here first if video stutters.</source>
+        <translation>显示实时帧率、延迟和解码状态，卡顿时先看这里。</translation>
+    </message>
+    <message>
+        <source>Fill the screen with the phone display; press again to exit.</source>
+        <translation>让手机画面占满整个屏幕，再按一次退出。</translation>
+    </message>
+    <message>
+        <source>Access recordings, logic editor, vision workbench, mini window, toolbar customization, and device settings.</source>
+        <translation>查看录制内容、编辑逻辑、视觉工作台、置顶小窗、自定义工具栏按钮和设备设置。</translation>
+    </message>
+    <message>
+        <source>Keep the toolbar visible above the screen instead of auto-hiding.</source>
+        <translation>固定后工具栏会一直停留在画面上方，不再自动隐藏。</translation>
+    </message>
+    <message>
+        <source>Open Key mapping options &gt; Edit key mapping to place keys on game buttons. Replay this tour in Help.</source>
+        <translation>打开「键位映射选项 &gt; 编辑键位映射」即可在画面上摆放按键，可在「帮助」中重播导览。</translation>
     </message>
     <message>
         <source>Key mapping</source>
@@ -11293,92 +11357,20 @@
         <translation>恢复默认</translation>
     </message>
     <message>
-        <source>With key mapping on, the keyboard and mouse tap the screen the way the profile says, which is how you play games. Turn it off to type into the phone. Try it: click it twice.</source>
-        <translation>键位映射打开时，键盘鼠标按方案去点屏幕，打游戏就靠它；关掉后键盘直接往手机里打字。试试：点它两下。</translation>
-    </message>
-    <message>
-        <source>Switch profiles, show or hide the key hints, and open the editor where you place the keys on the picture.</source>
-        <translation>切换方案、显示或隐藏键位提示，以及打开在画面上摆键位的编辑器。</translation>
-    </message>
-    <message>
-        <source>Back, Home and Recent apps</source>
-        <translation>返回、主页与最近任务</translation>
-    </message>
-    <message>
-        <source>The same as the three navigation keys at the bottom of the phone.</source>
-        <translation>和手机底部的三个导航键一样。</translation>
-    </message>
-    <message>
-        <source>Rotate</source>
-        <translation>旋转</translation>
-    </message>
-    <message>
-        <source>Turn the picture, or let the phone rotate by itself; the window changes shape with it.</source>
-        <translation>把画面转个方向，或者让手机自己转屏，窗口会跟着变形。</translation>
-    </message>
-    <message>
-        <source>Turn the phone&apos;s screen off</source>
-        <translation>关掉手机屏幕</translation>
-    </message>
-    <message>
-        <source>The phone&apos;s own screen goes dark while you keep mirroring and working it here. It saves power and keeps the screen private.</source>
-        <translation>手机自己的屏幕黑掉，这里照常投屏和操作。省电，也不让旁人看到屏幕。</translation>
-    </message>
-    <message>
-        <source>The phone&apos;s sound plays on this computer. Change how loud it is here or mute it; the phone&apos;s own volume stays as it is.</source>
-        <translation>手机的声音在这台电脑上播放，在这里调大小或静音，手机自己的音量不变。</translation>
-    </message>
-    <message>
-        <source>Run a task on this phone, such as a script that plays for you, and see or stop the ones that are running.</source>
-        <translation>在这台手机上运行任务（比如替你玩的脚本），也能查看或停下正在跑的任务。</translation>
-    </message>
-    <message>
         <source>Record</source>
         <translation>录制</translation>
-    </message>
-    <message>
-        <source>Record the picture and sound to a video. A recording also lets you test logic later without the phone.</source>
-        <translation>把画面和声音录成视频。有了录像，以后不连手机也能测试逻辑。</translation>
-    </message>
-    <message>
-        <source>Extensions that come with a panel open it beside the picture from here.</source>
-        <translation>带面板的扩展从这里打开，面板出现在画面旁边。</translation>
     </message>
     <message>
         <source>Diagnostics</source>
         <translation>诊断信息</translation>
     </message>
     <message>
-        <source>Shows the frame rate, the delay and how the picture is decoded. When things stutter, look here first.</source>
-        <translation>显示帧率、延迟和画面的解码方式。卡顿的时候先看这里。</translation>
-    </message>
-    <message>
         <source>Full screen</source>
         <translation>全屏</translation>
     </message>
     <message>
-        <source>The picture fills the whole screen; do it again to come back.</source>
-        <translation>画面铺满整个屏幕，再按一次回来。</translation>
-    </message>
-    <message>
-        <source>The notification shade, quick settings, recordings, editing logic, the vision workbench, files, the small window, syncing phones and this phone&apos;s settings are in here. When the window is narrow, the buttons that do not fit are in here too.</source>
-        <translation>通知栏、快捷设置、录像、编辑逻辑、识图工作台、文件、小窗、多机同步和这台手机的设置都在这里。窗口窄的时候，放不下的按钮也收在这里。</translation>
-    </message>
-    <message>
-        <source>Pin the toolbar</source>
-        <translation>固定工具栏</translation>
-    </message>
-    <message>
-        <source>Pinned, the toolbar stays above the picture instead of hiding until the mouse comes up.</source>
-        <translation>固定后工具栏一直留在画面上方，不再藏起来等鼠标移上去才出现。</translation>
-    </message>
-    <message>
         <source>Ready to play</source>
-        <translation>可以开玩了</translation>
-    </message>
-    <message>
-        <source>To have keys tap the buttons of a game, open Edit key mapping under Key mapping options and drag keys onto the picture. Help can replay this tour.</source>
-        <translation>想让按键去点游戏里的按钮，就在“键位选项”里打开“编辑键位”，把按键拖到画面上。帮助里可以重新看这段引导。</translation>
+        <translation>准备就绪</translation>
     </message>
     <message>
         <source>%1 — Edit key mapping</source>
@@ -12563,72 +12555,72 @@
         <translation>无法还原 %1。</translation>
     </message>
     <message>
-        <source>A profile is a set of keys: which key taps where on the screen and how it feels, optionally with logic and pictures to look for. A game can have several, and you can switch between them at any time.</source>
-        <translation>方案就是一套按键：哪个键点屏幕哪里、手感怎样，还可以带上逻辑和要找的图片。一个游戏可以有好几套方案，随时切换。</translation>
+        <source>Profiles store key mappings, logic, and vision targets for your games. Switch between them anytime.</source>
+        <translation>方案保存游戏的键位映射、自动化逻辑与识图资源，可随时切换。</translation>
+    </message>
+    <message>
+        <source>Create a profile from a template, blank canvas, or with the AI assistant, then edit keys on the mirror window.</source>
+        <translation>从模板、空白或 AI 助手开始创建方案，再去投屏窗口摆放按键。</translation>
+    </message>
+    <message>
+        <source>Filter profiles by profile or game name.</source>
+        <translation>按方案名称或游戏名快速筛选。</translation>
+    </message>
+    <message>
+        <source>Filter by current game, your own profiles, extension profiles, or ones with errors.</source>
+        <translation>筛选当前游戏、自己创建的、来自扩展的或有问题的方案。</translation>
+    </message>
+    <message>
+        <source>Profile card</source>
+        <translation>方案卡片</translation>
+    </message>
+    <message>
+        <source>Shows the linked game, active devices, and any errors or warnings.</source>
+        <translation>显示关联的游戏、当前使用的设备以及错误提示。</translation>
+    </message>
+    <message>
+        <source>Apply profile</source>
+        <translation>应用到设备</translation>
+    </message>
+    <message>
+        <source>Apply this profile to a mirrored phone. Linked profiles load automatically when the game opens.</source>
+        <translation>将方案应用到投屏中的手机；关联游戏后打开该游戏会自动切换。</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>更多操作</translation>
+    </message>
+    <message>
+        <source>Link a game, edit vision resources or logic, export, restore originals, or delete here.</source>
+        <translation>在这里关联游戏、编辑视觉资源与逻辑、导出、恢复原版或删除。</translation>
+    </message>
+    <message>
+        <source>Import a shared .json or .gsprofile file, or drop it onto the window.</source>
+        <translation>导入别人分享的 .json 或 .gsprofile 文件，也支持直接拖入窗口。</translation>
+    </message>
+    <message>
+        <source>Profiles tour complete</source>
+        <translation>方案页导览完成</translation>
+    </message>
+    <message>
+        <source>Export profiles to share or package them as extensions. Replay this tour in Help.</source>
+        <translation>导出方案即可分享或打包为扩展，可在「帮助」中重播此导览。</translation>
     </message>
     <message>
         <source>New profile</source>
         <translation>新建方案</translation>
     </message>
     <message>
-        <source>Start from a template or a blank one, or let the AI assistant build one with you. Then edit its keys in the mirror window.</source>
-        <translation>从模板或空白方案开始，也可以让 AI 小助手和你一起搭。建好后在投屏窗口里编辑它的键位。</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <source>Narrow the list down by profile or game name.</source>
-        <translation>按方案名或游戏名筛选列表。</translation>
-    </message>
-    <message>
         <source>Filters</source>
-        <translation>筛选</translation>
-    </message>
-    <message>
-        <source>Show only the profiles for this game, the ones you made, the ones that came with extensions, or the ones with a problem to fix.</source>
-        <translation>只看这个游戏的方案、你自己做的、扩展带来的，或者有问题要处理的。</translation>
-    </message>
-    <message>
-        <source>A profile card</source>
-        <translation>方案卡片</translation>
-    </message>
-    <message>
-        <source>The card tells which game the profile is for, which phone is using it and whether something needs fixing.</source>
-        <translation>卡片上写着方案是给哪个游戏的、正在哪台手机上用，以及有没有要处理的问题。</translation>
-    </message>
-    <message>
-        <source>Use it on a phone</source>
-        <translation>用到手机上</translation>
-    </message>
-    <message>
-        <source>Use puts the profile on a phone that is mirroring. A profile linked to a game comes on by itself when the game opens.</source>
-        <translation>“使用”把方案用到一台正在投屏的手机上。关联了游戏的方案，游戏一打开就会自动换上。</translation>
-    </message>
-    <message>
-        <source>More for a profile</source>
-        <translation>方案的更多操作</translation>
-    </message>
-    <message>
-        <source>Linking a game, vision resources, editing logic, exporting, restoring the original and deleting are in this menu.</source>
-        <translation>关联游戏、识图素材、编辑逻辑、导出、恢复原版和删除都在这个菜单里。</translation>
+        <translation>分类筛选</translation>
     </message>
     <message>
         <source>Import</source>
         <translation>导入</translation>
-    </message>
-    <message>
-        <source>Add a profile file someone shared with you; dropping the file on the window works too.</source>
-        <translation>添加别人分享给你的方案文件，直接把文件拖到窗口上也行。</translation>
-    </message>
-    <message>
-        <source>That&apos;s profiles</source>
-        <translation>方案页就是这些</translation>
-    </message>
-    <message>
-        <source>Share a profile you made by exporting it, or pack it as an extension. Help can replay this tour.</source>
-        <translation>自己做的方案可以导出分享，也可以打包成扩展。帮助里可以重新看这段引导。</translation>
     </message>
     <message>
         <source>Running on %1</source>
@@ -19242,10 +19234,6 @@
         <translation>通用</translation>
     </message>
     <message>
-        <source>The settings are grouped: mirroring and quality, audio, input and keys, shortcuts, general, appearance, extensions and AI. A number next to a group counts the settings a phone has changed for itself.</source>
-        <translation>设置按类别分组：投屏与画质、音频、输入与键位、快捷键、通用、外观、扩展和 AI。分类旁边的数字是某台手机单独改过的设置数。</translation>
-    </message>
-    <message>
         <source>on</source>
         <translation>开</translation>
     </message>
@@ -19310,42 +19298,6 @@
         <translation>设置</translation>
     </message>
     <message>
-        <source>Every setting is here, and a change takes effect right away; there is nothing to save.</source>
-        <translation>所有设置都在这里，改了马上生效，不用保存。</translation>
-    </message>
-    <message>
-        <source>Not sure where a setting is? Search for it, such as frame rate or key hints.</source>
-        <translation>不知道某个设置在哪？直接搜，比如“帧率”“键位提示”。</translation>
-    </message>
-    <message>
-        <source>Groups</source>
-        <translation>分类</translation>
-    </message>
-    <message>
-        <source>The settings</source>
-        <translation>设置项</translation>
-    </message>
-    <message>
-        <source>Each row says what it is for on the left and has its control on the right.</source>
-        <translation>每一行左边写着它管什么，右边是控件。</translation>
-    </message>
-    <message>
-        <source>All phones or this phone</source>
-        <translation>所有手机或这台手机</translation>
-    </message>
-    <message>
-        <source>With a phone connected, choose this phone to change a setting for it alone; the rest follow the default for all phones. Reset takes a changed setting back to that default.</source>
-        <translation>连着手机时，选这台手机就能只给它改设置，其余跟着所有手机的默认值走。“重置”把改过的设置恢复成那个默认值。</translation>
-    </message>
-    <message>
-        <source>That&apos;s settings</source>
-        <translation>设置就是这些</translation>
-    </message>
-    <message>
-        <source>The AI assistant&apos;s service and key are set up under AI. Help can replay this tour.</source>
-        <translation>AI 小助手的服务和密钥在“AI”里配置。帮助里可以重新看这段引导。</translation>
-    </message>
-    <message>
         <source>A move every %1 ms</source>
         <translation>每 %1 毫秒发一次移动</translation>
     </message>
@@ -19400,6 +19352,46 @@
     <message>
         <source>Up to 16 fingers. On an independent display touches still go the normal way.</source>
         <translation>最多 16 指；独立显示器上仍用普通方式。</translation>
+    </message>
+    <message>
+        <source>Changes take effect immediately—no save button needed.</source>
+        <translation>所有设置修改后立即生效，无需手动保存。</translation>
+    </message>
+    <message>
+        <source>Search by keyword, such as “frame rate” or “key hints”.</source>
+        <translation>输入关键词（如「帧率」或「键位提示」）快速定位设置项。</translation>
+    </message>
+    <message>
+        <source>Categories</source>
+        <translation>设置分组</translation>
+    </message>
+    <message>
+        <source>Browse by category. A badge shows how many settings are overridden for the selected phone.</source>
+        <translation>按功能分类浏览；分组旁的数字表示当前手机单独覆盖的设置数量。</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>设置项</translation>
+    </message>
+    <message>
+        <source>Each row explains the option on the left with its control on the right.</source>
+        <translation>左侧说明用途，右侧直接调节开关或数值。</translation>
+    </message>
+    <message>
+        <source>Global vs. per-phone</source>
+        <translation>全局或单机</translation>
+    </message>
+    <message>
+        <source>Switch to a connected phone to override settings just for it, or reset back to global defaults.</source>
+        <translation>连接手机后可切换为单机设置，其余未改项仍沿用全局默认。</translation>
+    </message>
+    <message>
+        <source>Settings tour complete</source>
+        <translation>设置页导览完成</translation>
+    </message>
+    <message>
+        <source>Configure your AI model and MCP access under AI. Replay this tour in Help.</source>
+        <translation>在 AI 分组配置模型服务和 MCP，可在「帮助」中重播此导览。</translation>
     </message>
     <message>
         <source>Pinned</source>
@@ -20279,48 +20271,48 @@
         <translation>已把 %1 加到你的任务</translation>
     </message>
     <message>
-        <source>A task is logic that runs by itself: check in every day, farm a level while you are away, remind you of something. It can run on the computer alone or work a phone that is mirroring.</source>
-        <translation>任务是一段自己会跑的逻辑：每天签到、人不在时刷关卡、到点提醒你。它可以只在电脑上跑，也可以操作一台正在投屏的手机。</translation>
+        <source>Tasks run automation scripts independently—for daily check-ins, farming, or reminders—without interrupting your key mappings.</source>
+        <translation>任务独立于键位方案运行，适合每日签到或挂机，不抢占手动操作。</translation>
     </message>
     <message>
-        <source>Start from a blank task and write your own logic, or copy an example and change it.</source>
-        <translation>从空白任务开始写自己的逻辑，或者复制一个示例来改。</translation>
+        <source>Create a blank task or start from an example.</source>
+        <translation>创建空白任务或从示例复制修改。</translation>
     </message>
     <message>
-        <source>A task card</source>
+        <source>Task card</source>
         <translation>任务卡片</translation>
     </message>
     <message>
-        <source>The card shows the task&apos;s name, when it runs and whether it is running now.</source>
-        <translation>卡片显示任务的名字、什么时候运行，以及现在是不是在跑。</translation>
+        <source>Shows the task name, schedule, and live run status.</source>
+        <translation>显示任务名称、定时计划和当前运行状态。</translation>
     </message>
     <message>
-        <source>Run and stop</source>
-        <translation>运行与停止</translation>
+        <source>Start &amp; stop</source>
+        <translation>启动与停止</translation>
     </message>
     <message>
-        <source>Run a task by hand or stop it at any time.</source>
-        <translation>随时手动运行一个任务，或者让它停下。</translation>
+        <source>Start or stop a task manually anytime.</source>
+        <translation>随时手动启动或停止任务。</translation>
+    </message>
+    <message>
+        <source>Set the schedule, target phones, parameters, and edit the task&apos;s logic here.</source>
+        <translation>设置定时时间、目标手机和参数，或打开逻辑编辑器。</translation>
+    </message>
+    <message>
+        <source>History of past runs with start time, phone, duration, and outcome.</source>
+        <translation>记录每次运行的开始时间、设备、耗时和结果。</translation>
+    </message>
+    <message>
+        <source>Tasks tour complete</source>
+        <translation>任务页导览完成</translation>
+    </message>
+    <message>
+        <source>Enable menu bar mode in Settings so scheduled tasks keep running when the main window is closed.</source>
+        <translation>在设置中开启「关闭到菜单栏」后，关掉主窗口也能按时执行定时任务。</translation>
     </message>
     <message>
         <source>Task settings</source>
         <translation>任务设置</translation>
-    </message>
-    <message>
-        <source>Choose when the task runs, such as every day or on some days of the week, which phone it works, and open its logic to edit it.</source>
-        <translation>设定任务什么时候运行（比如每天，或者每周的某几天）、操作哪台手机，还能打开它的逻辑来编辑。</translation>
-    </message>
-    <message>
-        <source>Every run is kept here: when it started, on which phone, how long it took and how it ended.</source>
-        <translation>每次运行都记在这里：什么时候开始、在哪台手机上、跑了多久、结果怎样。</translation>
-    </message>
-    <message>
-        <source>That&apos;s tasks</source>
-        <translation>任务页就是这些</translation>
-    </message>
-    <message>
-        <source>With the setting for it on, closing the window leaves anmacgamer in the menu bar so that tasks with a schedule still run on time. Help can replay this tour.</source>
-        <translation>打开相应设置后，关闭窗口会让 anmacgamer 留在菜单栏，好让设了定时的任务按时运行。可以在“帮助”里重看这段引导。</translation>
     </message>
 </context>
 <context>
@@ -20354,8 +20346,8 @@
 <context>
     <name>TourOverlay</name>
     <message>
-        <source>Step %1 of %2</source>
-        <translation>第 %1 步，共 %2 步</translation>
+        <source>%1 / %2</source>
+        <translation>第 %1 / %2 步</translation>
     </message>
     <message>
         <source>Shortcut</source>

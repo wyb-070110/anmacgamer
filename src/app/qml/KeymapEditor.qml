@@ -1593,7 +1593,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     small: true
                     focusPolicy: keymapEditor.trying ? Qt.TabFocus : Qt.StrongFocus
-                    text: qsTr("Save")
+                    text: qsTr("Save & Done")
                     enabled: keymapEditor.unsaved
                     onClicked: DeviceManager.saveEditing(keymapEditor.serial)
                 }
@@ -1617,7 +1617,7 @@ Item {
                 objectName: "freezeFrame"
                 visible: !keymapEditor.noPicture
                 iconName: "pause"
-                text: qsTr("Freeze the picture")
+                text: qsTr("Freeze picture")
                 selected: keymapEditor.frozen
                 onClicked: keymapEditor.setFrozen(!keymapEditor.frozen)
             },
@@ -1777,7 +1777,7 @@ Item {
                     readonly property var pages: keymapEditor.readOnly
                                                  ? [qsTr("Changes")]
                                                  : keymapEditor.selectedCount === 0
-                                                 ? [qsTr("Library"), { text: qsTr("Placed"), count: keymapEditor.keyRows.length }]
+                                                 ? [qsTr("Library"), { text: qsTr("Placed keys"), count: keymapEditor.keyRows.length }]
                                                  : [keymapEditor.selectedCount === 1 ? qsTr("Properties") : qsTr("Arrange")]
                     readonly property int page: keymapEditor.readOnly ? 0
                                                 : keymapEditor.selectedCount === 0 ? keymapEditor.browsePage : 0
@@ -2439,77 +2439,67 @@ Item {
         steps: [
             {
                 centered: true,
-                title: qsTr("Editing the key mapping"),
-                text: qsTr("Here you set up the keys for a game: drag components onto the phone picture and give "
-                           + "each one a key. Every change can be undone, and Save writes them into the profile.")
+                title: qsTr("Key mapping editor"),
+                text: qsTr("Drag components onto game buttons and bind keys. Every edit can be undone; click Save to "
+                           + "keep changes.")
             },
             {
                 target: libraryView,
-                title: qsTr("The component library"),
-                text: qsTr("Tap, hold, turbo, swipe, the WASD wheel, the camera, skills… each component presses the "
-                           + "screen its own way; rest the mouse on one to see what it does. Try it: drag one onto "
-                           + "the picture.")
+                title: qsTr("Component library"),
+                text: qsTr("Hover over any component to see how it works, then drag one onto the screen.")
             },
             {
                 target: canvas,
-                title: qsTr("Place it and give it a key"),
-                text: qsTr("Drag the component onto the game's button, then click it and press the key you want "
-                           + "to use for it.")
+                title: qsTr("Place & bind"),
+                text: qsTr("Drop it over a button, then press a keyboard key or mouse button to bind it.")
             },
             {
                 target: function() { return tour.findItem(keymapEditor, "properties") },
                 optional: true,
                 title: qsTr("Properties"),
-                text: qsTr("The selected component's settings: its key, its name and how it feels, such as how fast "
-                           + "a turbo taps or how far a swipe goes. Use it in logic is here too.")
+                text: qsTr("Adjust key, sensitivity, anchor corner, code name, or jump to Use it in logic.")
             },
             {
                 target: sideTabs,
-                title: qsTr("Placed"),
-                text: qsTr("Placed lists every component on the picture with its key, and marks keys that clash.")
+                title: qsTr("Placed keys"),
+                text: qsTr("Lists all placed components, their bound keys, and any key conflicts.")
             },
             {
                 target: modeSwitch,
-                title: qsTr("Picture and logic"),
-                text: qsTr("Logic connects keys to a blueprint: a press can run a series of actions, check "
-                           + "conditions or look for pictures on the screen. The components' own events are there "
-                           + "too.")
+                title: qsTr("Picture & Logic"),
+                text: qsTr("Switch to Logic to build combos, conditions, and image-matching blueprints or TypeScript.")
             },
             {
                 target: function() { return tour.findItem(keymapEditor, "tryToggle") },
-                title: qsTr("Try the keys"),
-                text: qsTr("Try these keys on the phone without leaving the editor; click again to go back to "
-                           + "editing.")
+                title: qsTr("Try live"),
+                text: qsTr("Test your keys on the live game without leaving the editor; click again to resume editing.")
             },
             {
                 target: function() { return tour.findItem(keymapEditor, "undo") },
-                title: qsTr("Undo and redo"),
-                text: qsTr("Every change can be taken back, and brought back again."),
+                title: qsTr("Undo & Redo"),
+                text: qsTr("Undo or redo any change."),
                 keys: ["Ctrl+Z", "Ctrl+Y"]
             },
             {
                 target: function() { return tour.findItem(keymapEditor, "freezeFrame") },
                 optional: true,
-                title: qsTr("Freeze the picture"),
-                text: qsTr("When the game keeps moving, freeze the picture to line the components up with its "
-                           + "buttons.")
+                title: qsTr("Freeze picture"),
+                text: qsTr("Pause the live screen so you can align keys over moving UI.")
             },
             {
                 target: moreButton,
                 title: qsTr("More"),
-                text: qsTr("Save as, restoring the original profile, handing a gamepad to the game and discarding "
-                           + "the changes are in here.")
+                text: qsTr("Save as, restore original, toggle gamepad passthrough, or discard changes here.")
             },
             {
                 target: saveButton,
-                title: qsTr("Save"),
-                text: qsTr("Save writes the changes into the profile; Done saves and goes back to mirroring.")
+                title: qsTr("Save & Done"),
+                text: qsTr("Save writes changes now; Done saves and returns to the mirror window.")
             },
             {
                 centered: true,
                 title: qsTr("Ready to play"),
-                text: qsTr("With the keys in place, click Done and play. For combos and smarter keys, switch to "
-                           + "Logic. Help can replay this tour.")
+                text: qsTr("Click Done to play, or switch to Logic for automation. Replay this tour in Help.")
             }
         ]
         advance: {

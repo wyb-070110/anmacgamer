@@ -5,6 +5,33 @@
 
 ---
 
+## 2026-11-26（G10：App 内帮助教程与导览文案大改）
+
+### 做了什么
+按 `docs/handoff/gemini/g10-help-rewrite.md` 要求，重写了 App 内全部 13 对中英文帮助文档、`src/app/help/index.json` 标题与摘要，并整理了首次引导与各页导览的新文案（未改任何 QML / C++ 代码，未执行 `git commit`）：
+
+1. **帮助索引 `src/app/help/index.json`**：精简了全部 13 篇文章的中英文 `title` 与 `summary`，去掉冗余描述。
+2. **13 篇英文帮助（`src/app/help/en/*.md`）与 13 篇中文帮助（`src/app/help/zh_CN/*.md`）**：
+   - 改为「一句话说明用途 + 分步骤操作」，去掉营销词、冗余背景与内部原理说明；保持英文与中文章节结构一一对应。
+   - 保留了全部原有 `{#anchor}`、图名（`figure:...`）、`action:` / `help:` 链接与 callout 语法，并保留了 `scripts.md` 和 `extension-features.md` 中的全部 API 名称、参数与规则。
+   - 同步核对并写入近期变更：免 USB 调试时 AOA 走有线控制 + 伴侣扫码经同 Wi-Fi 传画面与声音（投屏期间手机静音、每台电脑只需扫一次码）；伴侣改为单页设置式界面（状态、功能、电脑、权限、关于）；投屏声音由 Mac 控制且手机音量键不改变音量；工具栏固定返回/主页/最近任务 + 最多 5 个自选按钮（含置顶窗口）；内置《崩坏：星穹铁道》方案鼠标为普通指针、Tab 锁视角、F 键在 Mac 键盘需配合 `fn`。
+3. **首次引导与各页导览文案（`docs/handoff/gemini/g10-guide-tours.md`）**：
+   - 整理了 `GuideOverlay.qml`、`TourOverlay.qml` 以及 `DevicesPage.qml`、`ProfilesPage.qml`、`TasksPage.qml`、`ExtensionsPage.qml`、`SettingsPage.qml`、`MirrorOverlay.qml`、`KeymapEditor.qml`、`LogicView.qml`、`AiCorner.qml` 共 9 个页面导览的全部旧英文、新英文与新中文对照文案。
+
+### 篇幅对比（字数 / 字符数统计）
+- **英文 `src/app/help/en/*.md`**：由改写前的 **17,614 words / 101,604 chars** 精简至 **7,733 words / 51,749 chars**（词数约 **44%**，字符数约 **51%**）。
+  - 明细（旧 words → 新 words）：`aoa-driver` 681→427、`capture-card` 696→357、`companion` 881→524、`connecting` 855→633、`extension-features` 1233→567、`extensions` 1907→652、`faq` 978→688、`keymap-editor` 2571→953、`mirror-window` 1178→610、`profiles` 633→410、`scripts` 4643→1427、`touch-box` 494→286、`tours` 362→199。
+- **中文 `src/app/help/zh_CN/*.md`**：由改写前的 **93,970 chars** 精简至 **51,226 chars**（约 **54.5%**）。
+  - 明细（旧 chars → 新 chars）：`aoa-driver` 3565→2572、`capture-card` 3531→2134、`companion` 4490→3336、`connecting` 4886→3972、`extension-features` 6669→3764、`extensions` 10203→4556、`faq` 5665→4578、`keymap-editor` 12964→5736、`mirror-window` 6086→3776、`profiles` 3822→2789、`scripts` 27478→10913、`touch-box` 2641→1690、`tours` 1970→1410。
+
+### 拿不准 / 需要 Claude 审阅确认的地方
+1. **额外包含的两个导览**：`g10-help-rewrite.md` 提到的 QML 列表未包含 `TasksPage.qml` 和 `SettingsPage.qml`，但两处都有 `TourOverlay`，一并整理进了 `g10-guide-tours.md` 第 5、7 节供统一替换。
+2. **`GuideOverlay.qml` 中的分品牌步骤**：第 2 页各手机品牌的 USB 调试具体步骤来自 C++ `SetupSteps`，本次未改动。
+3. **`capture-card.md` 的 macOS 状态说明**：保留了「macOS 版暂未开放采集卡视频输入」的提示，同时保留了连接与裁剪步骤（精简版），待后续支持时无需再补写。
+4. **单元测试未在本轮运行**：`HelpMarkdownTests.cpp` 和 `HelpLibraryTests.cpp` 需由 Claude 编译运行以确认全部锚点、图名和内部链接校验通过。
+
+---
+
 ## 2026-11-26（第四批：G9 英文为主文档重写与更名 anmacgamer）
 
 ### 做了什么

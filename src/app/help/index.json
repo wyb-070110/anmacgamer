@@ -9,21 +9,21 @@
           "icon": "smartphone",
           "tile": "azure",
           "hero": "hero-connecting",
-          "title": { "en": "Connecting a phone", "zh_CN": "连接手机" },
+          "title": { "en": "Connect a phone", "zh_CN": "连接手机" },
           "summary": {
-            "en": "Turn on USB debugging, then connect with a cable or over Wi-Fi. The first time takes a few minutes.",
-            "zh_CN": "打开 USB 调试，用数据线或 Wi‑Fi 连上手机。第一次几分钟就好。"
+            "en": "Turn on USB debugging once, then mirror over USB or Wi-Fi.",
+            "zh_CN": "打开一次 USB 调试，之后就能用数据线或 Wi-Fi 投屏。"
           },
-          "meta": [{ "icon": "smartphone", "text": { "en": "Android 9 or later", "zh_CN": "Android 9 或更高" } }]
+          "meta": [{ "icon": "smartphone", "text": { "en": "Android 9 or later", "zh_CN": "Android 9 及以上" } }]
         },
         {
           "slug": "aoa-driver",
           "icon": "usb",
           "tile": "teal",
-          "title": { "en": "AOA touch over USB", "zh_CN": "AOA 有线触控" },
+          "title": { "en": "Control without USB debugging (AOA)", "zh_CN": "免调试有线控制（AOA）" },
           "summary": {
-            "en": "Control a phone over the USB cable without USB debugging, and pair anmacgamer Companion over Wi-Fi.",
-            "zh_CN": "不开 USB 调试也能经数据线控制手机，并经 Wi‑Fi 连接 anmacgamer 伴侣。"
+            "en": "Control a phone over USB without USB debugging, and stream picture and sound via Companion over Wi-Fi.",
+            "zh_CN": "不开 USB 调试也能用数据线控制手机，并通过 Wi-Fi 伴侣传回画面和声音。"
           }
         },
         {
@@ -32,8 +32,8 @@
           "tile": "azure",
           "title": { "en": "Touch boxes", "zh_CN": "触控盒" },
           "summary": {
-            "en": "A small board from an extension acts as the phone's touch screen and keyboard. The ESP32 touch box is now a community extension.",
-            "zh_CN": "扩展提供的小板子充当手机的触摸屏和键盘。ESP32 触控盒现在是社区扩展。"
+            "en": "Use an extension-driven hardware board as the phone's touch screen and keyboard.",
+            "zh_CN": "通过扩展驱动的硬件小板充当手机的触控屏和键盘。"
           }
         },
         {
@@ -42,59 +42,59 @@
           "tile": "azure",
           "title": { "en": "Capture cards", "zh_CN": "采集卡" },
           "summary": {
-            "en": "Show a phone's HDMI picture through a capture card, without USB debugging; touches over AOA or a touch box.",
-            "zh_CN": "经采集卡显示手机的 HDMI 画面，不开 USB 调试也行；触控走 AOA 或触控盒。"
+            "en": "Receive HDMI video from a phone and pair it with AOA or a touch box.",
+            "zh_CN": "通过采集卡接收手机 HDMI 画面，搭配 AOA 或触控盒操控。"
           }
         },
         {
           "slug": "mirror-window",
           "icon": "monitor-play",
           "tile": "orange",
-          "title": { "en": "The mirror window", "zh_CN": "投屏窗口与工具栏" },
+          "title": { "en": "Mirror window & toolbar", "zh_CN": "投屏窗口与工具栏" },
           "summary": {
-            "en": "Every button on the toolbar, the status capsule, camera lock, full screen and the mini window.",
-            "zh_CN": "工具栏上每个按钮、状态胶囊、视角锁定、全屏和置顶小窗。"
+            "en": "Toolbar buttons, camera lock, volume, full screen, and the mini window.",
+            "zh_CN": "工具栏按钮、视角锁定、音量调节、全屏与置顶小窗。"
           }
         },
         {
           "slug": "keymap-editor",
           "icon": "sliders-horizontal",
           "tile": "lime",
-          "title": { "en": "The key mapping editor", "zh_CN": "键位编辑器" },
+          "title": { "en": "Key mapping editor", "zh_CN": "键位编辑器" },
           "summary": {
-            "en": "Drag keys onto the game's buttons, press a key for each, try them out and sort out conflicts.",
-            "zh_CN": "把键位拖到游戏按钮上，按一个键，试玩，处理冲突。"
+            "en": "Place components on game buttons, bind keys, test live, and fix conflicts.",
+            "zh_CN": "把组件拖到游戏按钮上、绑定按键、实时试玩并解决冲突。"
           }
         },
         {
           "slug": "profiles",
           "icon": "layers",
           "tile": "teal",
-          "title": { "en": "Profiles and sharing", "zh_CN": "方案与分享" },
+          "title": { "en": "Profiles & sharing", "zh_CN": "方案与分享" },
           "summary": {
-            "en": "Make profiles, link them to games so they switch by themselves, import, export and share.",
-            "zh_CN": "新建方案，关联到游戏自动切换，导入导出与分享。"
+            "en": "Create profiles, link them to games for auto-switching, and import or export.",
+            "zh_CN": "创建键位方案、关联游戏自动切换，以及导入和导出分享。"
           }
         },
         {
           "slug": "scripts",
           "icon": "code-xml",
           "tile": "rose",
-          "title": { "en": "Getting started with scripts", "zh_CN": "脚本入门" },
+          "title": { "en": "Scripts & logic", "zh_CN": "脚本与逻辑" },
           "summary": {
-            "en": "The logic view of the editor, waiting for the picture to change, and finding pictures and colors by name.",
-            "zh_CN": "编辑器的逻辑视图、等画面变化再继续、按名字找图找色。"
+            "en": "Write TypeScript or blueprints, wait for screen changes, and match images or colors.",
+            "zh_CN": "编写 TypeScript 或蓝图、等待画面变化，以及识图找色。"
           },
-          "meta": [{ "icon": "flask-conical", "text": { "en": "For players who like to tinker", "zh_CN": "适合喜欢折腾的玩家" } }]
+          "meta": [{ "icon": "flask-conical", "text": { "en": "For advanced users", "zh_CN": "适合进阶玩家" } }]
         },
         {
           "slug": "tours",
           "icon": "navigation",
           "tile": "azure",
-          "title": { "en": "Guided tours", "zh_CN": "跟着做的新手引导" },
+          "title": { "en": "Guided tours", "zh_CN": "界面导览" },
           "summary": {
-            "en": "The short tour on each main screen, how to skip it, and how to watch one again.",
-            "zh_CN": "每个主要界面的短引导、怎么跳过，以及怎么再看一遍。"
+            "en": "Step-by-step walkthroughs on each screen, and how to replay them.",
+            "zh_CN": "各主要界面的分步导览，以及如何重新播放。"
           }
         },
         {
@@ -103,8 +103,8 @@
           "tile": "lime",
           "title": { "en": "anmacgamer Companion", "zh_CN": "anmacgamer 伴侣" },
           "summary": {
-            "en": "The phone app for the cursor, key hints and typing on the phone, with switches you can change on either side.",
-            "zh_CN": "手机上的光标、键位提示和打字都靠它，开关在电脑和手机上都能改。"
+            "en": "Phone app for cursor display, key hints, Mac keyboard typing, and Wi-Fi mirroring without adb.",
+            "zh_CN": "在手机端显示光标与键位提示、用 Mac 键盘打字，以及免 adb Wi-Fi 投屏。"
           }
         },
         {
@@ -113,18 +113,18 @@
           "tile": "rose",
           "title": { "en": "Extensions", "zh_CN": "扩展" },
           "summary": {
-            "en": "Install extensions safely: signatures, install links, native code, updates and what to do when one goes wrong.",
-            "zh_CN": "安全地安装扩展：签名、安装链接、原生代码、更新，以及出了问题怎么办。"
+            "en": "Install, verify, update, and troubleshoot .gsext packages safely.",
+            "zh_CN": "安全安装、校验、更新和排查 .gsext 扩展包。"
           }
         },
         {
           "slug": "extension-features",
           "icon": "sparkles",
           "tile": "teal",
-          "title": { "en": "What extensions add", "zh_CN": "扩展带来的功能" },
+          "title": { "en": "What extensions add", "zh_CN": "扩展功能总览" },
           "summary": {
-            "en": "Devices, pictures and sound, speech, languages, files, AI services and converters from extensions, and where to find them.",
-            "zh_CN": "扩展带来的设备、画面与声音、语音、语言、文件、AI 服务和格式转换，以及在哪里找到它们。"
+            "en": "Where extension devices, media, speech, languages, AI, and converters appear.",
+            "zh_CN": "扩展提供的设备、音视频、语音、语言、AI 和格式转换在哪里使用。"
           }
         },
         {
@@ -132,10 +132,10 @@
           "icon": "circle-help",
           "tile": "amber",
           "layout": "faq",
-          "title": { "en": "Questions and troubleshooting", "zh_CN": "常见问题" },
+          "title": { "en": "FAQ & troubleshooting", "zh_CN": "常见问题与排查" },
           "summary": {
-            "en": "The phone does not show up, the keys do nothing, there is no sound, the pointer is gone…",
-            "zh_CN": "手机不出现、键鼠没反应、没有声音、指针不见了……"
+            "en": "Fix missing devices, unresponsive keys, no sound, and locked pointers.",
+            "zh_CN": "解决设备不显示、按键无反应、没有声音和指针消失等问题。"
           }
         }
       ]

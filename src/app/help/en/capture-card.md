@@ -1,42 +1,31 @@
-A capture card turns the picture a phone sends over HDMI into a picture on this computer. anmacgamer shows it like a phone's picture, with key mapping, vision and recording, even when USB debugging is off. Touches go to the phone over AOA, through a touch box from an extension, or not at all.
-
-## What to buy
-
-- :usb: **A USB 3.0 capture card**: gives the raw picture, 1080p at 60 frames per second with almost no delay. Look for "1080p60" and "USB 3.0" on the box; anmacgamer picks the best format by itself.
-- :plug: **A cheap USB 2.0 card**: sends the picture as MJPEG. Most still reach 1080p at 60 frames per second; the graphics card unpacks it, and the picture is a little softer.
-- :smartphone: **A USB-C to HDMI adapter**: the phone must send video over its USB-C port (DisplayPort Alt Mode). Many flagship phones do, most budget phones do not.
+A capture card brings your phone's HDMI video into anmacgamer with key mapping, vision, and recording—even when USB debugging is off. Touches are sent over AOA or a touch box.
 
 > [!NOTE]
-> Capture card video input is not available on macOS yet (connect over USB debugging or wireless debugging instead). Only standard UVC capture cards that macOS recognizes without proprietary OBS plugins are supported when available.
+> Capture card video input is not available on macOS yet (use USB debugging, wireless debugging, or Companion instead). When supported, only standard UVC capture cards recognized natively by macOS work.
 
-## Connect it
+## Hardware needed
 
-1. **Phone, adapter, HDMI cable, capture card, computer**: plug the capture card into a USB 3.0 port of this computer.
-2. **Turn the phone's screen on**: most phones show their screen over HDMI as soon as the adapter is in.
-3. **Look at the Devices page**: a "Capture card" card appears by itself, one for each card. Select **Mirror**.
+- :usb: **USB 3.0 capture card**: delivers 1080p60 with minimal delay.
+- :plug: **USB 2.0 capture card**: uses MJPEG compression (slightly softer image, GPU-decoded).
+- :smartphone: **USB-C to HDMI adapter**: your phone must support video output over USB-C (DisplayPort Alt Mode).
 
-A webcam can show up too. Choose **More > This is not a capture card, hide it** on its card and it moves into the **Other video devices** row at the end of the device list; devices whose names do not look like a capture card (virtual cameras, webcams) start out there. Expand that row and select **Treat as capture card** to bring one back.
+## Connect a capture card
 
-## Choose how touches reach the phone
+1. **Wire it up**: connect Phone -> USB-C to HDMI adapter -> HDMI cable -> Capture card -> Mac USB 3.0 port.
+2. **Wake the phone**: turn on the phone screen so it outputs video.
+3. **Start mirroring**: select **Mirror** on the capture card's card on the **Devices** page.
 
-Select **Settings** on the capture card's card and choose in the **Touch** group of the settings window:
+If a webcam appears as a capture card, choose **More > This is not a capture card, hide it** to move it to **Other video devices** at the bottom. You can restore any hidden device with **Treat as capture card**.
 
-- :monitor-play: **No touch**: you watch the picture, and vision and recording work; the keyboard and mouse do nothing on the phone.
-- :usb: **AOA over USB**: plug the phone into this computer with a USB cable as well and choose it under **Phone on USB**; macOS needs no driver (see [AOA touch over USB](help:aoa-driver)).
-- :plug: A box from an extension, such as the ESP32 touch box, gives the touches to the phone; the list shows it under its own name while its extension is on and the box is connected. When it is not there, touch stays off and the mirror window says so. [Touch boxes](help:touch-box) tells how to get one.
+## Configure touch and profile
 
-**Profile** in the **Key mapping** group of the settings window chooses the profile: without adb anmacgamer cannot tell which game is in front.
+Open **Settings** on the capture card's card:
 
-## Black bars and the picture area
+- **Touch > Touch method**: choose **No touch** (view/record only), **AOA over USB** (also plug the phone into USB and pick it under **Phone on USB**; see [AOA touch over USB](help:aoa-driver)), or a connected **Touch box** (see [Touch boxes](help:touch-box)).
+- **Key mapping > Profile**: pick the profile manually, since anmacgamer cannot detect the foreground app without adb.
+- **Picture and sound > Sound**: toggle audio capture and recording on or off.
 
-Phones send a picture in the shape of their screen, and the capture card fills the rest of its wide frame with black. anmacgamer finds the phone's screen in the frame by itself and shows only that part; key hints, vision, screenshots and recordings also see only the phone's screen. Dark scenes do not make the area smaller, and after the phone turns, the new area takes over within about a second.
+## Crop black bars & set rotation
 
-If the area is wrong, choose **More > Adjust the picture area…** in the mirror window, drag the box onto the phone's screen and select **Apply**. **Back to automatic** lets anmacgamer find it again.
-
-## Turned left or right
-
-Without adb nothing tells which way a landscape phone is turned, so touches could land upside down. **Which way the phone turns** on the mirror window's toolbar chooses **Landscape (turned left)** or **Landscape (turned right)**. Each capture card remembers it; turned left comes first.
-
-## Sound
-
-When the capture card has a sound device of its own, anmacgamer finds it, plays it and records it with the picture. The volume and mute buttons work as they do for a phone. Turn **Sound** off in the **Picture and sound** group of the settings window to leave the sound alone.
+- **Auto crop**: anmacgamer automatically trims black bars around the phone screen. To adjust manually, choose **More > Adjust the picture area…** in the mirror window, drag the box, and click **Apply** (or **Back to automatic** to reset).
+- **Orientation**: without adb, choose **Landscape (turned left)** or **Landscape (turned right)** under **Which way the phone turns** on the toolbar so touches do not land upside down.

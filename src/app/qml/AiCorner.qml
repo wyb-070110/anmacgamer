@@ -286,7 +286,7 @@ Item {
                 ToolbarButton {
                     objectName: "aiNewConversation"
                     iconName: "plus"
-                    text: qsTr("New conversation")
+                    text: qsTr("New chat")
                     onClicked: AiChats.newConversation()
                 }
 
@@ -295,7 +295,7 @@ Item {
 
                     objectName: "aiRecent"
                     iconName: "history"
-                    text: qsTr("Recent conversations")
+                    text: qsTr("Recent chats")
                     onClicked: recentMenu.popup(recentButton, recentButton.width - recentMenu.width, recentButton.height)
                 }
 
@@ -421,42 +421,36 @@ Item {
         steps: [
             {
                 target: card,
-                title: qsTr("The AI assistant"),
-                text: qsTr("It knows which window you are in and which profile you are looking at. Ask it to set "
-                           + "up keys, write blueprints and scripts, explain blocks or find out why a phone does not "
-                           + "connect. Whatever it changes goes into a draft first and only counts once you agree.")
+                title: qsTr("AI assistant"),
+                text: qsTr("Understands your current window and profile. Ask it to set up keys, write scripts, or "
+                           + "troubleshoot—edits wait in a draft until you apply them.")
             },
             {
                 target: function() { return tour.findItem(card, "aiNewConversation") },
-                title: qsTr("New conversation"),
-                text: qsTr("Start a new conversation for a new topic; the earlier ones are kept.")
+                title: qsTr("New chat"),
+                text: qsTr("Start a fresh conversation; earlier chats stay saved.")
             },
             {
                 target: recentButton,
-                title: qsTr("Recent conversations"),
-                text: qsTr("Every conversation is kept on this computer. The newest %n are listed here; Show all "
-                           + "opens the rest in a separate window. Pick one up again or delete them.", "",
+                title: qsTr("Recent chats"),
+                text: qsTr("Reopen the latest %n saved chats here, or click Show all to manage everything in a window.", "",
                            AiChats.menuShown)
             },
             {
                 target: function() { return tour.findItem(card, "aiPopout") },
-                title: qsTr("A separate window"),
-                text: qsTr("Chat in a window of its own, with the recent conversations on the left; it remembers "
-                           + "its size and place.")
+                title: qsTr("Pop-out window"),
+                text: qsTr("Open the assistant in its own resizable window with the chat list on the left.")
             },
             {
                 target: function() { return tour.findItem(card, "aiCollapse") },
                 title: qsTr("Collapse"),
-                text: qsTr("The card folds away and the bubble stays in the corner. The shortcut brings it back in "
-                           + "any window."),
+                text: qsTr("Minimize to the corner bubble; press the shortcut anytime to reopen."),
                 keys: assistantCommand.shortcut
             },
             {
                 target: chat,
                 title: qsTr("Ask"),
-                text: qsTr("Type a question below and press Enter. While it answers you can follow its thinking and "
-                           + "the tools it uses. If no service is set up yet, set one up under AI in Settings "
-                           + "first.")
+                text: qsTr("Type a question and press Enter. Configure your AI service under Settings > AI if needed.")
             }
         ]
     }

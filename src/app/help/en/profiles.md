@@ -1,53 +1,38 @@
-A profile is a set of keys for a game. Your profiles are on the **Profiles** page.
+A profile saves the key mappings, logic, and vision resources for a game. Manage all profiles on the **Profiles** page.
 
-## Make a profile
+## Create a profile
 
-On the **Profiles** page, select **New profile…** and pick a starting point:
+1. On the **Profiles** page, click **New profile…** (or pick a choice from the prompt when opening an unmapped game).
+2. Choose a starting point:
+   - :layout-grid: **Use a template**: pick Shooter, MOBA, Racing, Action / RPG, Cards / Tapping, or Blank, name it, link it to a game, and set **Landscape** or **Portrait**.
+   - :puzzle: **Community profiles**: start from an extension-provided profile.
+   - :plus: **Start blank**: place every key yourself.
+3. Click **Create and edit** to open the [Key mapping editor](help:keymap-editor) on a mirrored phone.
 
-- :layout-grid: **Use a template**: choose the closest kind of game—Shooter, MOBA, Racing, Action / RPG, Cards / Tapping or Blank. Give the profile a name, link it to a game and choose **Landscape** or **Portrait**. If a phone is mirroring, **Create and edit** opens the editor on it right away.
-- :puzzle: **Community profiles**: start from a profile that an installed extension provides, or import a file someone shared.
-- :plus: **Start blank**: place every key yourself.
+> [!NOTE]
+> **Built-in Honkai: Star Rail profiles**: the mouse works as a normal pointer, <kbd>Tab</kbd> locks the camera while exploring, and <kbd>F1</kbd>–<kbd>F5</kbd> require holding <kbd>fn</kbd> on Mac keyboards unless **Use F1, F2, etc. keys as standard function keys** is enabled in macOS System Settings.
 
-When a game without a profile is in front on a mirrored phone, the mirror window offers the same choices. If you close that offer, it does not come back by itself for this game; **Key mapping options > New profile…** on the toolbar opens it again.
+## Switch and link profiles
 
-Then put the keys on the game's buttons: [The key mapping editor](help:keymap-editor)
+- **Switch manually**: open **Key mapping options** on the mirror toolbar to pick a profile, or click **Use on** on a profile card.
+- **Auto-switch by game**: open **More (…)** on a profile card and select **Link to …** for a running game. With **Settings > Input & key mapping > Switch profiles with the game** on, anmacgamer loads it automatically whenever that game opens.
 
-## Use a profile
+![Linked profiles switch automatically when the game opens.](figure:profile-link)
 
-- **In the mirror window**: open **Key mapping options** on the toolbar and pick a profile. Profiles linked to the game in front are marked **This game**; **No profile** uses the phone without one.
-- **On the Profiles page**: select **Use on** on a profile's card. With several phones mirroring, choose the phone.
+## Organize & edit extension profiles
 
-## Link a profile to a game
+- Search by profile or game name, or filter by **All**, **This game**, **Mine**, **From extensions**, and **Problems**.
+- Use **Duplicate** to copy, **Delete…** to move to Trash, or **Show in folder** / **Open folder** to view files in Finder.
+- Extension profiles are marked **Read-only**, but your edits are saved as overrides. Use **Restore original…** to revert, or **Copy to mine** to make an editable copy.
 
-When **Switch profiles with the game** is on (in **Settings > Input & key mapping**, on by default), the phone uses the profile linked to the game in front by itself. If you pick another profile for a game, the phone remembers your choice for that game.
+## Export and import
 
-![Once a profile is linked to a game, it is used whenever that game comes to the front.](figure:profile-link)
+A profile is either a `.json` file (keys only) or a profile folder (keys, `logic.ts`/`logic.js`, and `res/` images).
 
-To link a profile, open **More** (…) on its card and choose **Link to …**. The menu lists the games running on your mirrored phones. **Unlink from …** removes the link.
+![Export a profile folder as a single .gsprofile file to share.](figure:profile-share)
 
-## Find and tidy
-
-- Search by profile name or by game.
-- Filter with **All**, **This game**, **Mine**, **From extensions** and **Problems**.
-- **Duplicate** makes a copy.
-- **Delete…** moves the profile to the Trash. Phones using it stop using it.
-- **Show in folder** shows the profile's file in Finder; **Open folder** opens the folder that holds all your profiles.
-
-A profile with a problem shows what is wrong on its card.
-
-## Profiles from extensions
-
-Extensions can bring profiles. They are marked **Read-only**, but you can still edit them: your changes are kept separately, and **Restore original…** removes them. **Copy to mine** makes a copy that is all yours.
-
-## Share a profile
-
-A profile is either a single `.json` file or a profile folder. A profile folder holds `profile.json` with the keys, and can also hold logic (`logic.ts` or `logic.js`) and pictures (see [Getting started with scripts](help:scripts)).
-
-![A profile folder is exported as one .gsprofile file; send it to a friend, who imports it on the Profiles page.](figure:profile-share)
-
-- **To share**: **Export…** in **More** on the card. A profile folder is saved as a `.gsprofile` file, which keeps its logic and pictures; you can also save just its keys as `.json`.
-- **To receive**: **Import…** on the **Profiles** page opens `.json` and `.gsprofile` files. You can also drop files, or a profile folder, onto the anmacgamer window.
-- **Other formats**: with a converter extension, **Import…** also opens the other formats it knows, and the card's **More** gains **Export as …**; see [What extensions add](help:extension-features#converters).
+- **Export**: open **More (…) > Export…** on a card to save a `.gsprofile` bundle (includes logic and images) or `.json`.
+- **Import**: click **Import…** on the **Profiles** page, or drag `.json` / `.gsprofile` files onto the window. Converter extensions add support for extra formats (see [What extensions add](help:extension-features#converters)).
 
 > [!WARNING]
-> **Only import profiles you trust**: a profile with logic can tap, swipe and press keys on the phone by itself, and can read the keys you hold and where the pointer is in the mirror window. anmacgamer asks before it imports one.
+> Only import profiles with logic from sources you trust—logic can send touches, read key states, and see pointer positions.

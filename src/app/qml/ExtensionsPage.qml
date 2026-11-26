@@ -1748,58 +1748,53 @@ Item {
             {
                 centered: true,
                 title: qsTr("Extensions"),
-                text: qsTr("Extensions add to anmacgamer: new components, picture filters, themes, hardware such as "
-                           + "a touch box, side panels, and new blocks for profiles and logic.")
+                text: qsTr("Extensions add touch boxes, components, themes, panels, AI providers, and logic blocks.")
             },
             {
                 target: function() { return tour.findItem(page, "extensionCard") },
                 optional: true,
-                title: qsTr("An extension card"),
-                text: qsTr("The card tells what the extension adds and what it may do.")
+                title: qsTr("Extension card"),
+                text: qsTr("Shows what the extension adds and the permissions it uses.")
             },
             {
                 target: function() { return tour.findItem(page, "extensionToggle") },
                 optional: true,
-                title: qsTr("Turn it on"),
-                text: qsTr("An extension only loads once its switch is on. Turning it on allows the permissions it "
-                           + "asks for.")
+                title: qsTr("Enable extension"),
+                text: qsTr("Extensions load only when switched on, which grants their requested permissions.")
             },
             {
                 target: function() { return tour.findItem(page, "extensionSettings") },
                 optional: true,
                 title: qsTr("Settings"),
-                text: qsTr("Extensions that have settings are set up here.")
+                text: qsTr("Configure options provided by this extension.")
             },
             {
                 target: function() { return tour.findItem(page, "extensionDetails") },
                 optional: true,
                 title: qsTr("Details"),
-                text: qsTr("See everything it adds, the permissions it asked for and any problem it ran into.")
+                text: qsTr("View added features, permissions, crash history, and updates.")
             },
             {
                 target: function() { return tour.findItem(page, "installExtension") },
                 title: qsTr("Install from file"),
-                text: qsTr("Add an extension from a .gsext package. Before it installs, it shows what the extension "
-                           + "may do.")
+                text: qsTr("Install a .gsext or .gsbundle package after reviewing its permissions.")
             },
             {
                 target: function() { return tour.findItem(page, "findProblem") },
                 optional: true,
                 title: qsTr("Find a problem extension"),
-                text: qsTr("When something goes wrong, this turns half of the extensions off at a time to find the "
-                           + "one that causes it.")
+                text: qsTr("Binary-search your enabled extensions to isolate the one causing an issue.")
             },
             {
                 target: function() { return tour.findItem(page, "exportBundle") },
                 optional: true,
                 title: qsTr("Export bundle"),
-                text: qsTr("Pack the extensions you use into one bundle file to set up another computer or share "
-                           + "them.")
+                text: qsTr("Pack all enabled extensions and settings into one .gsbundle file.")
             },
             {
                 centered: true,
-                title: qsTr("That's extensions"),
-                text: qsTr("Extensions only do what you allowed. Help can replay this tour.")
+                title: qsTr("Extensions tour complete"),
+                text: qsTr("Extensions only run with permissions you approved. Replay this tour in Help.")
             }
         ]
         advance: {

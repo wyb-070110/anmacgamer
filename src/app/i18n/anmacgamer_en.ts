@@ -45,10 +45,10 @@
         </translation>
     </message>
     <message numerus="yes">
-        <source>Every conversation is kept on this computer. The newest %n are listed here; Show all opens the rest in a separate window. Pick one up again or delete them.</source>
+        <source>Reopen the latest %n saved chats here, or click Show all to manage everything in a window.</source>
         <translation>
-            <numerusform>Every conversation is kept on this computer. The newest %n is listed here; Show all opens the rest in a separate window. Pick one up again or delete them.</numerusform>
-            <numerusform>Every conversation is kept on this computer. The newest %n are listed here; Show all opens the rest in a separate window. Pick one up again or delete them.</numerusform>
+            <numerusform>Reopen the latest saved chat here, or click Show all to manage everything in a window.</numerusform>
+            <numerusform>Reopen the latest %n saved chats here, or click Show all to manage everything in a window.</numerusform>
         </translation>
     </message>
 </context>
