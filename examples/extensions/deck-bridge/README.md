@@ -7,16 +7,16 @@
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\deck-bridge
-   gs check examples\extensions\deck-bridge
-   gs pack examples\extensions\deck-bridge -o deck-bridge.gsext
+   ```zsh
+   gs validate examples/extensions/deck-bridge
+   gs check examples/extensions/deck-bridge
+   gs pack examples/extensions/deck-bridge -o deck-bridge.gsext
    ```
 2. 在扩展页点**从文件安装…**安装、启用并同意权限。
 3. 在左栏打开**按键桥**（`Listening on http://127.0.0.1:8765`）。
 4. 在键位编辑器等待录键时运行：
-   ```powershell
-   Invoke-RestMethod -Method Post http://127.0.0.1:8765/tap/k1
+   ```zsh
+   curl -fsS -X POST http://127.0.0.1:8765/tap/k1
    ```
    即可录为 `Ext.example.deck-bridge.deck.k1`。从 Stream Deck 或 OBS 发同一 `POST` 请求即可触发（发往前台投屏窗口）。
 

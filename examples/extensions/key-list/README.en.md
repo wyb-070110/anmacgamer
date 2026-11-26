@@ -18,13 +18,13 @@ Line 1 starting with `#` sets the profile name; other `#` lines are comments. Ea
 ## Try it
 
 1. Validate, check, and pack:
-   ```powershell
-   gs validate examples\extensions\key-list
-   gs check examples\extensions\key-list
-   gs pack examples\extensions\key-list -o key-list.gsext
+   ```zsh
+   gs validate examples/extensions/key-list
+   gs check examples/extensions/key-list
+   gs pack examples/extensions/key-list -o key-list.gsext
    ```
 2. Install via **Install from file…** and enable it.
-3. On the Profiles page, click **Import** and choose `samples\arena.keys` (or drop it on the mirror window) to create "Arena basics".
+3. On the Profiles page, click **Import** and choose `samples/arena.keys` (or drop it on the mirror window) to create "Arena basics".
 4. Open a profile card's menu and choose **Export as Key list…**.
 
 Both converters share `src/main.ts` (`convert(input)` branches on `input.to`, returning `{ name, json }` for `gamescrcpy.profile` v3 on import or `{ text }` on export).

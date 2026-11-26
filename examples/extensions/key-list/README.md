@@ -18,13 +18,13 @@ Space 0.94 0.80 Dodge
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\key-list
-   gs check examples\extensions\key-list
-   gs pack examples\extensions\key-list -o key-list.gsext
+   ```zsh
+   gs validate examples/extensions/key-list
+   gs check examples/extensions/key-list
+   gs pack examples/extensions/key-list -o key-list.gsext
    ```
 2. 在扩展页点**从文件安装…**安装并启用。
-3. 在方案页点**导入**并选择 `samples\arena.keys`（或拖入投屏窗口），生成“Arena basics”方案。
+3. 在方案页点**导入**并选择 `samples/arena.keys`（或拖入投屏窗口），生成“Arena basics”方案。
 4. 在方案卡片菜单选**导出为 键位清单…**即可导出。
 
 两个转换器共用 `src/main.ts`（`convert(input)` 按 `input.to` 区分，导入返回 `gamescrcpy.profile` v3 的 `{ name, json }`，导出返回 `{ text }`）。

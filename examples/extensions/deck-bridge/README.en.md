@@ -7,16 +7,16 @@ Demonstrates `net.listen` (local HTTP server on `127.0.0.1`), `input.source` (fe
 ## Try it
 
 1. Validate, check, and pack:
-   ```powershell
-   gs validate examples\extensions\deck-bridge
-   gs check examples\extensions\deck-bridge
-   gs pack examples\extensions\deck-bridge -o deck-bridge.gsext
+   ```zsh
+   gs validate examples/extensions/deck-bridge
+   gs check examples/extensions/deck-bridge
+   gs pack examples/extensions/deck-bridge -o deck-bridge.gsext
    ```
 2. Install via **Install from file…** on the Extensions page, enable it, and approve permissions.
 3. Open **Deck bridge** in the sidebar (`Listening on http://127.0.0.1:8765`).
 4. In the key mapping editor, bind a key while running:
-   ```powershell
-   Invoke-RestMethod -Method Post http://127.0.0.1:8765/tap/k1
+   ```zsh
+   curl -fsS -X POST http://127.0.0.1:8765/tap/k1
    ```
    This records `Ext.example.deck-bridge.deck.k1`. Send the same `POST` from Stream Deck or OBS; keys target the front mirror window.
 

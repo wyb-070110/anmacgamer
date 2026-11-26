@@ -6,10 +6,10 @@
 
 ## 打包：`gs pack`
 
-```powershell
-gs pack .\lap-timer
-gs pack .\lap-timer -o .\dist\alice.lap-timer-1.2.0.gsext
-gs pack .\lap-timer --sign $env:USERPROFILE\keys\alice.key
+```zsh
+gs pack ./lap-timer
+gs pack ./lap-timer -o ./dist/alice.lap-timer-1.2.0.gsext
+gs pack ./lap-timer --sign ~/keys/alice.key
 ```
 
 - 先执行 `gs validate`，有错误则不打包。
@@ -29,8 +29,8 @@ gs pack .\lap-timer --sign $env:USERPROFILE\keys\alice.key
 首次安装签名包时显示原始公钥（“已用公钥 … 签名，这台电脑以前没见过这个公钥”）；后续同公钥版本显示“已验证的发布者 · 公钥 …”。未签名原生扩展会显示醒目警告（受限模式仅提示）。
 
 1. 生成密钥对一次（带密码的 minisign 私钥可用 `minisign -C -W` 去除密码）：
-   ```powershell
-   gs ext keygen $env:USERPROFILE\keys\alice.key
+   ```zsh
+   gs ext keygen ~/keys/alice.key
    ```
 2. 将输出的 `"authorKey": "RWQ…"` 写入 `manifest.json`。
 3. 打包签名：`gs pack <文件夹> --sign <私钥>`。密钥不匹配报 `signing-key-mismatch`。
@@ -50,20 +50,20 @@ gs pack .\lap-timer --sign $env:USERPROFILE\keys\alice.key
 ## 安装链接
 
 ```html
-<a href="gamescrcpy://install?url=https%3A%2F%2Fexample.com%2Fdownloads%2Falice.lap-timer-1.2.0.gsext&sha256=9f2b5c0e4d7a8b1c3e5f6a7b8c9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f70812">在 GameScrcpy 里安装</a>
+<a href="gamescrcpy://install?url=https%3A%2F%2Fexample.com%2Fdownloads%2Falice.lap-timer-1.2.0.gsext&sha256=9f2b5c0e4d7a8b1c3e5f6a7b8c9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f70812">在 anmacgamer 里安装</a>
 ```
 
 - 参数：`url`（带主机名、无用户名的 `https://`，URL 编码，解码后 <= 2048 字符）与 `sha256`（64 位十六进制）。各出现一次、无其他参数、无 `#`；整条链接 <= 4096 可打印 ASCII 字符。
 - 下载限制：最多 8 次 HTTPS 重定向、最大 200 MiB。SHA-256 不符即中止。安装框显示重定向后的最终主机（国际化域名以 `xn--…` 显示）。
 - `gamescrcpy://extension/<id>` 直接打开扩展页并定位到该卡片。
 - 链接必须是唯一命令行参数（带额外参数会报错退出）。同时仅处理一个链接；安装框打开时新链接会被忽略并提示。
-- 便携版可在**设置 > 通用 > 扩展链接**一键注册协议。
+- macOS 由 `anmacgamer.app` 自动注册 `gamescrcpy://`（Windows 便携版可在**设置 > 通用 > 扩展链接**注册）。
 
-PowerShell 计算示例（每次发版需更新 `sha256`）：
+`zsh` 计算示例（每次发版需更新 `sha256`）：
 
-```powershell
-(Get-FileHash .\alice.lap-timer-1.2.0.gsext -Algorithm SHA256).Hash.ToLower()
-[uri]::EscapeDataString("https://example.com/downloads/alice.lap-timer-1.2.0.gsext")
+```zsh
+shasum -a 256 ./alice.lap-timer-1.2.0.gsext | awk '{print $1}'
+python3 -c 'import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=""))' "https://example.com/downloads/alice.lap-timer-1.2.0.gsext"
 ```
 
 ## 更新列表
@@ -123,5 +123,5 @@ PowerShell 计算示例（每次发版需更新 `sha256`）：
 - `gs validate`（0 错误）、`gs check`、`gs ext test`（原生再跑 `--hosted`）全部通过。
 - `requires` 写明扩展点版本（原生为 `"native": "^2.0"`），并填写 `"gamescrcpy": "2.1"`（缺省报 `gamescrcpy-missing` 警告）。
 - `id` 使用自有前缀，补全 `license`、`authors`、`repository`、`description`、权限 `reason` 与 `l10n`/`locales` 译文。
-- 原生 DLL 用 `/MT` 静态链接运行库、导出 `gs_ext_main`、尽量提供 arm64，可行时使用 `"sandbox": "restricted"`。
+- 原生 dylib 用 Clang 编译（通用 `-arch arm64 -arch x86_64` 或分架构 `arm64`/`x64`）、导出 `gs_ext_main`，可行时使用 `"sandbox": "restricted"`（若同时附带 Windows DLL，静态链接 `/MT` 并尽量提供 arm64）。
 - 用 `gs pack --sign` 签名、备份私钥、公布公钥、先传包再改 `updates.index`，并在 anmacgamer 中从文件实测安装。

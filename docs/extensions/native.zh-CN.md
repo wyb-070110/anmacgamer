@@ -2,7 +2,7 @@
 
 [English](native.md) · 简体中文
 
-原生扩展是用 C/C++ 编写的 DLL（Windows）或 dylib（macOS），对接 [`sdk/include/gamescrcpy_ext.h`](../../sdk/include/gamescrcpy_ext.h)（`GS_EXT_ABI_VERSION` 2，由 `gs api write sdk` 生成）。适合直接操作硬件、每帧低延迟触控或提供自定义设备/连接/媒体/AI/识别引擎；画界面或调用常规接口请优先用[逻辑扩展](logic.zh-CN.md)。
+原生扩展是用 C/C++ 编写的 dylib（Windows 上为 DLL），对接 [`sdk/include/gamescrcpy_ext.h`](../../sdk/include/gamescrcpy_ext.h)（`GS_EXT_ABI_VERSION` 2，由 `gs api write sdk` 生成）。适合直接操作硬件、每帧低延迟触控或提供自定义设备/连接/媒体/AI/识别引擎；画界面或调用常规接口请优先用[逻辑扩展](logic.zh-CN.md)。
 
 ## 最小示例
 
@@ -38,7 +38,7 @@ GS_EXT_EXPORT int32_t gs_ext_main(const gs_ext_host* host, const gs_ext_plugin**
 
 ```json
 "native": {
-  "dll": "native.dll",
+  "dylib": "libnative.dylib",
   "nodes": [ { "name": "greet", "params": [ { "name": "name", "type": "string" } ], "returns": "string", "description": "Says hello." } ]
 }
 ```
@@ -94,7 +94,7 @@ GS_EXT_EXPORT int32_t gs_ext_main(const gs_ext_host* host, const gs_ext_plugin**
 
 ## 线程、时间与进程隔离
 
-每个扩展独立运行在 `gs-exthost.exe`（macOS 为 `gs-exthost`）并通过共享内存通信。节点超时 > 2 秒或通道断开会终止宿主进程；1 分钟崩溃 3 次自动停用并写崩溃报告（minidump/`crash.txt`）。开发期可用 `gs ext test <文件夹> --hosted` 测独立进程（[测试扩展](testing.zh-CN.md)）。
+每个扩展独立运行在 `gs-exthost` 进程（位于 `Contents/MacOS`）并通过共享内存通信。节点超时 > 2 秒或通道断开会终止宿主进程；1 分钟崩溃 3 次自动停用并写崩溃报告（`crash.txt` 与日志）。开发期可用 `gs ext test <文件夹> --hosted` 测独立进程（[测试扩展](testing.zh-CN.md)）。
 
 | 回调 / 调用 | 线程与时间规则 |
 |:--|:--|
@@ -158,7 +158,7 @@ const gs_ext_job kFlash = {sizeof(gs_ext_job), "flash", nullptr, &flashStart, &f
 
 ## 硬件占用
 
-打开硬件前调 `claim(context, 资源, flags)`，用完 `release`。资源名不区分大小写：`serial:COM9`、`ble:AA:BB:CC:DD:EE:FF`、`hid:<路径>`、`usb:<vid>:<pid>:<序列号>`（十六进制）。被占返回 `GS_EXT_BUSY`；`GS_EXT_CLAIM_WAIT` 先经 `claim_wanted(context, 资源, 谁)` 询问（1 秒内返回 `GS_EXT_OK` 且 3 秒内 `release` 即让出）。停止时自动释放。与 AOA 及 `hardware.claim` 共用。
+打开硬件前调 `claim(context, 资源, flags)`，用完 `release`。资源名不区分大小写：`serial:/dev/cu.usbserial-0001`（Windows 如 `serial:COM9`）、`ble:AA:BB:CC:DD:EE:FF`、`hid:<路径>`、`usb:<vid>:<pid>:<序列号>`（十六进制）。被占返回 `GS_EXT_BUSY`；`GS_EXT_CLAIM_WAIT` 先经 `claim_wanted(context, 资源, 谁)` 询问（1 秒内返回 `GS_EXT_OK` 且 3 秒内 `release` 即让出）。停止时自动释放。与 AOA 及 `hardware.claim` 共用。
 
 ## 输入设备
 
@@ -212,15 +212,18 @@ const gs_ext_job kFlash = {sizeof(gs_ext_job), "flash", nullptr, &flashStart, &f
 
 ## 受限模式
 
-`"sandbox": "restricted"` 让 `gs-exthost.exe` 运行在独立 AppContainer 中：
-- 禁联网、禁启子进程、禁写容器外文件（仅可写 `%LOCALAPPDATA%\Packages\GameScrcpy.Extension.<散列>\AC` 与 `Temp`，自身目录只读）、禁剪贴板/窗口/系统设置。
+`"sandbox": "restricted"` 让 `gs-exthost` 运行在 macOS `sandbox_init` 沙箱中：
+- 自身目录与系统库只读，容器 `~/Library/Application Support/anmacgamer/Containers/GameScrcpy.Extension.<散列>`（同时作为 `HOME` 与 `TMPDIR`）可读写，环境变量仅限 `HOME`、`TMPDIR`、`PATH` 与语言。
+- 禁联网、禁启子进程、禁写容器外文件、禁剪贴板/窗口/系统设置。
 - 硬件仅经[经 anmacgamer 用设备](#经-anmacgamer-用设备)（需 `hardware` 权限，`claim` 亦然）。
-- 上限：1 GiB 内存（Windows）、200 日志/秒、3 通知/10 秒、4 设备变化/秒、16000 输入事件/秒；事件须为合法 UTF-8 JSON。
-- `gs ext test` 始终在 `gs-exthost.exe` + AppContainer（`gs-test:<id>`）中运行受限 DLL。Administrators 属主的便携版在普通权限下可能报错误 5。
+- 上限：200 日志/秒、3 通知/10 秒、4 设备变化/秒、16000 输入事件/秒；事件须为合法 UTF-8 JSON（macOS 无作业对象内存上限）。
+- `gs ext test` 始终在 `gs-exthost` 沙箱（`gs-test:<id>`）中运行受限 dylib。
+- Windows：在独立 AppContainer（`%LOCALAPPDATA%\Packages\GameScrcpy.Extension.<散列>`）中运行 `gs-exthost.exe`，并带 1 GiB 作业对象内存限制。
 
-## 多架构与构建（Windows）
+## 多架构与构建
 
-- `dll` 支持 `{ "x64": "...", "arm64": "..." }`。用 Visual Studio 2022 编译，静态链接运行库（`/MT`），导出 `gs_ext_main`（`GS_EXT_EXPORT` = `__declspec(dllexport)`）。可用 `gs ext init native <文件夹>` 生成模板。
+- `dylib` 支持单个通用二进制（`-arch arm64 -arch x86_64`）或按架构路径 `{ "arm64": "...", "x64": "..." }`。用 Clang（Xcode 命令行工具）编译，导出 `gs_ext_main`（`GS_EXT_EXPORT` = `__attribute__((visibility("default")))`）。可用 `gs ext init native <文件夹>` 生成模板。
+- Windows：`dll` 支持 `{ "x64": "...", "arm64": "..." }`（macOS 上忽略，同一包可同时附带）。用 Visual Studio 2022 编译，静态链接运行库（`/MT`），导出 `gs_ext_main`（`__declspec(dllexport)`）。
 
 ## macOS
 

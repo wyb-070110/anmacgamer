@@ -7,10 +7,10 @@
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\notes-panel
-   gs check examples\extensions\notes-panel
-   gs pack examples\extensions\notes-panel -o notes-panel.gsext
+   ```zsh
+   gs validate examples/extensions/notes-panel
+   gs check examples/extensions/notes-panel
+   gs pack examples/extensions/notes-panel -o notes-panel.gsext
    ```
 2. 在扩展页点**从文件安装…**安装、启用并同意权限。
 3. 打开左栏**笔记**并首次选定目录（可在扩展设置中忘记）。

@@ -7,10 +7,10 @@
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\voice-commands
-   gs check examples\extensions\voice-commands
-   gs pack examples\extensions\voice-commands -o voice-commands.gsext
+   ```zsh
+   gs validate examples/extensions/voice-commands
+   gs check examples/extensions/voice-commands
+   gs pack examples/extensions/voice-commands -o voice-commands.gsext
    ```
 2. 在扩展页点**从文件安装…**安装、启用并同意权限。
 3. 打开左栏**语音命令**，设置引擎、语言、置信度并管理命令（默认中文“打开地图”“打开背包”“换弹”，英文“open map”“open bag”“reload”，存于 `store`）。

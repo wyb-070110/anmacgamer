@@ -2,7 +2,7 @@
 
 English · [简体中文](logic.zh-CN.md)
 
-Extension logic is written in TypeScript (or JavaScript) against the same script API as profile logic ([sdk/docs](../../sdk/docs/README.md)). It runs in the low-privilege `gs-scripthost.exe` process; all OS, device, network, and file access goes through anmacgamer and is permission-checked.
+Extension logic is written in TypeScript (or JavaScript) against the same script API as profile logic ([sdk/docs](../../sdk/docs/README.md)). It runs in the low-privilege `gs-scripthost` process (inside `Contents/MacOS`); all OS, device, network, and file access goes through anmacgamer and is permission-checked.
 
 ## Scripts
 
@@ -166,7 +166,7 @@ Exposed under `ext.<extension>` (each id segment in lowerCamelCase):
 
 ```ts
 const version = ext.alice.board.version();
-const job = ext.alice.board.flash({ port: "COM9" });
+const job = ext.alice.board.flash({ port: "/dev/cu.usbserial-0001" });
 job.onProgress((fraction, text) => log.info(Math.round(fraction * 100), text));
 job.onOutput((value) => log.info("found", JSON.stringify(value)));
 const result = await job.result;

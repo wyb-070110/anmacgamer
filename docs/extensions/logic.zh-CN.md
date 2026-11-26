@@ -2,7 +2,7 @@
 
 [English](logic.md) · 简体中文
 
-扩展逻辑用 TypeScript（或 JavaScript）编写，使用与方案逻辑相同的脚本接口（[sdk/docs](../../sdk/docs/README.md)）。它运行在低权限 `gs-scripthost.exe` 进程中，所有系统、设备、网络与文件操作都经 anmacgamer 校验权限后代办。
+扩展逻辑用 TypeScript（或 JavaScript）编写，使用与方案逻辑相同的脚本接口（[sdk/docs](../../sdk/docs/README.md)）。它运行在低权限 `gs-scripthost` 进程（位于 `Contents/MacOS`）中，所有系统、设备、网络与文件操作都经 anmacgamer 校验权限后代办。
 
 ## 脚本
 
@@ -166,7 +166,7 @@ const listener = await speech.listen(["open map", "close map"], async ({ phrase,
 
 ```ts
 const version = ext.alice.board.version();
-const job = ext.alice.board.flash({ port: "COM9" });
+const job = ext.alice.board.flash({ port: "/dev/cu.usbserial-0001" });
 job.onProgress((fraction, text) => log.info(Math.round(fraction * 100), text));
 job.onOutput((value) => log.info("found", JSON.stringify(value)));
 const result = await job.result;

@@ -7,10 +7,10 @@
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\tour-and-help
-   gs check examples\extensions\tour-and-help
-   gs pack examples\extensions\tour-and-help -o tour-and-help.gsext
+   ```zsh
+   gs validate examples/extensions/tour-and-help
+   gs check examples/extensions/tour-and-help
+   gs pack examples/extensions/tour-and-help -o tour-and-help.gsext
    ```
 2. 在扩展页点**从文件安装…**安装并启用。
 3. 首次启用后自动播放引导，依次高亮扩展卡片、左栏页面与设置卡片（脚本启动时即 `render` 面板，避免跳过步骤）。

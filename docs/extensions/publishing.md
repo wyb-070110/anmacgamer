@@ -6,10 +6,10 @@ An extension ships as a `.gsext` zip archive with `manifest.json` at the root. U
 
 ## Packing: `gs pack`
 
-```powershell
-gs pack .\lap-timer
-gs pack .\lap-timer -o .\dist\alice.lap-timer-1.2.0.gsext
-gs pack .\lap-timer --sign $env:USERPROFILE\keys\alice.key
+```zsh
+gs pack ./lap-timer
+gs pack ./lap-timer -o ./dist/alice.lap-timer-1.2.0.gsext
+gs pack ./lap-timer --sign ~/keys/alice.key
 ```
 
 - Runs `gs validate` first and aborts on errors.
@@ -29,8 +29,8 @@ gs pack .\lap-timer --sign $env:USERPROFILE\keys\alice.key
 First install of a signed package shows the raw key ("Signed with key …, which this computer has not seen before"); later versions with the same key show "Verified publisher · key …". Unsigned native extensions show a prominent warning (a note only if restricted).
 
 1. Generate a key pair once (remove password from any password-protected minisign key with `minisign -C -W`):
-   ```powershell
-   gs ext keygen $env:USERPROFILE\keys\alice.key
+   ```zsh
+   gs ext keygen ~/keys/alice.key
    ```
 2. Add the printed `"authorKey": "RWQ…"` line to `manifest.json`.
 3. Pack and sign with `gs pack <folder> --sign <secret-key>`. Mismatched keys fail with `signing-key-mismatch`.
@@ -50,20 +50,20 @@ Back up your secret key and publish your public key (for example in your README)
 ## Install links
 
 ```html
-<a href="gamescrcpy://install?url=https%3A%2F%2Fexample.com%2Fdownloads%2Falice.lap-timer-1.2.0.gsext&sha256=9f2b5c0e4d7a8b1c3e5f6a7b8c9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f70812">Install in GameScrcpy</a>
+<a href="gamescrcpy://install?url=https%3A%2F%2Fexample.com%2Fdownloads%2Falice.lap-timer-1.2.0.gsext&sha256=9f2b5c0e4d7a8b1c3e5f6a7b8c9d0e1f2a3b4c5d6e7f8091a2b3c4d5e6f70812">Install in anmacgamer</a>
 ```
 
 - Parameters: `url` (`https://` with host, no username, URL-encoded, <= 2048 chars decoded) and `sha256` (64 hex digits). Each once, no extra params, no `#`; whole link <= 4096 printable ASCII chars.
 - Download limits: <= 8 HTTPS-only redirects, <= 200 MiB. Mismatched SHA-256 aborts install. The dialog shows the final host in ASCII (`xn--…`) after redirects.
 - `gamescrcpy://extension/<id>` opens the Extensions page at that card.
 - Must be the sole CLI argument (extra args exit with error). Only one link install runs at a time; links arriving while an install dialog is open are dropped with a prompt.
-- Portable builds register `gamescrcpy://` under **Settings > General > Extension links**.
+- macOS registers `gamescrcpy://` from `anmacgamer.app` (on Windows portable builds, register it under **Settings > General > Extension links**).
 
-Helper commands (PowerShell; regenerate `sha256` each release):
+Helper commands (`zsh`; regenerate `sha256` each release):
 
-```powershell
-(Get-FileHash .\alice.lap-timer-1.2.0.gsext -Algorithm SHA256).Hash.ToLower()
-[uri]::EscapeDataString("https://example.com/downloads/alice.lap-timer-1.2.0.gsext")
+```zsh
+shasum -a 256 ./alice.lap-timer-1.2.0.gsext | awk '{print $1}'
+python3 -c 'import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=""))' "https://example.com/downloads/alice.lap-timer-1.2.0.gsext"
 ```
 
 ## Update lists
@@ -123,5 +123,5 @@ Rules:
 - `gs validate` (0 errors), `gs check`, and `gs ext test` (plus `--hosted` for native) all pass.
 - `requires` declares exact extension point ranges (`"native": "^2.0"` for native) and `"gamescrcpy": "2.1"` is set (otherwise `gamescrcpy-missing` warning).
 - `id` uses your own prefix; `license`, `authors`, `repository`, `description`, permission `reason`s, and `l10n`/`locales` translations are filled in.
-- Native DLLs link runtime statically (`/MT`), export `gs_ext_main`, include arm64 if possible, and use `"sandbox": "restricted"` when feasible.
+- Native dylibs are built with Clang (universal `-arch arm64 -arch x86_64` or per-arch `arm64`/`x64`), export `gs_ext_main`, and use `"sandbox": "restricted"` when feasible. (If also shipping a Windows DLL, link `/MT` and include arm64 if possible.)
 - Package is signed with `gs pack --sign`, secret key backed up, public key published, `updates.index` updated after upload, and tested by installing from file in anmacgamer.

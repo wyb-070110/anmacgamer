@@ -7,10 +7,10 @@
 ## 试一试
 
 1. 校验、检查并打包：
-   ```powershell
-   gs validate examples\extensions\event-log
-   gs check examples\extensions\event-log
-   gs pack examples\extensions\event-log -o event-log.gsext
+   ```zsh
+   gs validate examples/extensions/event-log
+   gs check examples/extensions/event-log
+   gs pack examples/extensions/event-log -o event-log.gsext
    ```
 2. 在扩展页点**从文件安装…**安装、启用并同意 `events.app`。
 3. 打开左栏**事件记录**，连接手机、开始投屏、切换方案或开关扩展即可看到事件列表。

@@ -7,10 +7,10 @@ Demonstrates `files.folder` (storing `.txt` notes in a user-chosen folder) and `
 ## Try it
 
 1. Validate, check, and pack:
-   ```powershell
-   gs validate examples\extensions\notes-panel
-   gs check examples\extensions\notes-panel
-   gs pack examples\extensions\notes-panel -o notes-panel.gsext
+   ```zsh
+   gs validate examples/extensions/notes-panel
+   gs check examples/extensions/notes-panel
+   gs pack examples/extensions/notes-panel -o notes-panel.gsext
    ```
 2. Install via **Install from file…**, enable it, and approve permissions.
 3. Open **Notes** in the sidebar and pick a folder on first open (you can forget it in extension settings).

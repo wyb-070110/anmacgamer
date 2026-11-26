@@ -159,7 +159,7 @@ SVG 图标（`svg:<路径>`，每扩展最多 64 个）：<= 32 KiB，根元素 
 
 ### `native`（`native`）
 
-需 `dll`（Windows `.dll` 或 `{ "x64": ..., "arm64": ... }`，最多 8 项）和/或 `dylib`（macOS `.dylib` 或按架构映射；见 [macOS](native.zh-CN.md#macos)）。`sandbox` 为 `"full"`（默认）或 `"restricted"`（[受限模式](native.zh-CN.md#受限模式)）。下表除注明外 `name` 为原生名（`title` <= 40、`description` <= 500），须与二进制贡献表一致。
+需 `dylib`（macOS 通用 `.dylib` 或 `{ "arm64": ..., "x64": ... }`，最多 8 项；见[原生扩展指南](native.zh-CN.md)）和/或 `dll`（Windows `.dll`，macOS 上忽略，同一包可同时附带）。`sandbox` 为 `"full"`（默认）或 `"restricted"`（[受限模式](native.zh-CN.md#受限模式)）。下表除注明外 `name` 为原生名（`title` <= 40、`description` <= 500），须与二进制贡献表一致。
 
 | 键 | 上限 | 字段 |
 |:--|:--|:--|

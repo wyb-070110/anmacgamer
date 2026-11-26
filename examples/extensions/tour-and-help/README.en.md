@@ -7,10 +7,10 @@ Demonstrates `contributes.tours` (5-step tour) and `contributes.help` (two bilin
 ## Try it
 
 1. Validate, check, and pack:
-   ```powershell
-   gs validate examples\extensions\tour-and-help
-   gs check examples\extensions\tour-and-help
-   gs pack examples\extensions\tour-and-help -o tour-and-help.gsext
+   ```zsh
+   gs validate examples/extensions/tour-and-help
+   gs check examples/extensions/tour-and-help
+   gs pack examples/extensions/tour-and-help -o tour-and-help.gsext
    ```
 2. Install via **Install from file…** and enable it.
 3. On first enable, the tour starts automatically and highlights the extension card, sidebar page, and Settings card (render panels on startup so targets are not skipped).

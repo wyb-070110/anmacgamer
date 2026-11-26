@@ -2,7 +2,7 @@
 
 [English](README.md) · 简体中文
 
-anmacgamer 扩展是一个含 `manifest.json` 的文件夹，打包为 `.gsext`（zip）。扩展可以只包含数据（主题、滤镜、方案、帮助），也可以包含 TypeScript 逻辑（运行在低权限子进程中），或基于 C 接口的原生 DLL/dylib。
+anmacgamer 扩展是一个含 `manifest.json` 的文件夹，打包为 `.gsext`（zip）。扩展可以只包含数据（主题、滤镜、方案、帮助），也可以包含 TypeScript 逻辑（运行在低权限子进程中），或基于 C 接口的原生 dylib（Windows 上为 DLL）。
 
 | 文档 | 内容 |
 |:--|:--|
@@ -13,6 +13,8 @@ anmacgamer 扩展是一个含 `manifest.json` 的文件夹，打包为 `.gsext`�
 | [打包与发布](publishing.zh-CN.md) | `gs pack`、签名、`gamescrcpy://` 链接、更新列表与 `.gsbundle` |
 
 具体函数签名见 [sdk/docs](../../sdk/docs/README.md)（[sdk/types](../../sdk/types/gamescrcpy.d.ts)）与 [gamescrcpy_ext.h](../../sdk/include/gamescrcpy_ext.h)，均由 `gs api write sdk` 生成。
+
+命令行工具 `gs` 位于应用内 `/Applications/anmacgamer.app/Contents/MacOS/gs`（源码编译版为 `build/mac-app/bin/anmacgamer.app/Contents/MacOS/gs`）。在 `~/.zshrc` 中加上一行 `alias gs=/Applications/anmacgamer.app/Contents/MacOS/gs`，下文中的 `gs` 命令即可直接运行。
 
 ## 扩展能做什么
 
@@ -125,8 +127,8 @@ anmacgamer 2.2.0 提供的版本：
 ## 代码在哪里运行
 
 - 数据：不执行代码（滤镜着色器在 GPU 执行，`gs validate` 会预先编译检查）。
-- 逻辑：运行在低权限 `gs-scripthost.exe` 子进程，每次 API 调用均做权限校验。`"run": "session"` 按投屏手机各运行一份，`"run": "app"` 整个程序一份。界面由 anmacgamer 按声明树绘制。
-- 原生：每个扩展独立运行在 `gs-exthost.exe` 进程中，崩溃不连累主程序。默认 `"sandbox": "full"` 拥有当前账户权限且安装检查更严；`"sandbox": "restricted"` 运行在 AppContainer（或 macOS 沙箱）中，无直接文件、网络或进程权限，见[受限模式](native.zh-CN.md#受限模式)。
+- 逻辑：运行在低权限 `gs-scripthost` 子进程（位于 `Contents/MacOS`），每次 API 调用均做权限校验。`"run": "session"` 按投屏手机各运行一份，`"run": "app"` 整个程序一份。界面由 anmacgamer 按声明树绘制。
+- 原生：每个扩展独立运行在 `gs-exthost` 进程（位于 `Contents/MacOS`）中，崩溃不连累主程序。默认 `"sandbox": "full"` 拥有当前账户权限且安装检查更严；`"sandbox": "restricted"` 运行在 macOS `sandbox_init` 沙箱中（Windows 上为 AppContainer），无直接文件、网络或进程权限，见[受限模式](native.zh-CN.md#受限模式)。
 
 ## 安装、同意与更新
 
@@ -140,8 +142,8 @@ anmacgamer 2.2.0 提供的版本：
 
 - 扩展卡片与详情列出清单、版本、依赖与权限同意问题。
 - 独立进程 1 分钟内停 3 次，或附加/行为 10 秒内失败 3 次，扩展会自动关闭；重新启用可清除健康记录。
-- 日志位于 `%APPDATA%\GameScrcpy\logs`（便携版 `data\logs`），前缀为 `[extensions] <id>:` 与 `logic <名字> on <手机>:`。**设置 > 关于 > 导出诊断包…**包含健康与崩溃记录。
-- 可用扩展页**查找出问题的扩展**二分排查，或运行 `GameScrcpy.exe --safe-mode`（带扩展崩溃后下次启动也会自动进入安全模式）。
+- 日志位于 `~/Library/Application Support/anmacgamer/logs`，前缀为 `[extensions] <id>:` 与 `logic <名字> on <手机>:`。**设置 > 关于 > 导出诊断包…**包含健康与崩溃记录。
+- 可用扩展页**查找出问题的扩展**二分排查，或运行 `/Applications/anmacgamer.app/Contents/MacOS/anmacgamer --safe-mode`（带扩展崩溃后下次启动也会自动进入安全模式）。
 
 ## 示例
 

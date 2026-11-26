@@ -159,7 +159,7 @@ Fields: `name` (native name; called as `<ext-id>/<name>`), `title` (<= 40), `des
 
 ### `native` (`native`)
 
-Requires `dll` (Windows `.dll` or `{ "x64": ..., "arm64": ... }`, max 8 entries) and/or `dylib` (macOS `.dylib` or per-arch map; see [macOS](native.md#macos)). `sandbox` is `"full"` (default) or `"restricted"` ([Restricted mode](native.md#restricted-mode)). All `name`s below are native names unless noted (`title` <= 40, `description` <= 500) and must match the binary's contribution table.
+Requires `dylib` (macOS universal `.dylib` or `{ "arm64": ..., "x64": ... }`, max 8 entries; see [Native guide](native.md)) and/or `dll` (Windows `.dll`, ignored on macOS; a package may ship both). `sandbox` is `"full"` (default) or `"restricted"` ([Restricted mode](native.md#restricted-mode)). All `name`s below are native names unless noted (`title` <= 40, `description` <= 500) and must match the binary's contribution table.
 
 | Key | Max | Fields |
 |:--|:--|:--|
