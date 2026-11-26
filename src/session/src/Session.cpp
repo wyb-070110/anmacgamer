@@ -272,8 +272,8 @@ private:
             {
                 std::unique_lock lock(m_eventMutex);
                 m_wake.wait_until(lock, stop, std::min(nextPing, nextReport),
-                                  [this] { return m_fatal.has_value() || m_lost.has_value(); });
-                if (stop.stop_requested()) {
+                                  [this] { return m_serverStopped || m_fatal.has_value() || m_lost.has_value(); });
+                if (stop.stop_requested() || m_serverStopped) {
                     return std::nullopt;
                 }
                 if (m_fatal) {
@@ -315,11 +315,17 @@ private:
     {
         GS_ASSERT_ON_THREAD(m_onSessionThread);
         closeChannels();
+        if (serverStopped()) {
+            return std::nullopt;
+        }
         setPhase(SessionPhase::Reconnecting, lost);
         const auto deadline = SteadyClock::now() + m_options.linger;
         SessionFailure last = std::move(lost);
         bool afterFailure = false;
         while (!stop.stop_requested()) {
+            if (serverStopped()) {
+                return std::nullopt;
+            }
             if (std::optional<SessionFailure> ended = takeFatal()) {
                 return ended;
             }
@@ -354,15 +360,17 @@ private:
         if (requested) {
             setPhase(SessionPhase::Stopping);
         }
-        protocol::Goodbye goodbye;
-        if (!requested) {
-            goodbye.reason = ended && ended->kind == FailureKind::ProtocolError ? protocol::ErrorCode::MalformedFrame
-                                                                                 : protocol::ErrorCode::InternalError;
-        }
-        if (send(goodbye)) {
-            const auto deadline = SteadyClock::now() + m_options.stopGrace;
-            flush(deadline);
-            finishControl(deadline);
+        if (!serverStopped()) {
+            protocol::Goodbye goodbye;
+            if (!requested) {
+                goodbye.reason = ended && ended->kind == FailureKind::ProtocolError ? protocol::ErrorCode::MalformedFrame
+                                                                                    : protocol::ErrorCode::InternalError;
+            }
+            if (send(goodbye)) {
+                const auto deadline = SteadyClock::now() + m_options.stopGrace;
+                flush(deadline);
+                finishControl(deadline);
+            }
         }
         closeChannels();
         m_host->stop(m_options.stopGrace);
@@ -569,6 +577,12 @@ private:
         m_listener.onStateChanged(state);
     }
 
+    bool serverStopped()
+    {
+        const std::lock_guard lock(m_eventMutex);
+        return m_serverStopped;
+    }
+
     std::optional<SessionFailure> takeFatal()
     {
         const std::lock_guard lock(m_eventMutex);
@@ -605,6 +619,16 @@ private:
             if (const auto* pong = std::get_if<protocol::Pong>(&*message)) {
                 onPong(*pong);
             } else if (const auto* goodbye = std::get_if<protocol::ServerGoodbye>(&*message)) {
+                if (goodbye->reason == protocol::ErrorCode::None) {
+                    log::info(kLog, "[{}] the phone ended the session{}", m_id,
+                              goodbye->message.empty() ? "" : std::format(": {}", goodbye->message));
+                    {
+                        const std::lock_guard lock(m_eventMutex);
+                        m_serverStopped = true;
+                    }
+                    m_wake.notify_all();
+                    return;
+                }
                 SessionFailure ended = failure(FailureKind::ServerEnded,
                                                std::format("the server said goodbye ({}): {}",
                                                            protocol::enumName(goodbye->reason), goodbye->message));
@@ -847,6 +871,7 @@ private:
     std::condition_variable_any m_wake;
     std::optional<SessionFailure> m_lost;
     std::optional<SessionFailure> m_fatal;
+    bool m_serverStopped = false;
     bool m_controlReaderDone = true;
 
     std::jthread m_sessionThread;

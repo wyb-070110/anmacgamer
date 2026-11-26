@@ -271,6 +271,56 @@ class LanConnectorTest {
         }
     }
 
+    @Test
+    fun aStalePairingAtTheCurrentPortSwitchesImmediatelyToTheMatchingKnownPairing() {
+        FakeComputer(key, pc).use { computer ->
+            val gonePort = ServerSocket(0, 1, InetAddress.getLoopbackAddress()).use { it.localPort }
+            val oldPc1 = ByteArray(LanCodec.ID_SIZE) { (0x10 + it).toByte() }
+            val oldKey1 = ByteArray(LanCodec.KEY_SIZE) { (it * 3 + 9).toByte() }
+            val oldPc2 = ByteArray(LanCodec.ID_SIZE) { (0x20 + it).toByte() }
+            val oldKey2 = ByteArray(LanCodec.KEY_SIZE) { (it * 5 + 7).toByte() }
+            val current = Pairing(Hex.encode(pc), Hex.encode(key), "127.0.0.1", gonePort)
+            val stale1 = Pairing(Hex.encode(oldPc1), Hex.encode(oldKey1), "127.0.0.1", computer.port)
+            val stale2 = Pairing(Hex.encode(oldPc2), Hex.encode(oldKey2), "127.0.0.1", computer.port)
+            val store = MemoryPairings(listOf(current, stale1, stale2))
+            val delivered = LinkedBlockingQueue<LanConnection>()
+            LanConnector(store, Discovery { _, _ -> emptyMap() }, { delivered.put(it) }, Recorder(), timing).use { connector ->
+                connector.start(null)
+                val joined = delivered.poll(5, TimeUnit.SECONDS) ?: throw AssertionError("the matching pairing did not join")
+                assertEquals(Hex.encode(pc), joined.pc)
+                // Visit 1 was stale1 learning computer.id == pc; visit 2 is current joining with the right key.
+                computer.next()
+                val proven = computer.next()
+                val welcome = Codec.encodeFrame(Messages.CompanionWelcome())
+                joined.output.write(welcome)
+                joined.output.flush()
+                assertArrayEquals(welcome, proven.receive())
+                assertEquals(Pairing(Hex.encode(pc), Hex.encode(key), "127.0.0.1", computer.port), store.all().first())
+                joined.close()
+            }
+        }
+    }
+
+    @Test
+    fun stoppingBeforeCloseLeavesTheLiveConnectionOpenForGoodbye() {
+        FakeComputer(key, pc).use { computer ->
+            val store = MemoryPairings(listOf(Pairing(Hex.encode(pc), Hex.encode(key), "127.0.0.1", computer.port)))
+            val delivered = LinkedBlockingQueue<LanConnection>()
+            LanConnector(store, Discovery { _, _ -> emptyMap() }, { delivered.put(it) }, Recorder(), timing).use { connector ->
+                connector.start(null)
+                val live = delivered.poll(5, TimeUnit.SECONDS) ?: throw AssertionError("nothing was delivered")
+                val visit = computer.next()
+                connector.stop()
+                val goodbye = Codec.encodeFrame(Messages.ServerGoodbye())
+                live.output.write(goodbye)
+                live.output.flush()
+                assertArrayEquals(goodbye, visit.receive())
+                live.close()
+                assertNull(delivered.poll(300, TimeUnit.MILLISECONDS))
+            }
+        }
+    }
+
     private fun hello() = Messages.CompanionHello().also {
         it.version = Constants.COMPANION_VERSION
         it.token = ByteArray(0)
