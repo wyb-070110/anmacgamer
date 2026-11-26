@@ -4,21 +4,21 @@ Notable changes are documented here following [Keep a Changelog](https://keepach
 
 ## [2.2.1-beta3] - 2026-11-25
 
-macOS beta release of **anmacgamer** (universal binary for Apple silicon and Intel, macOS 14 Sonoma and later):
+macOS 14+ universal beta of **anmacgamer**:
 
-- Trackpad swipes: phone-side touch timing now follows Mac input cadence with real finger lift velocity; fast flicks turn one home-screen page and lists keep native scroll momentum. Direct mode is now the default.
-- Mirror window and toolbar: customizable toolbar buttons on any side (hidden buttons move to More, and commands such as notifications, quick settings, files, latency, and mini window can be pinned), always-on-top across Spaces, and an option to turn off the phone screen while mirroring.
-- Input and profiles: Chinese pinyin composition preview on screen via Companion IME (hides the phone's soft keyboard while connected), built-in PC-style keymap profile for Honkai: Star Rail, and fixed-volume phone audio capture so macOS alone controls playback volume.
-- Connections and hardware: automatic wireless transport falls back to the adb tunnel when WiFi direct cannot reach the phone; companion-link mirroring without adb (`TransportKind::Companion`); USB AOA touch and `/dev/cu.*` serial ports wired up on macOS.
-- Branding and packaging: project renamed to anmacgamer with the new Icon Composer Liquid Glass icon and custom DMG volume icon.
+- Trackpad: touches match Mac cadence and lift velocity so home screens flip one page and lists keep native momentum; Direct mode is now default.
+- Window and toolbar: customizable toolbar buttons on any side, always-on-top across Spaces, and an option to turn off the phone screen while mirroring.
+- Input and audio: on-screen Chinese pinyin preview via **anmacgamer Companion** IME, built-in Honkai: Star Rail PC profile, and fixed-volume phone audio capture.
+- Connections and hardware: wireless transport falls back to the adb tunnel when Wi-Fi direct fails; adb-free Companion mirroring (`TransportKind::Companion`); USB AOA touch and `/dev/cu.*` serial ports wired up.
+- Branding: renamed to **anmacgamer** with a Liquid Glass icon and custom DMG icon.
 
 ## [2.2.1-beta2] - 2026-11-24
 
-Initial universal macOS 14+ beta build of **anmacgamer**:
+First macOS 14+ universal beta of **anmacgamer**:
 
-- Video and audio: VideoToolbox hardware decoding (H.264, H.265), dav1d AV1 decoding, Qt RHI (Metal) rendering paced to display refresh, SDL3 audio playback, and bundled LGPL FFmpeg and `adb`.
-- Input and connections: USB and wireless debugging (pairing code or QR), WiFi direct and adb tunnel, keyboard and mouse mapping without Input Monitoring permission, Xbox/PS4/PS5 controllers with rumble, and two-finger trackpad swipes.
-- macOS integration and automation: Liquid Glass UI, native menu bar and notifications, `sandbox_init`-confined blueprints/TypeScript (`gs-scripthost`) and `.dylib` native extensions (`gs-exthost`), Vision OCR, `AVSpeechSynthesizer` / `SFSpeechRecognizer` speech, and Keychain storage for AI keys.
+- Video and audio: VideoToolbox (H.264/H.265) and dav1d (AV1) decoding, Metal rendering, SDL3 audio, bundled LGPL FFmpeg and `adb`.
+- Connections and input: USB, wireless debugging, Wi-Fi direct/adb tunnel, key/mouse mapping without Input Monitoring, Xbox/PS4/PS5 rumble controllers, and two-finger trackpad swipes.
+- macOS and automation: Liquid Glass UI, native menu bar and notifications, sandboxed scripts (`gs-scripthost`) and `.dylib` extensions (`gs-exthost`), Vision OCR, speech, and Keychain AI keys.
 
 ---
 

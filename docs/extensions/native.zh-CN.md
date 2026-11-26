@@ -2,75 +2,58 @@
 
 [English](native.md) · 简体中文
 
-原生扩展是一个用 C 或 C++ 写的 Windows DLL，照 [`sdk/include/gamescrcpy_ext.h`](../../sdk/include/gamescrcpy_ext.h) 的接口和 anmacgamer 打交道。要直接碰硬件、要每帧都快速处理触点、要给程序加新的设备或连接方式时用它；只是画界面、调已有接口的，用[逻辑](logic.zh-CN.md)更简单，也不需要用户完全信任你。
+原生扩展是用 C/C++ 编写的 DLL（Windows）或 dylib（macOS），对接 [`sdk/include/gamescrcpy_ext.h`](../../sdk/include/gamescrcpy_ext.h)（`GS_EXT_ABI_VERSION` 2，由 `gs api write sdk` 生成）。适合直接操作硬件、每帧低延迟触控或提供自定义设备/连接/媒体/AI/识别引擎；画界面或调用常规接口请优先用[逻辑扩展](logic.zh-CN.md)。
 
-头文件由 `gs api write sdk` 从程序里的接口表生成，每个结构、字段和函数的说明都在里面，这里讲怎么把它们用起来。这一页说的接口版本是 `GS_EXT_ABI_VERSION` 2。
-
-## 一个最小的 DLL
+## 最小示例
 
 ```cpp
 #include <gamescrcpy_ext.h>
-
 #include <string>
 
 namespace {
-
 const gs_ext_host* g_host = nullptr;
 
-int32_t greet(void*, const gs_ext_value* args, uint32_t, gs_ext_result* result)
-{
+int32_t greet(void*, const gs_ext_value* args, uint32_t, gs_ext_result* result) {
     const std::string text = "Hello, " + std::string(args[0].text, args[0].size) + "!";
     return g_host->set_text(result, GS_EXT_TYPE_STRING, text.data(), text.size());
 }
 
 const uint32_t kGreetParams[] = {GS_EXT_TYPE_STRING};
-
 const gs_ext_node kGreet = {sizeof(gs_ext_node), "greet", kGreetParams, 1, GS_EXT_TYPE_STRING, nullptr, &greet};
-
 const gs_ext_contribution kContributions[] = {
     {sizeof(gs_ext_contribution), GS_EXT_KIND_NODE, "greet", &kGreet},
 };
-
 const gs_ext_plugin kPlugin = {sizeof(gs_ext_plugin), GS_EXT_ABI_VERSION, nullptr, 1, kContributions};
-
 }
 
-GS_EXT_EXPORT int32_t gs_ext_main(const gs_ext_host* host, const gs_ext_plugin** plugin)
-{
-    if (host == nullptr || plugin == nullptr || host->abi_version != GS_EXT_ABI_VERSION) {
-        return GS_EXT_UNSUPPORTED;
-    }
+GS_EXT_EXPORT int32_t gs_ext_main(const gs_ext_host* host, const gs_ext_plugin** plugin) {
+    if (!host || !plugin || host->abi_version != GS_EXT_ABI_VERSION) return GS_EXT_UNSUPPORTED;
     g_host = host;
     *plugin = &kPlugin;
     return GS_EXT_OK;
 }
 ```
 
-清单里写出同样的东西：
+清单（`"requires": { "native": "^2.0" }`）：
 
 ```json
-"requires": { "native": "^2.0" },
-"contributes": {
-  "native": {
-    "dll": "native.dll",
-    "nodes": [ { "name": "greet", "params": [ { "name": "name", "type": "string" } ], "returns": "string",
-                 "description": "Says hello to a name." } ]
-  }
+"native": {
+  "dll": "native.dll",
+  "nodes": [ { "name": "greet", "params": [ { "name": "name", "type": "string" } ], "returns": "string", "description": "Says hello." } ]
 }
 ```
 
-逻辑里这样调用：`ext.alice.hello.greet("world")`（扩展 id 的每一段写成小驼峰，`alice.lap-timer` 写成 `ext.alice.lapTimer`）。
+逻辑里调用 `ext.alice.hello.greet("world")`（id 各段小驼峰，如 `alice.lap-timer` -> `ext.alice.lapTimer`）。
 
-## 入口与结构的大小
+## 入口与结构版本
 
-- DLL 导出 `gs_ext_main`。anmacgamer 载入 DLL 后调它一次，传入宿主函数表 `gs_ext_host`；DLL 把指向自己的描述 `gs_ext_plugin` 的指针交回来。这份描述和它指向的一切由 DLL 持有，在 `unload` 被调用之前一直有效，anmacgamer 从不往里写。
-- 只导出旧入口 `gs_ext_entry`（接口版本 1）的 DLL 不会被载入：接口第 1 版属于 `native` 的 1.0，2.1 只提供 2.0。这样的 DLL 要用当前的 SDK 重新编译，清单里写 `"native": "^2.0"`。
-- 每个由 DLL 填写、或者含有数组的结构，第一个字段都是 `uint32_t size`，填 `sizeof`。双方只读两边都认识的字段，读不到的当作 0，所以以后的版本只在结构末尾加字段，新 DLL 在旧程序上、旧 DLL 在新程序上都能用。数组的元素结构（`gs_ext_value`、`gs_ext_contact` 等）头文件里写明“以后不改”，没有 `size`。
-- 后加的宿主函数在用之前先问 `supports("<功能名>")`。2.1.0 与 2.2.0 认识的功能名：`jobs`、`events`、`settings`、`claims`、`job-output`、`app-events`、`input-sources`、`services`、`transports`、`media`、`frame-taps`、`vision-engines`、`devices`。
+- 导出 `gs_ext_main`。在 `unload` 调用前保持 `gs_ext_plugin` 及其指向数据有效。旧入口 `gs_ext_entry`（ABI 1）不再加载，需用新 SDK 重编并写 `"native": "^2.0"`。
+- 由扩展填写或含数组的结构以 `uint32_t size = sizeof(...)` 开头以实现前后兼容；固定数组元素（`gs_ext_value`、`gs_ext_contact` 等）无 `size`。
+- 后加功能先用 `supports("<功能>")` 检查。2.1.0 / 2.2.0 支持：`jobs`、`events`、`settings`、`claims`、`job-output`、`app-events`、`input-sources`、`services`、`transports`、`media`、`frame-taps`、`vision-engines`、`devices`。
 
 ## 贡献表
 
-`gs_ext_plugin.contributions` 是 `gs_ext_contribution { size, kind, name, data }` 的数组（最多 256 项），`kind` 是字符串，`data` 指向那一种的结构，`name` 与结构里的 `name` 都要和清单里的名字一致。anmacgamer 不认识的 `kind` 记一行日志后跳过，DLL 照常载入；清单里声明了、DLL 里却没有的，扩展页会写出来。
+`gs_ext_plugin.contributions` 最多 256 项 `gs_ext_contribution { size, kind, name, data }`，名称须与清单一致（未知 `kind` 记日志跳过）：
 
 | `kind` | 常量 | 结构 | 清单 |
 |:--|:--|:--|:--|
@@ -89,312 +72,173 @@ GS_EXT_EXPORT int32_t gs_ext_main(const gs_ext_host* host, const gs_ext_plugin**
 | `frame-tap` | `GS_EXT_KIND_FRAME_TAP` | `gs_ext_frame_tap` | `frameTaps` |
 | `vision-engine` | `GS_EXT_KIND_VISION_ENGINE` | `gs_ext_vision_engine` | `visionEngines` |
 
-语音引擎和 AI 服务提供者没有自己的种类：它们由清单把长任务和节点组合起来（见[语音引擎](#语音引擎)与 [AI 服务提供者](#ai-服务提供者)）。插件描述里另有五个可选回调：`unload`（卸载前调一次）、`settings_changed`、`claim_wanted`、`on_event`、`device_event`，用不到就填 `NULL`。
+语音引擎与 AI 服务提供者在清单中由节点和长任务组合。`gs_ext_plugin` 可选回调：`unload`、`settings_changed`、`claim_wanted`、`on_event`、`device_event`（不用填 `NULL`）。
 
 ## 宿主函数
 
+字符串均为带长度 UTF-8（除非注明以零结尾）。状态码（`gs_ext_status`）：`GS_EXT_OK`、`GS_EXT_FAILED`、`GS_EXT_UNSUPPORTED`、`GS_EXT_DENIED`、`GS_EXT_BAD_ARGUMENT`、`GS_EXT_BUSY`。
+
 | 函数 | 用途 |
 |:--|:--|
-| `log`、`now_us` | 写程序日志；只往前走的微秒时钟 |
-| `store_get`、`store_set` | 关掉程序后还在的存储，整个最多 1 MiB 的 JSON，每个值最多嵌套 64 层 |
-| `allowed`、`notify` | 问用户是否同意了某项权限；显示系统通知（要 `notify`） |
-| `set_text`、`set_error` | 节点把文字结果、失败原因写进 `gs_ext_result` |
-| `supports` | 问 anmacgamer 有没有某个后加的功能 |
-| `job_progress`、`job_log`、`job_finish`、`job_fail`、`job_output` | 长任务报进度、写日志、结束、中途交出部分结果 |
-| `emit_event` | 给本扩展的逻辑与面板（以及依赖它的扩展的逻辑）发事件 |
-| `events_subscribe` | 订阅 anmacgamer 的程序事件，在 `on_event` 里收 |
-| `setting_get` | 读扩展的设置 |
-| `devices_changed` | 让设备页重新列出某个设备提供者的设备 |
-| `claim`、`release` | 占用、放开硬件 |
-| `input_event` | 把输入设备的按键与轴送进键位 |
-| `call_service` | 调别的扩展的服务 |
-| `transport_changed`、`stream_opened`、`stream_data`、`stream_writable`、`stream_closed` | 连接方式 |
-| `sources_changed`、`video_frame`、`audio_samples`、`stream_ended` | 画面与声音来源 |
-| `device_list`、`device_open`、`device_write`、`device_control`、`device_close` | 经 anmacgamer 用用户允许的设备 |
+| `log`、`now_us`、`supports` | 写日志、单调微秒时钟、功能检测 |
+| `store_get`、`store_set` | 持久化 JSON 存储（总 <= 1 MiB，嵌套 <= 64 层） |
+| `allowed`、`notify` | 权限检查；系统通知（需 `notify`） |
+| `set_text`、`set_error` | 向 `gs_ext_result` 写入文本结果或错误 |
+| `job_progress`、`job_log`、`job_finish`、`job_fail`、`job_output` | 长任务生命周期与中间输出 |
+| `emit_event`、`events_subscribe` | 发自定义事件；订阅程序事件（`on_event`） |
+| `setting_get`、`devices_changed` | 读清单设置；刷新设备列表 |
+| `claim`、`release`、`input_event`、`call_service` | 硬件占用、输入事件、跨扩展服务调用 |
+| `transport_changed`、`stream_opened`、`stream_data`、`stream_writable`、`stream_closed` | 连接方式字节流 |
+| `sources_changed`、`video_frame`、`audio_samples`、`stream_ended` | 音视频来源 |
+| `device_list`、`device_open`、`device_write`、`device_control`、`device_close` | 经宿主代理的串口/HID/BLE 读写 |
 
-字符串都是 UTF-8、带长度、不要求以零结尾（结构里注明“ended by a zero byte”的除外）。返回值是 `gs_ext_status`：`GS_EXT_OK`、`GS_EXT_FAILED`、`GS_EXT_UNSUPPORTED`、`GS_EXT_DENIED`（缺权限）、`GS_EXT_BAD_ARGUMENT`、`GS_EXT_BUSY`。
+## 线程、时间与进程隔离
 
-## 线程与时间
+每个扩展独立运行在 `gs-exthost.exe`（macOS 为 `gs-exthost`）并通过共享内存通信。节点超时 > 2 秒或通道断开会终止宿主进程；1 分钟崩溃 3 次自动停用并写崩溃报告（minidump/`crash.txt`）。开发期可用 `gs ext test <文件夹> --hosted` 测独立进程（[测试扩展](testing.zh-CN.md)）。
 
-anmacgamer 在不同的线程上调 DLL，每种回调有自己的要求：
-
-| 回调 | 要求 |
+| 回调 / 调用 | 线程与时间规则 |
 |:--|:--|
-| 节点 `call` | 同一个 DLL 的节点一次一个，100 毫秒内返回；可能和触控方式同时被调 |
-| 触控方式 `open` / `close` / `frame` / `key`… | 同一时间只有一个线程调；`frame` 在实时线程上，要立刻返回 |
-| 附加、行为的回调 | 同一份状态一次一个，在实时线程上，不能等；在独立进程里每次最多 2 毫秒；10 秒内失败三次，整个扩展被关掉 |
-| 长任务 `start` | 立即返回，活在 DLL 自己的线程里干 |
-| 设备提供者 `list` | 100 毫秒内返回 |
-| `settings_changed` | 在 anmacgamer 的线程上调（进程内是界面线程，独立进程里是它的消息线程） |
-| `claim_wanted` | 一秒内回答 |
-| `on_event` | 在不画界面的线程上按顺序一个一个来，要很快返回；排队超过 256 个的会被丢掉 |
-| `call_service`、带 `GS_EXT_CLAIM_WAIT` 的 `claim` | 只能在长任务或 DLL 自己的线程里用，不能在节点、动作、触控方式、附加、行为、任务的 `start` 或回调里用 |
-| `device_list`、`device_open`、`device_write`、`device_control` | 只能在 DLL 自己的线程里用，最多等 20 秒；在 anmacgamer 的线程上返回 `GS_EXT_UNSUPPORTED` |
-| `device_event` | 在不画界面的线程上按设备发来的顺序一个一个来，要很快返回；排队超过 1024 个的会被丢掉 |
-| 识别引擎 `run` | 在 anmacgamer 为它开的、不画界面的线程上，每个引擎一次一张图；超过 5 秒逻辑得到错误，返回后才接下一张 |
-| `input_event`、`emit_event`、`job_*`、`device_close` | 任何线程都可以 |
+| 节点 `call` / 设备提供者 `list` | 单库串行，100 ms 内返回 |
+| 触控方式 `open`/`close`/`frame`/`key`… | 单线程；`frame` 在实时线程，立即返回 |
+| 附加 / 行为回调 | 实时线程禁阻塞；独立进程单次限 2 ms；10 秒失败 3 次停用扩展 |
+| 长任务 `start` | 立即返回，在自有线程干活 |
+| `settings_changed` / `claim_wanted` | 宿主线程 / 1 秒内回答 |
+| `on_event` / `device_event` | 非界面线程有序投递，需快返（积压超 256 / 1024 丢弃） |
+| `call_service`、`claim`（`GS_EXT_CLAIM_WAIT`） | 仅限长任务或自有线程（不可在宿主回调内调用） |
+| `device_list`/`open`/`write`/`control` | 仅限自有线程（最多等 20 秒；宿主线程返回 `GS_EXT_UNSUPPORTED`） |
+| 识别引擎 `run` | 专用非界面线程单帧串行（逻辑 5 秒超时） |
+| `input_event`、`emit_event`、`job_*`、`device_close` | 任意线程 |
 
-## 在哪个进程里运行
+## 系统节点、触控方式、附加与行为
 
-每个 DLL 都在自己的 `gs-exthost.exe` 进程里运行，anmacgamer 经共享内存的通道和它说话（只有随程序发布、`gamescrcpy.` 开头的官方扩展才会载入到 anmacgamer 自己的进程里，2.1 没有这样的扩展）。独立进程里有这些规矩：
-
-- 节点调用 2 秒没有回答、或通道坏了，进程会被结束，扩展页写“没有及时回应，已被结束”。
-- 进程意外退出时，anmacgamer 写一份崩溃报告（小型转储与写明出错模块和偏移的 `crash.txt`），记进扩展的健康状况；一分钟内停了三次，扩展被关掉，直到用户重新打开它。
-- 默认（`"sandbox": "full"`）进程以用户的权限运行，不是沙箱：DLL 能做的事和用户能做的一样多，所以安装前要过杀毒扫描与导入函数的检查。清单写 `"sandbox": "restricted"` 时进程在沙箱里，见[受限模式](#受限模式)。
-
-开发时用 `gs ext test <文件夹> --hosted` 让测试也在独立进程里跑（见[测试扩展](testing.zh-CN.md)）。
-
-## 系统节点
-
-`gs_ext_node { size, name, params, param_count, returns, context, call }`：`params` 是每个参数的 `gs_ext_type`，顺序和清单一致。`call` 收到的参数已经按类型检查过；把结果写进 `result->value`（文字类的用 `set_text`）并返回 `GS_EXT_OK`，失败时 `set_error` 写原因、返回 `GS_EXT_FAILED`，逻辑里得到 `GS-API-062` 和这句原因。节点要的权限写在清单 `nodes[].permissions` 里，用户没同意时逻辑得到 `GS-API-063`，不会调到 DLL。
-
-## 触控方式
-
-`gs_ext_touch_method` 出现在设置的“触控方式”里，排在普通、UHID、AOA 之后。`open` 收到 `gs_ext_touch_open`：手机序列号和一段 JSON 选项 `{ settings, deviceSettings, phone, device, touchBox }`——扩展的全局设置、这台手机的单独设置、给 `setting_get` 用的手机 id、用户为它选的 USB / 串口 / 蓝牙设备（清单 `wantsDevice` 为 `true` 时，`{ kind, path, name }`，否则 `null`）、从触控盒卡片开始控制或采集卡配了这个触控盒时的设备 id（别的为 `null`）。`frame` 收到一帧触点（坐标同时给出画面比例和手机自然方向的比例），`key`、`text`、`mouse`、`gamepad` 可以为 `NULL`（交给普通方式）。任何调用返回非 `GS_EXT_OK`，触控就退回普通方式。
-
-## 附加与行为
-
-- **附加**（`gs_ext_attachment`）挂在组件上：`input` 在组件看到输入之前改它、加事件或吞掉，`output` 在手指命令到手机之前改它、推迟、加命令或丢掉，`wake` 在要求的时间到了时交出推迟的东西。`start` 收到参数 JSON（清单 `params` 的值，加上组件位置 `@position` 和画面短边单位 `@unit`）与随机种子：同样的输入必须得到同样的输出，随机只能用这个种子。
-- **行为**（`gs_ext_behavior`）是组件库“扩展”分组里的一种新组件：清单声明它的输入槽和参数，`input` 收槽的事件，`frame`（`wants_frames` 为 1 时按输入整形的节拍调用）与 `wake` 里给出手指命令。
-
-这两种都在实时线程上调，不能等待、不能做文件或网络操作。
+- **系统节点**（`gs_ext_node`）：收到已校验 `args`，写 `result->value`（或 `set_text`）返回 `GS_EXT_OK`，失败用 `set_error` + `GS_EXT_FAILED`（逻辑收 `GS-API-062`）。缺 `nodes[].permissions` 直接报 `GS-API-063`。
+- **触控方式**（`gs_ext_touch_method`）：`open` 收 `gs_ext_touch_open`（序列号 + JSON `{ settings, deviceSettings, phone, device, touchBox }`）。`frame` 收画面比例与自然方向比例触点。`key`/`text`/`mouse`/`gamepad` 可为 `NULL`。非 `GS_EXT_OK` 回退普通触控。
+- **附加**（`gs_ext_attachment`）：`input`、`output`、`wake`；`start` 收参数 JSON（含 `@position`、`@unit`）与确定性随机种子。
+- **行为**（`gs_ext_behavior`）：自定义键位组件，含 `input`、`frame`（`wants_frames == 1`）、`wake`。
 
 ## 长任务
 
 ```cpp
 int32_t flashStart(void* context, uint64_t job, const char* args, size_t size);
 void flashCancel(void* context, uint64_t job);
-
 const gs_ext_job kFlash = {sizeof(gs_ext_job), "flash", nullptr, &flashStart, &flashCancel};
 ```
 
-- `start(context, job, args, size)`：`job` 是任务号，`args` 是符合清单 `params` 的 JSON 对象。立即返回 `GS_EXT_OK`，在自己的线程里干活；返回别的表示没开始，之后不能再提这个任务。
-- 进度用 `job_progress(context, job, 0～1 或 -1, 说明)`（每秒最多传 20 次）、日志用 `job_log`，最后**恰好一次** `job_finish(context, job, 结果 JSON)` 或 `job_fail(context, job, 原因)`。结果最多 252 KiB，要符合清单的 `returns`，没写 `returns` 的结果给逻辑的是 `null`。
-- `job_output(context, job, JSON)` 在任务进行中交出一部分结果（例如扫描时每找到一台设备），每秒最多 100 次，逻辑用 `job.onOutput()` 收。先问 `supports("job-output")`。
-- `cancel(context, job)` 请任务尽快停下；任务仍然以 `job_fail`（或已经做完时的 `job_finish`）结束。扩展被关掉、换版本或程序退出时，anmacgamer 先取消所有任务，3 秒后不再等。
-- 同一个扩展同时最多 4 个任务在跑，清单的 `most` 可以再收紧；逻辑超出时得到 `GS-API-067`。逻辑里任务失败是 `GS-API-065`、被取消是 `GS-API-066`。
-
-逻辑里这样用：
-
-```ts
-const job = ext.alice.board.flash({ port: "COM9" });
-job.onProgress((fraction, text) => log.info(Math.round(fraction * 100), text));
-const result = await job.result;
-```
-
-蓝图里一个任务是一个带“进度、完成、失败”出口的方块。设备卡片上的动作也能启动任务（见[设备提供者](#设备提供者)）。
+- `start` 收任务号 `job` 与 JSON `args`，立即返回 `GS_EXT_OK` 并在自有线程执行。
+- 过程用 `job_progress`（0..1 或 -1，限 20 次/秒）、`job_log` 与 `job_output`（中间 JSON，限 100 次/秒，先查 `supports("job-output")`）。结束时**恰好调用一次** `job_finish`（<= 252 KiB，符合 `returns`）或 `job_fail`。
+- `cancel` 请求停止（仍以 `job_fail`/`job_finish` 结束；退出最多等 3 秒）。并发最多 4 个（或清单 `most`，超出报 `GS-API-067`）。逻辑错误：`GS-API-065`（失败）、`GS-API-066`（取消）。
 
 ## 事件
 
-`emit_event(context, 主题, JSON)` 把事件发给本扩展的逻辑与面板，以及在 `dependencies` 里列了本扩展的扩展的逻辑：
-
-- 主题 1～64 个字节，只有小写字母、数字、`.` 和 `-`；不能以 anmacgamer 自己的前缀开头（`device.`、`session.`、`profile.`、`app.`、`orientation.`、`recording.`、`window.`、`extension.`、`settings.`），这样扩展不能冒充程序。
-- JSON 最大 64 KiB，空字符串表示 `null`。
-- 每个主题每秒前 100 条立刻送出，同一秒里之后的只留最后一条，在这一秒结束时送出。
-- 本扩展的逻辑用 `events.on("board.added", …)` 收，依赖它的扩展用 `events.on("alice.board:board.added", …)` 收。
+`emit_event(context, 主题, json)`：主题 1–64 字节 `[a-z0-9.-]`，禁以 `device.`、`session.`、`profile.`、`app.`、`orientation.`、`recording.`、`window.`、`extension.`、`settings.` 开头。JSON <= 64 KiB（空串即 `null`）。每秒前 100 条立刻送达，其余合并为最后一条。本扩展监听 `events.on("<主题>")`，依赖扩展监听 `events.on("<扩展 id>:<主题>")`。
 
 ## 程序事件
 
-`events_subscribe(context, 主题, 1)` 订阅 anmacgamer 自己的事件、`0` 退订，事件到 `on_event(context, 主题, JSON)`：
+`events_subscribe(context, 主题, 1|0)` 投递至 `on_event(context, 主题, json)`（未知报 `GS_EXT_UNSUPPORTED`，缺 `events.app` 报 `GS_EXT_DENIED`）：
 
 | 主题 | 值 | 权限 |
 |:--|:--|:--|
 | `device.connected`、`device.disconnected` | `{ phone, name }` | `events.app` |
-| `session.started`、`session.ended` | `{ phone, name }`，结束时多 `failed` | `events.app` |
+| `session.started`、`session.ended` | `{ phone, name, failed? }` | `events.app` |
 | `profile.applied` | `{ phone, name, profile, profileName }` | `events.app` |
 | `app.foreground` | `{ phone, name, package, game }` | `events.app` |
 | `orientation.changed` | `{ phone, name, rotation }`（四分之一圈） | `events.app` |
-| `recording.started`、`recording.ended` | `{ phone, name, path }`，结束时多 `durationMs` | `events.app` |
-| `window.focused` | `{ phone, name, window: "mirror" 或 "grid", focused }` | `events.app` |
+| `recording.started`、`recording.ended` | `{ phone, name, path, durationMs? }` | `events.app` |
+| `window.focused` | `{ phone, name, window: "mirror"\|"grid", focused }` | `events.app` |
 | `extension.enabled`、`extension.disabled` | `{ id, name, version }` | — |
-| `settings.changed` | `{ keys, values, extension, device }`，只说本扩展自己的设置与语言、外观设置 | — |
-
-不认识的主题返回 `GS_EXT_UNSUPPORTED`，缺 `events.app` 返回 `GS_EXT_DENIED`。合并规则同上。
+| `settings.changed` | `{ keys, values, extension, device }`（本扩展 + 语言/外观） | — |
 
 ## 设置
 
-清单 `settings` 里的设置用 `setting_get(context, 键, 手机, value)` 读，值以 JSON 文字放在 `value` 里，在同一线程下次调用前有效。手机传空是全局的值；传触控方式选项里的 `phone`，得到这台手机的单独值（`scope` 为 `device` 的设置），没有单独值时得到全局值。清单没声明的键返回 `GS_EXT_BAD_ARGUMENT`。用户改了设置后，anmacgamer 调 `settings_changed(context, 改了的键的 JSON 数组)`，只报真正变了的键。
+`setting_get(context, 键, 手机, value)` 返回 JSON 文本，同线程下次调用前有效（空 `手机` 为全局；未声明键报 `GS_EXT_BAD_ARGUMENT`）。`settings_changed` 收到实际变更键的 JSON 数组。
 
 ## 设备提供者
 
-`gs_ext_device_provider { size, name, context, list, act }`，要权限 `devices.provide`。`list` 用 `set_text` 写一个 JSON 数组（最多 64 台），每台：
-
-```json
-{ "id": "board-30C6F7A1", "name": "Touch box", "kind": "touchBox",
-  "summary": "Firmware 1.0.2 · phone on USB", "state": "ready", "stateText": "",
-  "icon": "svg:icons/board.svg", "touchMethod": "box", "resource": "serial:COM9", "capture": true,
-  "actions": [ { "id": "settings", "title": "Settings", "panel": "board" },
-               { "id": "flash", "title": "Flash firmware", "job": "flash" },
-               { "id": "disconnect", "title": "Disconnect" } ] }
-```
-
-| 字段 | 规则 |
-|:--|:--|
-| `id`、`name` | 必填，最多 64 个字节 |
-| `kind` | 清单 `kinds` 里的一种，现在是 `touchBox`：能触控、没有画面的盒子 |
-| `summary`、`stateText` | 卡片上的一行说明与状态文字，最多 200 个字节 |
-| `state` | `ready`、`busy`、`problem`、`offline`，省掉是 `ready` |
-| `icon` | 图标名或 `svg:<包内路径>` |
-| `touchMethod` | 本扩展的一个触控方式；“控制”用它打开无画面的控制窗口，设备 id 放进触控选项的 `touchBox` |
-| `resource` | 设备经由的硬件（写法同 `claim`）；别人占着时卡片写“正被 某某 使用” |
-| `capture` | `true` 表示可以配采集卡画面：盒子连着时出现在采集卡设置的“触控方式”里，选了它，采集卡就用 `touchMethod` 触控，触控选项的 `touchBox` 同样是设备 id |
-| `actions` | 最多 8 个按钮：`panel` 打开本扩展的一个面板（`where` 为 `device`），`job` 启动本扩展的一个任务，两者都没有的交给 `act` |
-
-id 为 `settings` 的动作是卡片上的设置按钮，其余进卡片的“更多”菜单。任务的参数里有字符串参数 `device` 时，卡片把设备 id 传进去。设备变了就调 `devices_changed(context, 提供者名)`，anmacgamer 会重新 `list`。
+`gs_ext_device_provider { size, name, context, list, act }`（需 `devices.provide`）。`list` 用 `set_text` 写 <= 64 项 JSON：`{ id*, name* (<= 64 B), kind ("touchBox"), summary (<= 200 B), state (ready|busy|problem|offline), stateText (<= 200 B), icon, touchMethod, resource, capture, actions (<= 8: { id, title, panel?, job? }) }`。`id: "settings"` 为设置按钮，其余进“更多”（含字符串参数 `device` 的任务自动传入设备 id；无 `panel`/`job` 调 `act`）。变化时调 `devices_changed(context, 提供者名)`。
 
 ## 硬件占用
 
-打开串口、HID、蓝牙或 USB 设备之前，先 `claim(context, 资源, flags)`，用完 `release`。资源名不分大小写：`serial:COM9`、`ble:AA:BB:CC:DD:EE:FF`、`hid:` 加 CreateFile 打开的路径、`usb:<vid>:<pid>:<序列号>`（十六进制）。
-
-- 别人占着时返回 `GS_EXT_BUSY`。带 `GS_EXT_CLAIM_WAIT` 时先问占用方，对方同意就最多等 3 秒它放开——这要时间，只能在长任务或 DLL 自己的线程里用。
-- 别人想要你占着的硬件时，anmacgamer 调 `claim_wanted(context, 资源, 谁)`：一秒内返回 `GS_EXT_OK` 并在 3 秒内 `release` 表示让出，返回别的表示不让。`NULL` 等于不让。
-- 扩展停下时，它占的全部放开。程序自己的 AOA 会话也走这一套，逻辑里的 `hardware.claim` 与此同义。
+打开硬件前调 `claim(context, 资源, flags)`，用完 `release`。资源名不区分大小写：`serial:COM9`、`ble:AA:BB:CC:DD:EE:FF`、`hid:<路径>`、`usb:<vid>:<pid>:<序列号>`（十六进制）。被占返回 `GS_EXT_BUSY`；`GS_EXT_CLAIM_WAIT` 先经 `claim_wanted(context, 资源, 谁)` 询问（1 秒内返回 `GS_EXT_OK` 且 3 秒内 `release` 即让出）。停止时自动释放。与 AOA 及 `hardware.claim` 共用。
 
 ## 输入设备
 
-清单 `inputSources` 声明设备和它的槽（`button`、`axis`、`stick`），贡献表里登记 `gs_ext_input_source { size, name }`，要权限 `input.provide`。按键或轴变化时调 `input_event(context, 设备, 槽, x, y, 时间)`：按钮按下 `x` 为 1、松开为 0，轴 `x` 为 -1～1，摇杆 `x` 左 -1 右 1、`y` 上 -1 下 1，时间用 `now_us` 的微秒或 0 表示现在。任何线程都可以调，立即返回；每个设备每秒最多 1000 条，回到 0 的总能送达。
-
-方案里绑定写 `Ext.<扩展 id>.<设备>.<槽>`，键位编辑器等按键时直接按那个设备就能录入。扩展停下时它的按键全部松开、轴回到 0。
+`gs_ext_input_source { size, name }`（需 `input.provide` 与清单 `inputSources`）。任意线程调 `input_event(context, 设备, 槽, x, y, 微秒)`（按钮 `x` 0/1；轴 `x` -1..1；摇杆 `x,y` -1..1；时间 0 为现在；限 1000 次/秒，归零必达）。方案绑定 `Ext.<扩展 id>.<设备>.<槽>`。
 
 ## 服务
 
-`call_service(context, "<扩展 id>/<服务>", 参数 JSON, result)` 调别的扩展在 `contributes.services` 里提供的服务，最多等 10 秒。成功时 `result` 里是结果 JSON；失败时是原因：`GS_EXT_UNSUPPORTED`（没有打开的扩展提供它，或在 anmacgamer 的线程上调了）、`GS_EXT_DENIED`（本扩展的 `dependencies` 里没列对方）、`GS_EXT_BAD_ARGUMENT`（参数或结果不符合对方的 schema）、`GS_EXT_FAILED`（服务失败或超时）。只能在 DLL 自己的线程里调；先问 `supports("services")`。
-
-DLL 自己回答服务时，服务的 `node` 指向一个只有一个 `json` 参数、返回 `json` 的节点，它收到 `{ caller, permissions, input }`：调用方的扩展 id（用户自己的逻辑是空串）、双方都有的权限，和参数。`allowed()` 只回答本扩展自己的权限，所以要按 `permissions` 自己判断能为调用方做什么。
+`call_service(context, "<扩展 id>/<服务>", 参数 JSON, result)`（仅自有线程，先查 `supports("services")`，10 秒超时）。错误：`GS_EXT_UNSUPPORTED`、`GS_EXT_DENIED`（未列 `dependencies`）、`GS_EXT_BAD_ARGUMENT`（schema）、`GS_EXT_FAILED`。用 `node` 提供服务时接单 `json` 参数 `{ caller, permissions, input }` 并返回 `json`（按 `permissions` 鉴权，勿只看 `allowed()`）。
 
 ## 语音引擎
 
-语音引擎由清单把任务和节点组合起来，扩展的引擎 id 是 `<扩展 id>/<名字>`，出现在设置 › 音频 › “朗读与语音命令”的下拉里，逻辑的 `speech.*` 也能选它：
-
-```json
-"speechEngines": [ { "name": "cloud", "title": "Cloud voice", "say": "speak", "voices": "voices",
-                     "listen": "hear", "dictation": false, "languages": ["en-US", "zh-CN"] } ]
-```
-
-- `say` 任务的参数正好是 `text`（string）、`voice`（string，空是默认）、`rate`（number，0.5～2）、`volume`（number，0～1）；读完才结束，取消就停。
-- `listen` 任务的参数正好是 `phrases`（json：字符串数组，或能自由听写时为 `null`）、`language`（string）、`confidence`（number）；一直跑到被取消，每听到一句用 `job_output` 交出 `{ phrase, text, confidence }`。
-- `voices` 节点没有参数、返回 json 数组 `[{ id, name, language }]`。
-
-清单检查会核对这些任务和节点在不在、参数对不对（`speech-engine-invalid`）。
+清单 `speechEngines` 组合任务与节点（id `<扩展 id>/<名字>`，校验码 `speech-engine-invalid`）：
+- `say` 任务：参数 `text`（string）、`voice`（string）、`rate`（number 0.5–2）、`volume`（number 0–1）。
+- `listen` 任务：参数 `phrases`（json 数组或 `null`）、`language`（string）、`confidence`（number）；经 `job_output` 持续输出 `{ phrase, text, confidence }` 直至取消。
+- `voices` 节点：无参返回 json `[{ id, name, language }]`。
 
 ## 连接方式
 
-`gs_ext_transport` 给程序加一种连手机的办法（中转服务器、隧道、云手机、别的发现方式），要权限 `transport`，联网的另加 `network`：
+`gs_ext_transport`（需 `transport`，联网另加 `network`；先查 `supports("transports")`）：
+- `discover` 在 100 ms 内写 `[{ id, name, model, detail }]`，变化调 `transport_changed`。
+- `open(context, stream, gs_ext_stream_open*)` 为 `control`/`video`/`audio`/`bulk` 立即返回，20 秒内调 `stream_opened` 或 `stream_closed`。负责启动手机服务端并连到 `gs_ext_stream_open.session`。
+- `send` 单次 <= 64 KiB（`GS_EXT_OK` 全收；`GS_EXT_BUSY` 未收，等 `stream_writable`）。手机来数据调 `stream_data`，断开调 `stream_closed` / `close`。
 
-- `discover` 用 `set_text` 写出现在能连的手机 `[{ id, name, model, detail }]`，100 毫秒内返回；能连的手机变了就调 `transport_changed`。这些手机出现在设备页，标出连接方式。
-- 会话的每个通道（先 `control`，再按需 `video`、`audio`、`bulk`）各要一条字节流：`open(context, stream, gs_ext_stream_open*)` 立即返回，能传数据时调 `stream_opened`，连不上时调 `stream_closed` 并写原因，都要在 20 秒内。这条流要通到这次会话的服务端在手机上监听的抽象套接字（`gs_ext_stream_open.session` 里写着它、会话的 token，以及 anmacgamer 经 adb 启动服务端的做法），在手机上启动服务端是连接方式自己的事。anmacgamer 在这条流上跑正常的会话协议，所以加密、认证和画面编码都不变。
-- `send` 每次最多 64 KiB：`GS_EXT_OK` 表示全部收下，`GS_EXT_BUSY` 表示一个也没收，等 `stream_writable` 后 anmacgamer 再发。从手机来的字节用 `stream_data` 按顺序交上来。
-- 流断了（包括手机那边关了）调 `stream_closed`；会话按连接断开处理并尝试续上。anmacgamer 用完一条流时调 `close`。
+## 画面、声音、媒体输出与取帧
 
-先问 `supports("transports")`。
-
-## 画面、声音与媒体输出
-
-要权限 `media.capture`（来源）或 `media.output`（输出、导出）。先问 `supports("media")`。
-
-- **画面来源** `gs_ext_video_source`：`list` 写出能打开的画面 `[{ id, name }]`，它们像采集卡一样出现在设备页；`open(context, id, 参数, stream)` 立即返回，之后在自己的线程里用 `video_frame(context, stream, gs_ext_video_frame*)` 交帧（`GS_EXT_PIXEL_BGRA` 或 `GS_EXT_PIXEL_NV12`，2～4096 像素，时间戳用 `now_us` 的时钟），anmacgamer 复制进一个几帧的环、显示最新的一帧。设备拔了用 `stream_ended` 说明原因；画面列表变了调 `sources_changed`。
-- **声音来源** `gs_ext_audio_source`：同样的 `list` / `open` / `close`，用 `audio_samples` 交 48 kHz 的 16 位或浮点 PCM（1～8 声道）。和同一个扩展里 id 相同的画面一起播放。
-- **媒体输出** `gs_ext_media_sink`：用户在投屏窗口的“更多”菜单里把窗口送到这里（虚拟摄像头、推流、OBS 等）。`open` 收到手机、尺寸与格式，`frame` 收到按清单尺寸加了黑边的 BGRA 帧，`audio` 收到声音，都要复制后立即返回；`close` 时释放。
-- **录像导出** `gs_ext_recording_exporter`：录像列表“导出为”里多一种格式。`start(context, job, 输入 MP4 路径, 输出路径)` 像长任务一样在自己的线程里转换，用 `job_progress` 报进度、`job_finish` / `job_fail` 结束；算作扩展的 4 个任务之一。
-
-## 取帧
-
-`gs_ext_frame_tap` 读每台手机的全速投屏画面（用户在投屏窗口的“更多”菜单里打开它），要权限 `media.read`，先问 `supports("frame-taps")`。`open` 收到手机、尺寸与旋转（画面转了或尺寸变了会关掉再打开），`frame` 在 anmacgamer 为它开的线程上收到只读的 BGRA 帧（长边按清单的 `size` 缩小、每秒不超过清单的 `fps`），可以慢慢处理，期间新来的帧只留最新的一帧。`frame` 可以往 `gs_ext_overlay` 里放最多 256 个形状（矩形、线、点、文字，颜色取主题的几种），画在画面上；每一帧的形状替换上一帧的，`keep` 设为 1 保留上次的。
-
-逻辑里拿低频的帧用 `media.frames`（见[逻辑扩展指南](logic.zh-CN.md)）。
+先查 `supports("media")` / `supports("frame-taps")`：
+- **音视频来源**（`gs_ext_video_source`、`gs_ext_audio_source`，需 `media.capture`）：`list`/`open`/`close`，推送 `video_frame`（`GS_EXT_PIXEL_BGRA` 或 `GS_EXT_PIXEL_NV12`，2–4096 px）与 `audio_samples`（48 kHz 16 位/浮点 PCM，1–8 声道）；变化调 `sources_changed`/`stream_ended`。
+- **媒体输出**（`gs_ext_media_sink`，需 `media.output`）：`open`、`frame`（加黑边 BGRA）、`audio`、`close`，复制后立即返回。
+- **录像导出**（`gs_ext_recording_exporter`，需 `media.output`）：`start(context, job, 输入 MP4, 输出路径)` 按长任务执行（计入 4 任务上限）。
+- **取帧**（`gs_ext_frame_tap`，需 `media.read`）：`open`（尺寸/旋转变化时重开），`frame` 在专用线程收 BGRA（仅留最新帧）并向 `gs_ext_overlay` 写最多 256 个形状（`keep = 1` 保留上一帧）。
 
 ## 经 anmacgamer 用设备
 
-`device_list`、`device_open`、`device_write`、`device_control`、`device_close` 让 DLL 经 anmacgamer 用用户允许给这个扩展的串口、HID 与低功耗蓝牙设备，和逻辑的 `hardware.*` 是同一套：设备由扩展的逻辑用 `hardware.request` 请用户勾选（例如在它的面板上），用户在扩展页收回。要权限 `hardware`，先问 `supports("devices")`。[受限模式](#受限模式)的 DLL 只能这样碰硬件，完全权限的 DLL 也可以用。
-
-- `device_list(context, devices)` 把允许的设备写成 JSON 数组 `[{ id, kind, name, present }]`：`kind` 是 `serial`、`hid` 或 `ble`，`present` 说明现在连着没有。
-- `device_open(context, id, 选项, &device, answer)` 打开一台、给出设备号；串口的选项同逻辑的 `hardware.open`（`{ baudRate, dataBits, parity, stopBits, flowControl, dtr, rts }`），别的设备传空。anmacgamer 顺带替扩展占用这台设备的硬件（见[硬件占用](#硬件占用)），设备关掉时放开。没有权限或用户没允许是 `GS_EXT_DENIED`，选项不可能时是 `GS_EXT_BAD_ARGUMENT`，没连着、别人在用或打不开是 `GS_EXT_FAILED`，原因写在 `answer` 里。打开蓝牙设备可能要几秒。
-- `device_write(context, device, 数据, 大小, target, answer)` 发数据，设备收下才返回：串口原样发，最多 65536 字节；HID 是输出报告，`target` 写 `{ "report": id }`，最多 4096 字节；蓝牙是特征的新值，`target` 写 `{ "service": uuid, "characteristic": uuid, "response": true }`，最多 512 字节（`response` 为 `false` 时不等设备确认）。
-- `device_control(context, device, 请求, answer)` 做 `hardware.control` 能做的其余的事，请求的 `op` 是 `signals`（串口的 DTR / RTS）、`sendFeature` / `getFeature`（HID 的特性报告）、`services`（列出蓝牙设备的服务与特征）、`read`（读特征）或 `subscribe`（打开或关掉特征的通知）；字节两边都用 base64 文字。
-- `device_close(context, device)` 立即返回，任何线程都能调，`unload` 里也行；扩展停下或它的进程停了，anmacgamer 自己关掉它的设备。
-- 设备发来的东西到插件描述的 `device_event(context, gs_ext_device_event*)`：`GS_EXT_DEVICE_DATA`（串口的字节）、`GS_EXT_DEVICE_REPORT`（HID 的输入报告，`report` 是报告号）、`GS_EXT_DEVICE_NOTIFY`（订阅的蓝牙特征变了，`service` 与 `characteristic` 写出是哪个）、`GS_EXT_DEVICE_CLOSED`（设备自己关了，`reason` 是 `removed`、`failed` 或 `forgotten`）。
-- `device_list`、`device_open`、`device_write`、`device_control` 要等 anmacgamer（最多 20 秒），只能在 DLL 自己的线程里调，在 anmacgamer 的线程上返回 `GS_EXT_UNSUPPORTED`；它们给的文字在同一线程下次调用前有效。
+需 `hardware` 与 `supports("devices")`，与 `hardware.request` 共用授权列表：
+- `device_list` -> `[{ id, kind: serial|hid|ble, name, present }]`。
+- `device_open(context, id, 选项, &device, answer)`（串口选项 `{ baudRate, dataBits, parity, stopBits, flowControl, dtr, rts }`；自动占用硬件）。
+- `device_write`（串口 <= 65536 B；HID `target: { report }` <= 4096 B；BLE `target: { service, characteristic, response }` <= 512 B）。
+- `device_control`（`op`：`signals`、`sendFeature`、`getFeature`、`services`、`read`、`subscribe`；字节均用 base64）。
+- `device_close`（任意线程，`unload` 安全）。事件到 `device_event`：`GS_EXT_DEVICE_DATA`、`GS_EXT_DEVICE_REPORT`、`GS_EXT_DEVICE_NOTIFY`、`GS_EXT_DEVICE_CLOSED`（`removed`/`failed`/`forgotten`）。
 
 ## 识别引擎
 
-`gs_ext_vision_engine { size, name, kinds, context, run }` 给逻辑的 `vision.recognize` 认字（`ocr`）、找东西（`detect`）、分辨画面（`classify`），和 Windows 自带的识字（引擎 id `system`）排在一起，扩展的引擎 id 是 `<扩展 id>/<名字>`。清单的 `visionEngines` 写出它认哪几种、认哪些语言；结构里的 `kinds` 是 `1u << GS_EXT_VISION_OCR` 这样的位，至少包括清单写的那几种。每个 DLL 最多 4 个。它不要权限（调它的逻辑要 `device.screen`）；先问 `supports("vision-engines")`。
-
-```cpp
-int32_t readText(void* context, uint32_t kind, const gs_ext_image* image, const char* params, size_t size,
-                 gs_ext_result* out);
-
-const gs_ext_vision_engine kReader = {sizeof(gs_ext_vision_engine), "reader", 1u << GS_EXT_VISION_OCR, nullptr,
-                                      &readText};
-```
-
-- `run(context, kind, image, params, size, out)` 收到逻辑要看的那块画面：`gs_ext_image` 是 BGRA（alpha 总是 255），宽高 1～4096 像素，`stride` 至少 4 × 宽，只读，`run` 返回前有效；在 `gs-exthost.exe` 里经只读的共享内存交过来。`params` 是逻辑传的 JSON 对象（没传是 `{}`）。
-- 结果用 `set_text` 写成 JSON 数组、返回 `GS_EXT_OK`：`ocr` 每段字 `{ text, x, y, width, height, confidence }`，`detect` 每个东西 `{ label, x, y, width, height, confidence }`，`classify` 每个类别 `{ label, confidence }`。`x`、`y` 是中心，`width`、`height` 是大小，都是这块图的比例（0～1），anmacgamer 换算成整个画面的比例交给逻辑；`confidence` 是 0～1。不认的 `params` 返回 `GS_EXT_BAD_ARGUMENT`，失败时 `set_error` 写原因、返回 `GS_EXT_FAILED`。
-- anmacgamer 在自己开的、不画界面的线程上调它，每个引擎一次一张图，可能和节点、任务、别的引擎同时。超过 5 秒逻辑得到 `GS-API-174`，引擎返回后才接下一张。逻辑里的其他错误：`GS-API-170`（没有这个引擎或它的扩展没开）、`GS-API-171`（它不认这一种或这种语言）、`GS-API-172`（参数不对）、`GS-API-173`（引擎失败或结果不是合法的列表）。
-
-逻辑里这样用：`await vision.engine("alice.finder/reader").read(res.region("Chat"))`，或 `vision.recognize("alice.finder/reader", "ocr", 区域, 参数)`。
+`gs_ext_vision_engine { size, name, kinds, context, run }`（单库最多 4 个，无需权限，先查 `supports("vision-engines")`）。`kinds` 位掩码（如 `1u << GS_EXT_VISION_OCR`）须覆盖清单 `visionEngines[].kinds`。`run` 收只读 BGRA `gs_ext_image`（1–4096 px，`stride >= 4 * width`，alpha 255）与 JSON `params`，经 `set_text` 输出 JSON 数组：`ocr` `{ text, x, y, width, height, confidence }`、`detect` `{ label, x, y, width, height, confidence }`、`classify` `{ label, confidence }`（归一化 0..1）。逻辑错误：`GS-API-170`..`174`。
 
 ## AI 服务提供者
 
-AI 服务提供者让设置 › AI 的“模型服务”里多一项：小助手和逻辑的 `ai.ask` 都能用它，模型列表与深度思考、思考强度、长上下文的选项也照它给的来。它没有自己的贡献种类，由清单把一个节点和一个长任务组合起来，要权限 `ai.provide`（要联网的另加 `network`，在 `hosts` 里列出服务的域名）：
-
-```json
-"aiProviders": [ { "name": "cloud", "title": "My model service", "models": "models", "chat": "chat" } ],
-"nodes": [ { "name": "models", "returns": "json", "description": "The models this service offers." } ],
-"jobs": [ { "name": "chat", "title": "Answer", "params": [ { "name": "request", "type": "json" } ], "returns": "json" } ]
-```
-
-- `models` 节点没有参数，返回模型的 JSON 数组（最多 256 个）：每个 `{ id, name, traits }`，`id` 必填（最多 256 个字符），`name` 省掉时用 `id`；`traits` 说它能做什么：`think`（能深度思考）、`alwaysThinks`、`efforts`（思考强度，`minimal`、`low`、`medium`、`high`、`xhigh`、`max` 里的几种）、`thinkingEffort`（强度只在开了深度思考时有用）、`topEffortsThink`（`xhigh` 与 `max` 只在开了深度思考时能选）、`longContext`（能另开百万上下文）、`millionContext`（本来就是百万上下文，不用开）。
-- `chat` 任务每次提问启动一次，参数 `request` 是：
-
-  ```json
-  { "model": "…", "system": "…", "messages": [], "tools": [ { "name": "…", "description": "…", "inputSchema": {} } ],
-    "stream": true, "maxTokens": 4096, "think": false, "effort": "", "longContext": false }
-  ```
-
-  `messages` 依次是 `{ "role": "user", "text", "pictures" }`（`pictures` 里每张 `{ "type": "image", "mimeType", "data" }`，`data` 是 base64）、`{ "role": "assistant", "text", "toolCalls": [ { id, name, arguments } ], "thinkingBlocks" }` 与 `{ "role": "tools", "toolResults": [ { id, name, failed, content } ] }`。请求超过约 64 KiB 时 `request` 改成 `{ "file": "<路径>" }`：同样的 JSON 写在这个临时文件里，任务结束后删掉（受限的 DLL 也能读到它）。
-- 回答时用 `job_output` 一段一段交出 `{ "text": "…" }`、`{ "thinking": "…" }` 或 `{ "toolCall": "<工具名>" }`，界面边收边显示；最后 `job_finish` 交出 `{ text, thinking, thinkingBlocks, toolCalls: [ { id, name, arguments } ], stop, usage: { input, output } }`，省掉 `text` 与 `thinking` 时用交出过的拼起来。服务报错时在结果里写 `{ "problem": "…", "status": 429, "code": "…" }`，或者 `job_fail`。
-- 两分钟没有任何输出算失败；用户取消时 anmacgamer 取消这个任务。设置里选的服务属于一个没装、关着或没有 `ai.provide` 的扩展时，`ai.ask` 得到 `GS-API-150`。
+清单 `aiProviders` 组合 `models` 节点与 `chat` 任务（需 `ai.provide`，联网另加 `network`）：
+- `models`（无参）-> <= 256 个 `{ id (<= 256), name?, traits: { think, alwaysThinks, efforts (minimal|low|medium|high|xhigh|max), thinkingEffort, topEffortsThink, longContext, millionContext } }`。
+- `chat`（`request` json）：`{ model, system, messages, tools, stream, maxTokens, think, effort, longContext }`（`messages` 角色：`user` 含 `text`/`pictures`，`assistant` 含 `text`/`toolCalls`/`thinkingBlocks`，`tools` 含 `toolResults`）。超约 64 KiB 改为 `{ "file": "<路径>" }`（受限模式可读）。
+- 流式片段用 `job_output`（`{ text }`、`{ thinking }`、`{ toolCall }`）；结束用 `job_finish`（`{ text, thinking, thinkingBlocks, toolCalls, stop, usage: { input, output } }` 或 `{ problem, status, code }`）。2 分钟无输出失败。服务不可用报 `GS-API-150`。
 
 ## 受限模式
 
-清单的 `contributes.native` 写 `"sandbox": "restricted"`，DLL 就在一个只属于这个扩展的 AppContainer 里的 `gs-exthost.exe` 中运行。接口和完全权限的 DLL 一样，但是：
+`"sandbox": "restricted"` 让 `gs-exthost.exe` 运行在独立 AppContainer 中：
+- 禁联网、禁启子进程、禁写容器外文件（仅可写 `%LOCALAPPDATA%\Packages\GameScrcpy.Extension.<散列>\AC` 与 `Temp`，自身目录只读）、禁剪贴板/窗口/系统设置。
+- 硬件仅经[经 anmacgamer 用设备](#经-anmacgamer-用设备)（需 `hardware` 权限，`claim` 亦然）。
+- 上限：1 GiB 内存（Windows）、200 日志/秒、3 通知/10 秒、4 设备变化/秒、16000 输入事件/秒；事件须为合法 UTF-8 JSON。
+- `gs ext test` 始终在 `gs-exthost.exe` + AppContainer（`gs-test:<id>`）中运行受限 DLL。Administrators 属主的便携版在普通权限下可能报错误 5。
 
-- **不能**：读写扩展文件夹以外的文件（自己的文件夹也只读）、联网、启动别的程序，也看不到用户的其他环境变量：进程只有系统的几项变量，`LOCALAPPDATA`、`TEMP`、`TMP` 的值取自 anmacgamer；能写的是这个扩展自己的容器文件夹 `%LOCALAPPDATA%\Packages\GameScrcpy.Extension.<散列>\AC` 与其下的 `Temp`，往用户的临时文件夹写会被拒绝。剪贴板、系统设置、别的程序的窗口这类界面操作也被挡掉。
-- **能**：碰硬件只经[设备函数](#经-gamescrcpy-用设备)（要 `hardware` 权限并经用户允许，`claim` 同样要 `hardware`）；存储、AI 请求的临时文件由 anmacgamer 代为交给它。
-- **上限**：进程最多用 1 GiB 内存、只能有一个进程。anmacgamer 这一边还替它限速：日志每秒 200 行、通知 10 秒 3 条、设备变化每秒 4 次、输入事件每秒 16000 个，超出的丢掉，第一次丢时日志里记一条；事件的值必须是合法的 UTF-8 JSON。
-- 安装检查不再要求它导入的联网、文件函数有对应的权限，安装框写“受限：只能做它声明的事”，并列出沙箱挡掉的系统函数；没签名时只是一条提示。
-- `gs ext test` 里受限的 DLL 也总在 `gs-exthost.exe` 与 AppContainer 里跑（用 `gs-test:<扩展 id>` 造，测完删掉），不用加 `--hosted`。
-- 已知限制：容器里的进程要能读取、执行 `gs-exthost.exe` 与它旁边的依赖，anmacgamer 为此给“所有应用程序包”授权；文件的属主是 Administrators、而 anmacgamer 在普通权限下运行时改不了权限（错误 5）。便携版由管理员权限的程序解压到非系统盘时会遇到，装在 Program Files 下的不受影响。
+## 多架构与构建（Windows）
 
-## 一个 DLL 对应多种处理器
-
-清单的 `dll` 可以写成 `{ "x64": "bin/x64/native.dll", "arm64": "bin/arm64/native.dll" }`，anmacgamer 载入与这台电脑相同处理器的那一份，没有就说明“这个扩展没有适合这台电脑的版本”。`gs validate` 检查每份 DLL 的处理器和它是否导出 `gs_ext_main`。
-
-## 构建
-
-- 用 Visual Studio 2022 编译 x64（需要时另编 arm64）的 DLL，包含 `gamescrcpy_ext.h`，导出 `gs_ext_main`（头文件的 `GS_EXT_EXPORT` 就是 `__declspec(dllexport)`）。
-- 建议静态链接 C/C++ 运行库（`/MT`），这样 DLL 不依赖用户电脑上的运行库版本。
-- `gs ext init native <文件夹>` 生成一个能直接编译的起点：CMake 工程、头文件的副本、一个节点、一个长任务、一个 `contributes.cli` 命令和一个测试（见[测试扩展](testing.zh-CN.md)）。
-- 包里带上编好的 DLL；源代码要不要一起发由你决定，名字以点开头的文件夹（如 `.build`）不会被打包。
+- `dll` 支持 `{ "x64": "...", "arm64": "..." }`。用 Visual Studio 2022 编译，静态链接运行库（`/MT`），导出 `gs_ext_main`（`GS_EXT_EXPORT` = `__declspec(dllexport)`）。可用 `gs ext init native <文件夹>` 生成模板。
 
 ## macOS
 
-macOS 版的 anmacgamer 载入 dylib，写在清单的 `dylib` 里（和 `dll` 并列，`dll` 仍是 Windows 的 DLL）：可以是一个路径，用于所有 Mac 都能用的一份（比如通用二进制）；也可以按处理器写，`{ "arm64": "lib/arm64/libboard.dylib", "x64": "lib/x64/libboard.dylib" }`。macOS 从不载入 `dll`，Windows 从不载入 `dylib`，一个包可以两样都带。清单至少要有其中一个；还不认识 `dylib` 的旧版 anmacgamer 只把它当作一条提示。
-
-- 用 Clang（Xcode 命令行工具）编译，包含 `gamescrcpy_ext.h`，导出 `gs_ext_main`（这时头文件的 `GS_EXT_EXPORT` 是 `__attribute__((visibility("default")))`）。
-- `gs validate` 像检查 DLL 一样检查 dylib：处理器、`gs_ext_main`、导入了什么。导入取自 macOS 载入它时真正要绑定的内容，不只看符号表，所以去掉符号也藏不住。`task_for_pid`、`mach_vm_write`、`thread_set_state`、`ptrace` 这类算注入，包会被拒绝。
-- 每个 dylib 和在 Windows 上一样在自己的 `gs-exthost` 进程里运行。崩溃时崩溃文件夹里有 `crash.txt`（信号、地址、出错的库和偏移）和日志，没有小型转储。
-- `"sandbox": "restricted"` 时 `gs-exthost` 在 macOS 沙箱里运行，代替 AppContainer：能读自己的文件夹和系统的库，能读写自己的容器文件夹 `~/Library/Application Support/anmacgamer/Containers/GameScrcpy.Extension.<散列>`（也是它的 `HOME` 和 `TMPDIR`），别的都不行；联网、启动别的程序都被拒绝，环境变量只有 `HOME`、`TMPDIR`、`PATH` 和语言。anmacgamer 之后交给它的文件只有它能读。macOS 没有作业对象，Windows 上 1 GiB 的内存上限这里没有。
+在 `contributes.native` 使用 `dylib`（单通用路径或 `{ "arm64": "...", "x64": "..." }`；macOS 忽略 `dll`，Windows 忽略 `dylib`，可同时携带）。
+- 用 Clang（Xcode 命令行工具）编译，导出 `gs_ext_main`（`GS_EXT_EXPORT` = `__attribute__((visibility("default")))`）。
+- `gs validate` 检查 Mach-O 架构、`gs_ext_main` 与实际绑定导入（去符号无法隐藏）；`task_for_pid`、`mach_vm_write`、`thread_set_state`、`ptrace` 等按注入拒绝。
+- 运行于 `gs-exthost`；崩溃写 `crash.txt`（信号、地址、库与偏移）与日志（无 minidump）。
+- `"sandbox": "restricted"` 使用 macOS `sandbox_init`：自身目录与系统库只读，容器 `~/Library/Application Support/anmacgamer/Containers/GameScrcpy.Extension.<散列>`（即 `HOME`/`TMPDIR`）可读写，环境变量仅 `HOME`/`TMPDIR`/`PATH`/语言；禁联网与子进程；无 Windows 1 GiB 作业对象限制。
 
 ## 逻辑里看到的错误
 
-| 代码 | 意思 |
+| 代码 | 含义 |
 |:--|:--|
-| `GS-API-060` | 扩展没打开 |
-| `GS-API-061` | 参数类型不对、任务缺参数，或任务的参数嵌套超过 64 层 |
-| `GS-API-062` | 节点失败（带 `set_error` 的原因） |
-| `GS-API-063` | 扩展缺这个节点或任务要的权限 |
-| `GS-API-064` | 节点超过 100 毫秒没有返回 |
-| `GS-API-065` | 任务失败（带 `job_fail` 的原因），或结果不符合 `returns` |
-| `GS-API-066` | 任务被取消 |
-| `GS-API-067` | 扩展同时在跑的任务已经到上限 |
+| `GS-API-060` | 扩展未启用 |
+| `GS-API-061` | 参数类型错、任务缺参数或嵌套超 64 层 |
+| `GS-API-062` | 节点失败（`set_error` 原因） |
+| `GS-API-063` | 缺少节点/任务所需权限 |
+| `GS-API-064` | 节点超过 100 ms 未返回 |
+| `GS-API-065` | 任务失败（`job_fail` 原因）或结果不符 `returns` |
+| `GS-API-066` | 任务已取消 |
+| `GS-API-067` | 达到并发任务上限 |
