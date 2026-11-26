@@ -14,7 +14,7 @@
 
 [下载发布版](https://github.com/wyb-070110/anmacgamer/releases) · [文档](docs/README.md) · [macOS 移植说明](docs/macos-port.md) · [更新日志](CHANGELOG.md)
 
-<img src="docs/images/keymap-editor.png" width="860" alt="在投屏画面上摆放键位">
+<img src="docs/images/mirror-keymap.png" width="860" alt="macOS 投屏窗口，手机画面上显示键位提示">
 
 </div>
 
@@ -94,6 +94,6 @@ ctest --preset mac-app
 
 anmacgamer 为 macOS 新编写的代码以 [GNU GPL 3.0 或更高版本](LICENSES/GPL-3.0-or-later.txt) 发布，沿用的上游代码保留 [Apache License 2.0](LICENSE)；发布的 macOS 程序整体按 **GPL 3.0 或更高版本**提供。详见 [LICENSING.md](LICENSING.md)。
 
-- 上游出处：基于 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy)（Apache License 2.0）移植与开发，感谢原作者。
+- 上游出处：基于 [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy)（Apache License 2.0）移植与开发，感谢原作者。anmacgamer 的问题请在本仓库反馈，不要提到上游。
 - [scrcpy](https://github.com/Genymobile/scrcpy) 与 [QtScrcpy](https://github.com/barry-ran/QtScrcpy)。
 - 第三方组件与许可证：[third_party/README.md](third_party/README.md)、[LICENSING.md](LICENSING.md)，以及程序内**设置 > 关于 > 开源许可**。

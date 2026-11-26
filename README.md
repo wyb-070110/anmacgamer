@@ -14,7 +14,7 @@ English · [简体中文](README.zh-CN.md)
 
 [Releases](https://github.com/wyb-070110/anmacgamer/releases) · [Documentation](docs/README.md) · [macOS port notes](docs/macos-port.md) · [Changelog](CHANGELOG.md)
 
-<img src="docs/images/keymap-editor.png" width="860" alt="Placing key bindings directly on the mirrored phone screen">
+<img src="docs/images/mirror-keymap.png" width="860" alt="The macOS mirror window with key hints over the phone screen">
 
 </div>
 
@@ -94,6 +94,6 @@ Build only the Qt-free core libraries with `cmake --workflow --preset posix-core
 
 Code written for anmacgamer on macOS is licensed under [GNU GPL 3.0 or later](LICENSES/GPL-3.0-or-later.txt). Code kept from upstream remains under the [Apache License 2.0](LICENSE). The distributed macOS application as a whole is offered under **GPL 3.0 or later**. See [LICENSING.md](LICENSING.md) for details.
 
-- Upstream: built upon [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) (Apache License 2.0). Thanks to the upstream author.
+- Upstream: built upon [NuoRan/GameScrcpy](https://github.com/NuoRan/GameScrcpy) (Apache License 2.0). Thanks to the upstream author. Please report problems with anmacgamer in this repository, not upstream.
 - [scrcpy](https://github.com/Genymobile/scrcpy) and [QtScrcpy](https://github.com/barry-ran/QtScrcpy).
 - Third-party libraries and licenses: [third_party/README.md](third_party/README.md), [LICENSING.md](LICENSING.md), and **Settings > About > Open-source licenses**.

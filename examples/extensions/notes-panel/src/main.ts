@@ -7,7 +7,7 @@ type Release = {
 };
 
 const page = ui.panel("notes");
-const releaseUrl = "https://api.github.com/repos/NuoRan/GameScrcpy/releases/latest";
+const releaseUrl = "https://api.github.com/repos/wyb-070110/anmacgamer/releases/latest";
 const mostNotes = 200;
 const mostNoteBytes = 65536;
 

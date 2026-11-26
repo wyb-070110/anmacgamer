@@ -7,7 +7,7 @@
   "description": "Imports key lists written as plain text as profiles, and exports profiles as key lists.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "script": "^1.1"
   },

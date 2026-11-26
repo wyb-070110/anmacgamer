@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 project(anmacgamer
     VERSION 2.2.1
     DESCRIPTION "Android screen mirroring, input mapping and automation"
-    HOMEPAGE_URL "https://github.com/NuoRan/GameScrcpy"
+    HOMEPAGE_URL "https://github.com/wyb-070110/anmacgamer"
     LANGUAGES C CXX
 )
 

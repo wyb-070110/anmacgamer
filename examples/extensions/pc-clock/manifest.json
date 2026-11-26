@@ -7,7 +7,7 @@
   "description": "A sample native extension: a system node that gives the computer's current time as text.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "native": "^2.0"
   },

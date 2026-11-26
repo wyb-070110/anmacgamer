@@ -7,7 +7,7 @@
   "description": "Reads the text in a part of the phone's picture with the text recognition of Windows, and reads it out.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "script": "^1.1",
     "panel": "^1.1"
