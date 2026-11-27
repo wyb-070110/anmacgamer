@@ -2,14 +2,11 @@ A touch box is a hardware board added by an extension that acts as your phone's 
 
 ## Use the ESP32 touch box
 
-The ESP32 touch box is provided by the separate community extension `community.esp32`.
+The ESP32 touch box comes from a separate community extension, `community.esp32`, made for the Windows version. It has not been tested on macOS, and anmacgamer does not ship it.
 
-1. **Download**: get `community.esp32-<version>.gsext` from [GameScrcpy-ESP32](https://github.com/NuoRan/GameScrcpy-ESP32).
-2. **Install**: on the **Extensions** page, select **Install from file…**, pick the package, and approve its permissions.
-3. **Follow its guide**: wiring, firmware flashing, and Wi-Fi setup articles appear in this Help under the extension's name.
-
-> [!NOTE]
-> Settings from GameScrcpy 2.0 do not carry over. Re-select your touch method and set up the board's Wi-Fi in the new extension.
+1. **Install**: if you have its `community.esp32-<version>.gsext` package, select **Install from file…** on the **Extensions** page, pick the package, and approve its permissions.
+2. **Follow its guide**: wiring, firmware flashing, and Wi-Fi setup articles appear in this Help under the extension's name.
+3. **Problems on a Mac**: report them in [anmacgamer's issues](https://github.com/wyb-070110/anmacgamer/issues), not to the extension's authors.
 
 ## Manage a box on the Devices page
 

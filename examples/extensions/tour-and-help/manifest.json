@@ -7,7 +7,7 @@
   "description": "Shows how an extension brings its own guided tour and help articles, with a page and a card in Settings for the tour to point at.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "script": "^1.0",
     "panel": "^1.1",

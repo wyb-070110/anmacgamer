@@ -62,3 +62,25 @@
   "Not yet" until tested, AGENTS.md link. No newer Star Rail mapping from Gemini (build/honkai-star-rail-pc is the
   23:28 version already built in). Gemini's open points: repo name anmacgammer (kept), Windows details in
   docs/extensions (kept), CHANGELOG beta3 tag link (at release time).
+
+## 2026-11-27 03:35 — beta 3 review, upstream links
+
+- A11 (Antigravity) done: notes and changelog are accurate and plain (en + zh). Checked its DMG myself
+  (SHA-256 406f8c71…96cf): universal x86_64 + arm64 for all four programs, codesign verifies, no Homebrew/Qt/home
+  paths, companion 2.3.2, profiles 1.0.2, smoke test exit 0. Merged A11 (`95c2a39`).
+- User asked before release: Mac images in the Markdown, every link points at anmacgamer, not upstream. Done in
+  `3c298b6`: README image is a capture of the macOS mirror window with key hints (demo copy, own data folder);
+  upstream Windows screenshots removed; homepage URL, companion Help link (companion 2.3.3), example extensions,
+  installer script and the touch-box help no longer point at NuoRan; READMEs ask to report here. Credit and licence
+  lines to NuoRan/GameScrcpy stay (Apache-2.0 attribution).
+- That made the A11 DMG stale: A12 (rebuild) sent to Antigravity (`4487caa`). Publishing waits for the user.
+
+## 2026-11-27 05:16 — A12 DMG checked (Claude)
+
+Antigravity rebuilt the beta 3 DMG from `6796941` (report `cb327c0` on `mac/antigravity`, only the handoff file).
+`~/GameScrcpy-macos-antigravity/build/package/anmacgamer-2.2.1-beta3-macos-universal.dmg`, 156,173,889 bytes,
+SHA-256 `5ff3da0634c5e723414b52c1f76afb432a8ba8d40b890be45f1b385c257dbde1`. Checked myself on a read-only mount and
+a copy in the scratchpad: all four binaries `x86_64 arm64`; `codesign --verify --deep --strict` ok; 0 references to
+`/opt/homebrew`, `/usr/local/(opt|Cellar)` or `/Users/york` in `otool -L` of every Mach-O; `gs-companion.json`
+versionCode 11 / 2.3.3; `extensions/gamescrcpy.games/1.0.2`; no `NuoRan` in `src/app/help` or the bundle; smoke test
+with its own `GS_DATA_DIR` exits 0. Ready to publish; waiting for the user's go (push, merge to main, tag, release).

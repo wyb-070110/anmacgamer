@@ -7,7 +7,7 @@
   "description": "Keeps short notes as text files in a folder you choose, and adds the newest GameScrcpy release as a note when you ask.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "script": "^1.1",
     "panel": "^1.0"
@@ -28,7 +28,7 @@
         {"name": "notes", "purpose": "Where your notes are kept, one text file for each."}
       ]
     },
-    {"name": "network", "reason": "Reads the newest GameScrcpy release from GitHub when you ask.", "hosts": ["api.github.com"]}
+    {"name": "network", "reason": "Reads the newest anmacgamer release from GitHub when you ask.", "hosts": ["api.github.com"]}
   ],
   "l10n": {
     "zh_CN": {

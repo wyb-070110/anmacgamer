@@ -8,7 +8,7 @@
   #define OutputDir "..\dist"
 #endif
 #ifndef AppUrl
-  #define AppUrl "https://github.com/NuoRan/GameScrcpy"
+  #define AppUrl "https://github.com/wyb-070110/anmacgamer"
 #endif
 
 [Setup]

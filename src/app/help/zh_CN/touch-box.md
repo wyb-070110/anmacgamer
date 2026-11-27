@@ -2,14 +2,11 @@
 
 ## 使用 ESP32 触控盒
 
-ESP32 触控盒现由社区扩展 `community.esp32` 提供支持。
+ESP32 触控盒来自另一个社区扩展 `community.esp32`，它是为 Windows 版做的，还没有在 macOS 上测试过，anmacgamer 也不附带它。
 
-1. **下载扩展**：前往 [GameScrcpy-ESP32](https://github.com/NuoRan/GameScrcpy-ESP32) 下载 `community.esp32-<version>.gsext`。
-2. **安装**：在**扩展**页点击**从文件安装…**，选择安装包并确认所需权限。
-3. **查看扩展帮助**：接线、刷写固件和 Wi-Fi 配网等说明会在本帮助中以该扩展名称列出。
-
-> [!NOTE]
-> GameScrcpy 2.0 的旧设置不会自动迁移，请在新扩展中重新配置 Wi-Fi 并重选触控方式。
+1. **安装**：如果你有它的 `community.esp32-<version>.gsext` 安装包，在**扩展**页点击**从文件安装…**，选择安装包并确认所需权限。
+2. **查看扩展帮助**：接线、刷写固件和 Wi-Fi 配网等说明会在本帮助中以该扩展名称列出。
+3. **在 Mac 上遇到问题**：请提到 [anmacgamer 的 Issues](https://github.com/wyb-070110/anmacgamer/issues)，不要去打扰扩展作者。
 
 ## 在设备页管理触控盒
 

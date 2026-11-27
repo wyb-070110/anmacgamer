@@ -7,7 +7,7 @@
   "description": "Darkens every few rows of the picture, like an old CRT screen.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "filter": "^1.0"
   },

@@ -7,7 +7,7 @@
   "description": "Lists what happens in GameScrcpy as it happens: phones connecting, profiles applied, apps in front, recordings, extensions and settings.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "script": "^1.1",
     "panel": "^1.0"

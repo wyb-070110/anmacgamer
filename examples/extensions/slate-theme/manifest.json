@@ -7,7 +7,7 @@
   "description": "Cool blue-grey surfaces for the hub and the mirror windows.",
   "authors": ["GameScrcpy"],
   "license": "Apache-2.0",
-  "repository": "https://github.com/NuoRan/GameScrcpy",
+  "repository": "https://github.com/wyb-070110/anmacgamer",
   "requires": {
     "theme": "^1.0"
   },
